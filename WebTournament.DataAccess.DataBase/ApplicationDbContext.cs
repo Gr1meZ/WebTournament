@@ -1,10 +1,13 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Infrastructure.DataAccess.Abstract;
 using Microsoft.EntityFrameworkCore;
+using DataAccess.Domain.Models;
+using DataAccess.DataBase.Configuration;
+using Microsoft.AspNetCore.Identity;
 
 namespace Infrastructure.DataAccess.DataBase
 {
-    public class ApplicationDbContext : IdentityDbContext, IApplicationDbContext
+    public class ApplicationDbContext : IdentityDbContext<AppUser, AppRole, Guid>, IApplicationDbContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -12,11 +15,19 @@ namespace Infrastructure.DataAccess.DataBase
             
         }
 
+        public DbSet<Belt> Belts { get; set; }
+        public DbSet<Club> Clubs { get; set; }
+        public DbSet<Fighter> Fighters { get; set; }
+        public DbSet<Tournament> Tournaments { get; set; }
+        public DbSet<Trainer> Trainers { get; set; }
+        public DbSet<WeightCategorie> WeightCategories { get; set; }
+        public DbSet<AgeGroup> AgeGroups { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
             
-          //  modelBuilder.ApplyConfigurationsFromAssembly(typeof().Assembly);
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(FighterEntityConfiguration).Assembly);
         }
     }
 }

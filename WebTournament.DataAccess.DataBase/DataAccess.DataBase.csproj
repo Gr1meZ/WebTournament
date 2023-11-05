@@ -13,11 +13,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Migrations\" />
+    <ProjectReference Include="..\WebTournament.DataAccess.Abstract\DataAccess.Abstract.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\WebTournament.DataAccess.Abstract\DataAccess.Abstract.csproj" />
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>

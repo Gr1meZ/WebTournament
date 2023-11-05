@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Infrastructure.DataAccess.DataBase;
 using Microsoft.AspNetCore.Identity;
 using System;
-
+using DataAccess.Domain.Models;
 
 namespace Infrastructure.DependencyInjection
 {
@@ -22,8 +22,9 @@ namespace Infrastructure.DependencyInjection
                .EnableSensitiveDataLogging(),ServiceLifetime.Transient);
 
 
-            //services.AddDefaultIdentity<ApplicationDbContext>(options => options.SignIn.RequireConfirmedAccount = true)
-              //   .AddEntityFrameworkStores<ApplicationDbContext>();
+            services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddRoles<AppRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddScoped<IApplicationDbContext>(provider => provider.GetService<ApplicationDbContext>());
 
