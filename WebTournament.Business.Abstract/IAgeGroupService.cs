@@ -6,10 +6,10 @@ namespace WebTournament.Business.Abstract
     public interface IAgeGroupService
     {
         Task AddAgeGroup(AgeGroupViewModel ageGroupViewModel);
-        Task EditProductType(AgeGroupViewModel ageGroupViewModel);
-        Task DeleteProductType(Guid id);
-        Task<PagedResponse<AgeGroupViewModel[]>> ProductTypeList(PagedRequest request);
-        Task<AgeGroupViewModel> GetProductType(Guid id);
-        Task<List<AgeGroupViewModel>> GetProductTypes();
+        Task EditAgeGroup(AgeGroupViewModel ageGroupViewModel);
+        Task DeleteAgeGroup(Guid id);
+        Task<PagedResponse<AgeGroupViewModel[]>> AgeGroupList(PagedRequest request);
+        Task<AgeGroupViewModel> GetAgeGroup(Guid id);
+        Task<List<AgeGroupViewModel>> GetAgeGroups();
     }
 }

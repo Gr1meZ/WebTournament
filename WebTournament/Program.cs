@@ -4,7 +4,7 @@ using Infrastructure.DependencyInjection;
 var builder = WebApplication.CreateBuilder(args);
 
 
-builder.Services.AddPersistence(builder.Configuration);
+builder.Services.AddServices(builder.Configuration);
 
 builder.Services.AddControllersWithViews();
 
