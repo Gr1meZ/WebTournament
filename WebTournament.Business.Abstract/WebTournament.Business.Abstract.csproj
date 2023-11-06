@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\WebTournament.Models\WebTournament.Models.csproj" />
+  </ItemGroup>
+
 </Project>
