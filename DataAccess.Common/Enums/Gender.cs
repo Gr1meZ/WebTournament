@@ -1,5 +1,5 @@
 ﻿
-namespace DataAccess.Domain.Enums
+namespace DataAccess.Common.Enums
 {
     public enum Gender
     {

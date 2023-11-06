@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Infrastructure.DataAccess.Abstract;
 using Microsoft.EntityFrameworkCore;
-using Infrastructure.DataAccess.DataBase;
+using Infrastructure.DataAccess.MSSQL;
 using DataAccess.IdentityModels;
 
 namespace Infrastructure.DependencyInjection

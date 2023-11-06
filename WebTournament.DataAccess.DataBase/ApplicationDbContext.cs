@@ -2,10 +2,10 @@
 using Infrastructure.DataAccess.Abstract;
 using Microsoft.EntityFrameworkCore;
 using DataAccess.Domain.Models;
-using DataAccess.DataBase.Configuration;
+using DataAccess.MSSQL.Configuration;
 using DataAccess.IdentityModels;
 
-namespace Infrastructure.DataAccess.DataBase
+namespace Infrastructure.DataAccess.MSSQL
 {
     public class ApplicationDbContext : IdentityDbContext<AppUser, AppRole, Guid>, IApplicationDbContext
     {

@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataAccess.DataBase.Configuration
+namespace DataAccess.MSSQL.Configuration
 {
     public class WeightCategorieEntityConfiguration : IEntityTypeConfiguration<WeightCategorie>
     {
