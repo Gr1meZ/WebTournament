@@ -3,9 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Infrastructure.DataAccess.Abstract;
 using Microsoft.EntityFrameworkCore;
 using Infrastructure.DataAccess.DataBase;
-using Microsoft.AspNetCore.Identity;
-using System;
-using DataAccess.Domain.Models;
+using DataAccess.IdentityModels;
 
 namespace Infrastructure.DependencyInjection
 {

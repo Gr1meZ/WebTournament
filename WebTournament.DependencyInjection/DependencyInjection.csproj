@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DataAccess.Common\DataAccess.Common.csproj" />
     <ProjectReference Include="..\WebTournament.DataAccess.Abstract\DataAccess.Abstract.csproj" />
     <ProjectReference Include="..\WebTournament.DataAccess.DataBase\DataAccess.DataBase.csproj" />
   </ItemGroup>

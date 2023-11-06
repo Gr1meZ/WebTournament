@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataAccess.Domain.Models
+namespace DataAccess.IdentityModels
 {
     public class AppUser : IdentityUser<Guid>
     {

@@ -1,12 +1,54 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using DataAccess.Domain.Models;
+using DataAccess.IdentityModels;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
+
 
 namespace DependencyInjection
 {
-    internal class RoleInitializer
+    public static class RoleInitializer
     {
+        public static async Task CreateRoles(this IServiceProvider serviceProvider)
+        {
+            using var scope = serviceProvider.CreateScope();
+
+            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<AppRole>>();
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+
+            string[] roleNames = { "Admin" };
+            IdentityResult roleResult;
+
+            foreach (var roleName in roleNames)
+            {
+                var roleExist = await roleManager.RoleExistsAsync(roleName);
+                if (!roleExist)
+                {
+                    roleResult = await roleManager.CreateAsync(new AppRole(roleName));
+                }
+            }
+
+            //Here you could create a super user who will maintain the web app
+            var powerUser = new AppUser
+            {
+
+                UserName = "admin@mail.ru",
+                Email = "admin@mail.ru",
+                EmailConfirmed = true
+
+            };
+            var userPwd = "Admin1*";
+            var user = await userManager.FindByEmailAsync("admin@mail.ru");
+
+            if (user == null)
+            {
+                var createPowerUser = await userManager.CreateAsync(powerUser, userPwd);
+                if (createPowerUser.Succeeded)
+                {
+
+                    await userManager.AddToRoleAsync(powerUser, "Admin");
+
+                }
+            }
+        }
     }
 }

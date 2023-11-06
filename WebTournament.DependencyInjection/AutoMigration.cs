@@ -11,14 +11,14 @@ namespace Infrastructure.DependencyInjection
 {
     public static class AutoMigration
     {
-        public static void AutoMigrateDatabase (this IServiceProvider serviceProvider)
+        public static async Task AutoMigrateDatabase (this IServiceProvider serviceProvider)
         {
             using (var scope = serviceProvider.CreateScope())
             {
                 var dbContext = scope.ServiceProvider
                     .GetRequiredService<ApplicationDbContext>();
 
-                 dbContext.Database.Migrate();
+                 await dbContext.Database.MigrateAsync();
             }
         }
     }

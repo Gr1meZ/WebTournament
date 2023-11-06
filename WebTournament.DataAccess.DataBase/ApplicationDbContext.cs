@@ -3,7 +3,7 @@ using Infrastructure.DataAccess.Abstract;
 using Microsoft.EntityFrameworkCore;
 using DataAccess.Domain.Models;
 using DataAccess.DataBase.Configuration;
-using Microsoft.AspNetCore.Identity;
+using DataAccess.IdentityModels;
 
 namespace Infrastructure.DataAccess.DataBase
 {

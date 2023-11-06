@@ -1,3 +1,4 @@
+using DependencyInjection;
 using Infrastructure.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,7 +12,8 @@ builder.Services.AddRazorPages();
 
 var app = builder.Build();
 
-app.Services.AutoMigrateDatabase();
+await app.Services.AutoMigrateDatabase();
+await app.Services.CreateRoles();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
