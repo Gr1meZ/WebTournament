@@ -1,4 +1,5 @@
 ﻿using DataAccess.Domain.Models;
+using DataAccess.MSSQL.Helpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -10,6 +11,8 @@ namespace DataAccess.MSSQL.Configuration
         public void Configure(EntityTypeBuilder<Fighter> builder)
         {
             builder.HasKey(x => x.Id);
+
+            builder.Property(x => x.BirthDate).HasConversion<DateOnlyConverter, DateOnlyComparer>();
 
             builder.HasOne(x => x.Trainer)
                 .WithMany(x => x.Fighters)

@@ -10,6 +10,7 @@ namespace WebTournament.Models
     {
         public Guid Id { get; set; }
         public Guid AgeGroupId { get; set; }
+        public string AgeGroupName { get; set; }
         public int MaxWeight { get; set; }
         public string WeightName { get; set; }
     }

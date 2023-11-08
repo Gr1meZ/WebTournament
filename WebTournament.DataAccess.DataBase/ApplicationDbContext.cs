@@ -4,6 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using DataAccess.Domain.Models;
 using DataAccess.MSSQL.Configuration;
 using DataAccess.IdentityModels;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using DataAccess.Common.Enums;
+using System.ComponentModel;
+using DataAccess.MSSQL.Helpers;
+using DateOnlyConverter = DataAccess.MSSQL.Helpers.DateOnlyConverter;
 
 namespace Infrastructure.DataAccess.MSSQL
 {
@@ -26,8 +31,19 @@ namespace Infrastructure.DataAccess.MSSQL
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            
+
+            modelBuilder.Entity<Fighter>().Property(d => d.Gender).HasConversion(new EnumToStringConverter<Gender>());
+
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(FighterEntityConfiguration).Assembly);
+        }
+        protected override void ConfigureConventions(ModelConfigurationBuilder builder)
+        {
+            base.ConfigureConventions(builder);
+
+            builder.Properties<DateOnly>()
+            .HaveConversion<DateOnlyConverter, DateOnlyComparer>()
+            .HaveColumnType("date"); 
+
         }
     }
 }
