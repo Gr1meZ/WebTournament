@@ -20,4 +20,8 @@
     <ProjectReference Include="..\WebTournament.DependencyInjection\DependencyInjection.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Views\AgeGroup\" />
+  </ItemGroup>
+
 </Project>
