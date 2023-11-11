@@ -1,4 +1,13 @@
-﻿function dtAjaxHandler(url, data, callback) {
+﻿const loader = {
+    show() {
+        $('.fullscreen-spinner').show();
+    },
+    hide() {
+        $('.fullscreen-spinner').attr("style", 'display: none !important;');
+    }
+}
+
+function dtAjaxHandler(url, data, callback) {
     $.ajax({
         url: url,
         type: 'POST',
@@ -31,7 +40,7 @@ function initCustomMultiSelect(options) {
     let select2Options = {
         containerCssClass : "form-control",
         placeholder: $(this).data('placeholder'),
-        multiple: true,
+        multiple: false,
         tags: true,
         language: {
             noResults: function(){
@@ -49,7 +58,7 @@ function initAjaxAutoCompleteSelect(options) {
     let select2Options = {
         containerCssClass : "form-control",
         placeholder: $(this).data('placeholder'),
-        multiple: true,
+        multiple: false,
         width: '100%',
         dropdownAutoWidth : true,
         ajax: {

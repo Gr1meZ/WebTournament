@@ -12,7 +12,7 @@ namespace Infrastructure.DataAccess.Abstract
         DbSet<Trainer> Trainers { get; set; }
         DbSet<WeightCategorie> WeightCategories { get; set; }
         DbSet<AgeGroup> AgeGroups { get; set; }
-
+        
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 
     }

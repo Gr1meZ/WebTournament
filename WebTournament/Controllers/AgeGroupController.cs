@@ -41,7 +41,7 @@ namespace WebTournament.WebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> AddModel(AgeGroupViewModel ageGroupViewModel)
         {
-            if (!ModelState.IsValid) return View();
+            if (!ModelState.IsValid) return View("AddIndex");
             await _ageGroupService.AddAgeGroup(ageGroupViewModel);
             return RedirectToAction("Index");
         }
@@ -60,6 +60,11 @@ namespace WebTournament.WebApp.Controllers
         {
             await _ageGroupService.DeleteAgeGroup(id);
             return Ok();
+        }
+
+        public async Task<IActionResult> Select2AgeGroups([FromForm] Select2Request request)
+        {
+            return Ok(await _ageGroupService.GetAutoCompleteAgeGroups(request));
         }
     }
 }

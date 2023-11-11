@@ -1,5 +1,6 @@
 ﻿using DataAccess.Domain.Models;
 using Infrastructure.DataAccess.Abstract;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using WebTournament.Business.Abstract;
@@ -82,6 +83,7 @@ namespace WebTournament.Business.Services
                 Id = x.Id,
                 MaxAge = x.MaxAge,
                 MinAge = x.MinAge,
+                Name = x.Name
             }).ToArrayAsync();
 
             return new PagedResponse<AgeGroupViewModel[]>(dbItems, totalItemCount, request.PageNumber, request.PageSize);
@@ -141,5 +143,37 @@ namespace WebTournament.Business.Services
                 MinAge = x.MinAge,
             }).ToListAsync();
         }
+
+        public async Task<Select2Response> GetAutoCompleteAgeGroups(Select2Request request)
+        {
+            var ageGroups = appDbContext.AgeGroups
+              .AsNoTracking()
+              .AsQueryable();
+
+            var dbQuery = ageGroups;
+            var total = await ageGroups.CountAsync();
+
+            if (!string.IsNullOrWhiteSpace(request.Search))
+            {
+                dbQuery = dbQuery.Where(x => x.Name.ToLower().Contains(request.Search.ToLower()));
+            }
+
+            if (request.PageSize != -1)
+                dbQuery = dbQuery.Skip(request.Skip).Take(request.PageSize);
+
+            var data = dbQuery.Select(x => new Select2Data()
+            {
+                Id = x.Id,
+                Name = x.Name
+            })
+                .ToArray();
+
+            return new Select2Response()
+            {
+                Data = data,
+                Total = total
+            };
+        }
+        
     }
 }

@@ -31,7 +31,7 @@ namespace WebTournament.Business.Services
             {
                 Address = tournamentViewModel.Address,
                 Name = tournamentViewModel.Name,
-                StartDate = DateTime.Now
+                StartDate = tournamentViewModel.StartDate,
             };
 
             appDbContext.Tournaments.Add(tournament);
@@ -144,6 +144,37 @@ namespace WebTournament.Business.Services
             }).ToArrayAsync();
 
             return new PagedResponse<TournamentViewModel[]>(dbItems, totalItemCount, request.PageNumber, request.PageSize);
+        }
+
+        public async Task<Select2Response> GetAutoCompleteTournaments(Select2Request request)
+        {
+            var tournaments = appDbContext.Tournaments
+              .AsNoTracking()
+              .AsQueryable();
+
+            var dbQuery = tournaments;
+            var total = await tournaments.CountAsync();
+
+            if (!string.IsNullOrWhiteSpace(request.Search))
+            {
+                dbQuery = dbQuery.Where(x => x.Name.ToLower().Contains(request.Search.ToLower()));
+            }
+
+            if (request.PageSize != -1)
+                dbQuery = dbQuery.Skip(request.Skip).Take(request.PageSize);
+
+            var data = dbQuery.Select(x => new Select2Data()
+            {
+                Id = x.Id,
+                Name = x.Name
+            })
+                .ToArray();
+
+            return new Select2Response()
+            {
+                Data = data,
+                Total = total
+            };
         }
     }
 }

@@ -3,6 +3,7 @@ using WebTournament.Business.Abstract;
 using WebTournament.Models.Helpers;
 using WebTournament.Models;
 using Microsoft.AspNetCore.Authorization;
+using WebTournament.Business.Services;
 
 namespace WebTournament.WebApp.Controllers
 {
@@ -60,6 +61,11 @@ namespace WebTournament.WebApp.Controllers
         {
             await _clubService.DeleteClub(id);
             return Ok();
+        }
+
+        public async Task<IActionResult> Select2Clubs([FromForm] Select2Request request)
+        {
+            return Ok(await _clubService.GetAutoCompleteClubs(request));
         }
     }
 }

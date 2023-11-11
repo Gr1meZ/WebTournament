@@ -78,7 +78,8 @@ namespace WebTournament.Business.Services
                 Phone = trainer.Phone,
                 Patronymic = trainer.Patronymic,
                 Surname = trainer.Surname,
-                Name = trainer.Name
+                Name = trainer.Name,
+                ClubName = trainer.Club.Name
             };
 
             return viewModel;
@@ -154,10 +155,44 @@ namespace WebTournament.Business.Services
                 Phone = x.Phone,
                 Name = x.Name,
                 Patronymic = x.Patronymic,
-                Surname = x.Surname
+                Surname = x.Surname,
+                ClubName = x.Club.Name
             }).ToArrayAsync();
 
             return new PagedResponse<TrainerViewModel[]>(dbItems, totalItemCount, request.PageNumber, request.PageSize);
+        }
+
+        public async Task<Select2Response> GetAutoCompleteTrainers(Select2Request request)
+        {
+            var ageGroups = appDbContext.Trainers
+              .AsNoTracking()
+              .AsQueryable();
+
+            var dbQuery = ageGroups;
+            var total = await ageGroups.CountAsync();
+
+            if (!string.IsNullOrWhiteSpace(request.Search))
+            {
+                dbQuery = dbQuery.Where(x => x.Name.ToLower().Contains(request.Search.ToLower()) ||
+                x.Surname.ToLower().Contains(request.Search.ToLower()) ||
+                x.Patronymic.ToLower().Contains(request.Search.ToLower()));
+            }
+
+            if (request.PageSize != -1)
+                dbQuery = dbQuery.Skip(request.Skip).Take(request.PageSize);
+
+            var data = dbQuery.Select(x => new Select2Data()
+            {
+                Id = x.Id,
+                Name = $"{x.Surname} {x.Name[0]}.{x.Patronymic}"
+            })
+                .ToArray();
+
+            return new Select2Response()
+            {
+                Data = data,
+                Total = total
+            };
         }
     }
 }

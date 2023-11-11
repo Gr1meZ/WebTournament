@@ -11,5 +11,7 @@ namespace WebTournament.Business.Abstract
         Task<PagedResponse<WeightCategorieViewModel[]>> WeightCategoriesList(PagedRequest request);
         Task<WeightCategorieViewModel> GetWeightCategorie(Guid id);
         Task<List<WeightCategorieViewModel>> GetWeightCategories();
+        Task<Select2Response> GetAutoCompleteWeightCategories(Select2Request request);
+
     }
 }

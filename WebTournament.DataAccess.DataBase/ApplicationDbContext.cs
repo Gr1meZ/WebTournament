@@ -45,5 +45,6 @@ namespace Infrastructure.DataAccess.MSSQL
             .HaveColumnType("date"); 
 
         }
+
     }
 }

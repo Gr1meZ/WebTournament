@@ -11,5 +11,7 @@ namespace WebTournament.Business.Abstract
         Task<PagedResponse<TournamentViewModel[]>> TournamentsList(PagedRequest request);
         Task<TournamentViewModel> GetTournament(Guid id);
         Task<List<TournamentViewModel>> GetTournaments();
+        Task<Select2Response> GetAutoCompleteTournaments(Select2Request request);
+
     }
 }

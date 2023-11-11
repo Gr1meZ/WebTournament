@@ -11,5 +11,7 @@ namespace WebTournament.Business.Abstract
         Task<PagedResponse<BeltViewModel[]>> BeltList(PagedRequest request);
         Task<BeltViewModel> GetBelt(Guid id);
         Task<List<BeltViewModel>> GetBelts();
+        Task<Select2Response> GetAutoCompleteBelts(Select2Request request);
+
     }
 }

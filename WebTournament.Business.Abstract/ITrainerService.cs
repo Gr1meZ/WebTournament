@@ -11,5 +11,8 @@ namespace WebTournament.Business.Abstract
         Task<PagedResponse<TrainerViewModel[]>> TrainersList(PagedRequest request);
         Task<TrainerViewModel> GetTrainer(Guid id);
         Task<List<TrainerViewModel>> GetTrainers();
+        Task<Select2Response> GetAutoCompleteTrainers(Select2Request request);
+
+
     }
 }

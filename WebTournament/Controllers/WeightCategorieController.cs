@@ -63,5 +63,10 @@ namespace WebTournament.WebApp.Controllers
             await _weightCategorieService.DeleteWeightCategorie(id);
             return Ok();
         }
+
+        public async Task<IActionResult> Select2WeightCategories([FromForm] Select2Request request)
+        {
+            return Ok(await _weightCategorieService.GetAutoCompleteWeightCategories(request));
+        }
     }
 }

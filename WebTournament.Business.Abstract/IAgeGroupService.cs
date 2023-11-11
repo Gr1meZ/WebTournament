@@ -11,5 +11,7 @@ namespace WebTournament.Business.Abstract
         Task<PagedResponse<AgeGroupViewModel[]>> AgeGroupList(PagedRequest request);
         Task<AgeGroupViewModel> GetAgeGroup(Guid id);
         Task<List<AgeGroupViewModel>> GetAgeGroups();
+        Task<Select2Response> GetAutoCompleteAgeGroups(Select2Request request);
+
     }
 }

@@ -3,6 +3,7 @@ using WebTournament.Business.Abstract;
 using WebTournament.Models.Helpers;
 using WebTournament.Models;
 using Microsoft.AspNetCore.Authorization;
+using WebTournament.Business.Services;
 
 namespace WebTournament.WebApp.Controllers
 {
@@ -41,7 +42,7 @@ namespace WebTournament.WebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> AddModel(TrainerViewModel trainerViewModel)
         {
-            if (!ModelState.IsValid) return View();
+            if (!ModelState.IsValid) return View("Index");
             await _trainerService.AddTrainer(trainerViewModel);
             return RedirectToAction("Index");
         }
@@ -60,6 +61,11 @@ namespace WebTournament.WebApp.Controllers
         {
             await _trainerService.DeleteTrainer(id);
             return Ok();
+        }
+
+        public async Task<IActionResult> Select2Trainers([FromForm] Select2Request request)
+        {
+            return Ok(await _trainerService.GetAutoCompleteTrainers(request));
         }
     }
 }

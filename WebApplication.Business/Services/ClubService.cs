@@ -124,5 +124,36 @@ namespace WebTournament.Business.Services
                 Name = x.Name,
             }).ToListAsync();
         }
+
+        public async Task<Select2Response> GetAutoCompleteClubs(Select2Request request)
+        {
+            var clubs = appDbContext.Clubs
+              .AsNoTracking()
+              .AsQueryable();
+
+            var dbQuery = clubs;
+            var total = await clubs.CountAsync();
+
+            if (!string.IsNullOrWhiteSpace(request.Search))
+            {
+                dbQuery = dbQuery.Where(x => x.Name.ToLower().Contains(request.Search.ToLower()));
+            }
+
+            if (request.PageSize != -1)
+                dbQuery = dbQuery.Skip(request.Skip).Take(request.PageSize);
+
+            var data = dbQuery.Select(x => new Select2Data()
+            {
+                Id = x.Id,
+                Name = x.Name
+            })
+                .ToArray();
+
+            return new Select2Response()
+            {
+                Data = data,
+                Total = total
+            };
+        }
     }
 }
