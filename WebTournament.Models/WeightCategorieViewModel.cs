@@ -11,8 +11,7 @@ namespace WebTournament.Models
     {
         public Guid Id { get; set; }
         public Guid AgeGroupId { get; set; }
-        [Required(ErrorMessage = "Поле не заполнено")]
-        public string AgeGroupName { get; set; }
+        public string AgeGroupName { get; init; } = string.Empty;
         [Required(ErrorMessage = "Поле не заполнено")]
         public int MaxWeight { get; set; }
         [Required(ErrorMessage = "Поле не заполнено")]

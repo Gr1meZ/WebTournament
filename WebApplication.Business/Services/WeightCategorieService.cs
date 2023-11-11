@@ -65,12 +65,12 @@ namespace WebTournament.Business.Services
 
         public async Task<WeightCategorieViewModel> GetWeightCategorie(Guid id)
         {
-            var weightCategorie = await appDbContext.WeightCategories.FindAsync(id);
+            var weightCategorie = await appDbContext.WeightCategories.Include(x => x.AgeGroup).FirstOrDefaultAsync(x => x.Id == id);
             var viewModel = new WeightCategorieViewModel()
             {
                 Id = weightCategorie.Id,
                 AgeGroupId = weightCategorie.AgeGroupId,
-                AgeGroupName = weightCategorie.WeightName,
+                AgeGroupName = weightCategorie.AgeGroup.Name,
                 MaxWeight = weightCategorie.MaxWeight,
                 WeightName = weightCategorie.WeightName
             };
@@ -95,6 +95,7 @@ namespace WebTournament.Business.Services
         public async Task<PagedResponse<WeightCategorieViewModel[]>> WeightCategoriesList(PagedRequest request)
         {
             var dbQuery = appDbContext.WeightCategories
+               .Include(x => x.AgeGroup)
                .AsQueryable()
                .AsNoTracking();
 
@@ -106,7 +107,7 @@ namespace WebTournament.Business.Services
                     current.Where(f =>
                         f.AgeGroup.Name.ToLower().Contains(searchWord.ToLower()) ||
                         f.MaxWeight.ToString().ToLower().Contains(searchWord.ToLower()) ||
-                        f.WeightName.ToString().ToLower().Contains(searchWord.ToLower())
+                        f.WeightName.ToLower().Contains(searchWord.ToLower())
                     ));
             }
 
@@ -121,7 +122,7 @@ namespace WebTournament.Business.Services
                     "maxWeight" => (request.OrderDir.Equals("asc"))
                     ? dbQuery.OrderBy(o => o.MaxWeight)
                     : dbQuery.OrderByDescending(o => o.MaxWeight),
-                    "weightCategorie" => (request.OrderDir.Equals("asc"))
+                    "ageGroupName" => (request.OrderDir.Equals("asc"))
                         ? dbQuery.OrderBy(o => o.AgeGroup.Name)
                         : dbQuery.OrderByDescending(o => o.AgeGroup.Name),
                     _ => (request.OrderDir.Equals("asc"))
@@ -131,7 +132,7 @@ namespace WebTournament.Business.Services
             }
 
             // total count
-            var totalItemCount = dbQuery.Count();
+            var totalItemCount = await dbQuery.CountAsync();
 
             // paging
             dbQuery = dbQuery.Skip((request.PageNumber - 1) * request.PageSize).Take(request.PageSize);

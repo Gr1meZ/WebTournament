@@ -14,7 +14,6 @@
             </div>
             <div class="modal-body">
             <div class="form-group">
-
                 <label asp-for="ClubId">Клуб</label>
                 <select asp-for="ClubId" name="ClubId" data-placeholder="Выберите тренера..." class="form-control"></select>
                 <span asp-validation-for="ClubId" class="errorSpan"></span>
@@ -52,8 +51,11 @@
 <script>
     initAjaxAutoCompleteSelect({
         selector: 'select[name="ClubId"]',
-        url: '/Club/Select2Clubs'
+        url: '/Club/Select2Clubs',
+        dropdownParent: $("#myModal")
+
     });
+  
     $('#btnSubmit').click(function (ev) {
 
         let $btn = $(ev.currentTarget);
@@ -106,12 +108,6 @@
         format: '+375 (__) ___-__-__',
         separator: '+375 (   )-'
     });
-    MaskedInput({
-        elm: document.getElementById('workTime'), // select only by id
-        format: '__:__-__:__',
-        separator: ':-'
-    });
-
 
 </script>
 <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>

@@ -56,7 +56,7 @@ namespace WebTournament.Business.Services
             if (trainerViewModel == null)
                 throw new ValidationException("Trainer model is null");
 
-            var trainer = await appDbContext.Trainers.FindAsync(trainerViewModel.Id);
+            var trainer = await appDbContext.Trainers.Include(x => x.Club).FirstOrDefaultAsync(x => x.Id == trainerViewModel.Id);
 
 
             trainer.Name = trainerViewModel.Name;
@@ -70,7 +70,7 @@ namespace WebTournament.Business.Services
 
         public async Task<TrainerViewModel> GetTrainer(Guid id)
         {
-            var trainer = await appDbContext.Trainers.FindAsync(id);
+            var trainer = await appDbContext.Trainers.Include(x => x.Club).FirstOrDefaultAsync(y => y.Id == id);
             var viewModel = new TrainerViewModel()
             {
                 Id = trainer.Id,

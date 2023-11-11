@@ -56,6 +56,7 @@ function initAjaxAutoCompleteSelect(options) {
     let pageSize = 30;
     console.log(options)
     let select2Options = {
+        dropdownParent: $('#myModal'),
         containerCssClass : "form-control",
         placeholder: $(this).data('placeholder'),
         multiple: false,
@@ -74,11 +75,12 @@ function initAjaxAutoCompleteSelect(options) {
                     skip: (parseInt(params.page || 1) - 1) * pageSize,
                     pageSize: pageSize
                 };
+                cache: true
             },
+
             processResults: function(data, params)
             {
                 params.page = params.page || 1;
-                console.log(data)
                 return {
                     results: data.data,
                     pagination:

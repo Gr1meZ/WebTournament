@@ -1,4 +1,4 @@
-﻿@model AgeGroupViewModel
+﻿@model TrainerViewModel
 
 @{
     Layout = null;
@@ -14,22 +14,32 @@
         </div>
         <div class="modal-body">
             <div class="form-group">
-                <label asp-for="Name">Название</label>
-                <input type="text" class="form-control" placeholder="Введите название" asp-for="Name">
+                <label asp-for="ClubId">Клуб</label>
+                <select asp-for="ClubId" id="ClubId" name="ClubId" data-placeholder="Выберите тренера..." class="form-control">
+                    <option id="@Model.ClubId">@Model.ClubName</option>
+                </select>
+                <span asp-validation-for="ClubId" class="errorSpan"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Name">Имя</label>
+                <input type="text" class="form-control" placeholder="Введите имя" asp-for="Name">
                 <span asp-validation-for="Name" class="errorSpan"></span>
             </div>
             <div class="form-group">
-
-                <label asp-for="MinAge">Минимальный возраст</label>
-                <input type="number" class="form-control" placeholder="Введите минимальный возраст" asp-for="MinAge">
-                <span asp-validation-for="MinAge" class="errorSpan"></span>
+                <label asp-for="Surname">Фамилия</label>
+                <input type="text" class="form-control" placeholder="Введите фамилию" asp-for="Surname">
+                <span asp-validation-for="Surname" class="errorSpan"></span>
             </div>
             <div class="form-group">
-                <label asp-for="MaxAge">Максимальный возраст</label>
-                <input type="number" class="form-control" placeholder="Введите максимальный возраст" asp-for="MaxAge">
-                <span asp-validation-for="MaxAge" class="errorSpan"></span>
+                <label asp-for="Patronymic">Отчество</label>
+                <input type="text" class="form-control" placeholder="Введите отчество" asp-for="Patronymic">
+                <span asp-validation-for="Patronymic" class="errorSpan"></span>
             </div>
-
+            <div class="form-group">
+                <label asp-for="Phone">Телефон</label>
+                <input id="phone" type="text" class="form-control" placeholder="Введите фамилию" asp-for="Phone" value="+375 (__) ___-__-__" pattern="^\+375(\s+)?\(?(17|25|29|33|44)\)?(\s+)?[0-9]{3}-?[0-9]{2}-?[0-9]{2}$">
+                <span asp-validation-for="Phone" class="errorSpan"></span>
+            </div>
         </div>
 
         <div class="modal-footer">
@@ -37,8 +47,76 @@
             <button type="submit" class="btn btn-primary" id="btnSubmit">Сохранить</button>
         </div>
     </div>
-    @Html.HiddenFor(x => x.Id);
+    @Html.HiddenFor(x => x.Id)
+    ;
+
 }
 
+
+<script>
+    initAjaxAutoCompleteSelect({
+        selector: 'select[name="ClubId"]',
+        url: '/Club/Select2Clubs',
+        dropdownParent: $("#myModal")
+
+    });
+
+
+    $('#btnSubmit').click(function (ev) {
+
+        let $btn = $(ev.currentTarget);
+        $btn.prop('disabled', true);
+        $btn.text('Generating...');
+
+        let $form = $('#sbmForm');
+        console.log($form.serialize())
+        $.ajax({
+            url: '/Trainer/EditModel',
+            method: 'POST',
+            data: $form.serialize(),
+            cache: false,
+            xhr: function () {
+                let xhr = new XMLHttpRequest();
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 2) {
+                        if (xhr.status === 200) {
+                            xhr.responseType = "text";
+                        }
+
+                    }
+                };
+                return xhr;
+            },
+            success: function (data) {
+                $("#myModal").modal('hide');
+                document.location.href = "/trainer/"
+            },
+            error: function (data) {
+                console.log(data);
+                /*  if (data.status === 400) {
+                      $('#alertMessage1').show('fade');
+                      $btn.prop('disabled', false);
+                      $btn.text('Подтвердить');
+                  }
+                  else {
+                      $('#alertMessage').show('fade');
+                      $btn.prop('disabled', false);
+                      $btn.text('Подтвердить');
+                  }
+                  */
+            }
+        });
+    });
+
+
+    MaskedInput({
+        elm: document.getElementById('phone'), // select only by id
+        format: '+375 (__) ___-__-__',
+        separator: '+375 (   )-'
+    });
+   
+
+
+</script>
 <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
 <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
