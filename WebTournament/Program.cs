@@ -12,6 +12,9 @@ builder.Services.AddRazorPages();
 
 var app = builder.Build();
 
+var loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
+var logger = loggerFactory.CreateLogger<Program>();
+
 await app.Services.AutoMigrateDatabase();
 await app.Services.CreateRoles();
 

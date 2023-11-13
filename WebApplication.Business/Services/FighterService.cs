@@ -1,17 +1,13 @@
-﻿using DataAccess.Common.Enums;
-using DataAccess.Common.Extensions;
+﻿using DataAccess.Common.Extensions;
 using DataAccess.Domain.Models;
 using Infrastructure.DataAccess.Abstract;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WebTournament.Business.Abstract;
 using WebTournament.Models;
 using WebTournament.Models.Helpers;
+using WebTournament.Business.Helpers;
+using System.Security.Cryptography.Xml;
 
 namespace WebTournament.Business.Services
 {
@@ -31,11 +27,12 @@ namespace WebTournament.Business.Services
 
             var fighter = new Fighter()
             {
-                Age = fighterViewModel.Age,
+                Age = AgeCalculator.CalculateAge(fighterViewModel.BirthDate),
+                BirthDate = fighterViewModel.BirthDate,
                 BeltId = fighterViewModel.BeltId,
                 City = fighterViewModel.City,
                 Country = fighterViewModel.Country,
-                Gender = fighterViewModel.Gender.ParseEnum<Gender>(),
+                Gender = GenderExtension.ParseEnum(fighterViewModel.Gender),
                 Surname = fighterViewModel.Surname,
                 Name = fighterViewModel.Name,
                 TournamentId = fighterViewModel.TournamentId,
@@ -49,10 +46,7 @@ namespace WebTournament.Business.Services
 
         public async Task DeleteFighter(Guid id)
         {
-            var fighter = await appDbContext.Fighters.FindAsync(id);
-
-            if (fighter == null)
-                throw new ValidationException("Fighter not found");
+            var fighter = await appDbContext.Fighters.FindAsync(id) ?? throw new ValidationException("Fighter not found");
             appDbContext.Fighters.Remove(fighter);
 
             await appDbContext.SaveChangesAsync();
@@ -67,22 +61,25 @@ namespace WebTournament.Business.Services
 
 
             fighter.Name = fighterViewModel.Name;
-            fighter.Age = fighterViewModel.Age;
+            fighter.BirthDate = fighterViewModel.BirthDate;
+            fighter.Age = AgeCalculator.CalculateAge(fighterViewModel.BirthDate);
             fighter.BeltId = fighterViewModel.BeltId;
             fighter.City = fighterViewModel.City;
             fighter.Country = fighterViewModel.Country;
-            fighter.Gender = fighterViewModel.Gender.ParseEnum<Gender>();
+            fighter.Gender = GenderExtension.ParseEnum(fighterViewModel.Gender);
             fighter.Surname = fighterViewModel.Surname;
             fighter.TournamentId = fighterViewModel.TournamentId;
             fighter.TrainerId = fighterViewModel.TrainerId;
             fighter.WeightCategorieId = fighterViewModel.WeightCategorieId;
-
+            
             await appDbContext.SaveChangesAsync();
         }
 
-        public async Task<PagedResponse<FighterViewModel[]>> FightersList(PagedRequest request)
+        public async Task<PagedResponse<FighterViewModel[]>> FightersList(PagedRequest request, Guid tournamentId)
         {
-            var dbQuery = appDbContext.Fighters
+            var dbQuery = appDbContext.Tournaments
+              .SelectMany(x => x.Fighters)
+              .Include(x => x.Trainer.Club).Include(x => x.Belt).Include(x => x.Tournament).Include(x => x.WeightCategorie.AgeGroup)
               .AsQueryable()
               .AsNoTracking();
 
@@ -94,17 +91,15 @@ namespace WebTournament.Business.Services
                     current.Where(f =>
                         f.Name.ToLower().Contains(searchWord.ToLower()) ||
                         f.Age.ToString().ToLower().Contains(searchWord.ToLower()) ||
+                        f.BirthDate.ToString().ToLower().Contains(searchWord.ToLower()) ||
                         f.City.ToLower().Contains(searchWord.ToLower()) ||
                         f.Surname.ToLower().Contains(searchWord.ToLower()) ||
                         f.Name.ToLower().Contains(searchWord.ToLower()) ||
                         f.Country.ToLower().Contains(searchWord.ToLower()) ||
-                        f.Gender.ToString().ToLower().Contains(searchWord.ToLower()) ||
                         f.Belt.ShortName.ToLower().Contains(searchWord.ToLower()) ||
-                        f.Tournament.Name.ToLower().Contains(searchWord.ToLower()) ||
-                        f.Trainer.Name.ToLower().Contains(searchWord.ToLower()) ||
                         f.Trainer.Surname.ToLower().Contains(searchWord.ToLower()) ||
-                        f.Trainer.Patronymic.ToLower().Contains(searchWord.ToLower()) ||
-                        f.WeightCategorie.WeightName.ToLower().Contains(searchWord.ToLower())
+                        f.WeightCategorie.WeightName.ToLower().Contains(searchWord.ToLower()) ||
+                        f.Trainer.Club.Name.ToLower().Contains(searchWord.ToLower())
                     ));
             }
 
@@ -119,6 +114,9 @@ namespace WebTournament.Business.Services
                     "age" => (request.OrderDir.Equals("asc"))
                     ? dbQuery.OrderBy(o => o.Age)
                     : dbQuery.OrderByDescending(o => o.Age),
+                    "birthDate" => (request.OrderDir.Equals("asc"))
+                    ? dbQuery.OrderBy(o => o.BirthDate)
+                    : dbQuery.OrderByDescending(o => o.BirthDate),
                     "city" => (request.OrderDir.Equals("asc"))
                         ? dbQuery.OrderBy(o => o.City)
                         : dbQuery.OrderByDescending(o => o.City),
@@ -134,15 +132,15 @@ namespace WebTournament.Business.Services
                     "beltName" => (request.OrderDir.Equals("asc"))
                     ? dbQuery.OrderBy(o => o.Belt.ShortName)
                     : dbQuery.OrderByDescending(o => o.Belt.ShortName),
-                    "tournament" => (request.OrderDir.Equals("asc"))
-                    ? dbQuery.OrderBy(o => o.Tournament.Name)
-                    : dbQuery.OrderByDescending(o => o.Tournament.Name),
-                    "trainer" => (request.OrderDir.Equals("asc"))
+                    "trainerName" => (request.OrderDir.Equals("asc"))
                     ? dbQuery.OrderBy(o => o.Trainer.Surname)
                     : dbQuery.OrderByDescending(o => o.Trainer.Surname),
-                    "weightCategorie" => (request.OrderDir.Equals("asc"))
+                    "weightCategorieName" => (request.OrderDir.Equals("asc"))
                     ? dbQuery.OrderBy(o => o.WeightCategorie.WeightName)
                     : dbQuery.OrderByDescending(o => o.WeightCategorie.WeightName),
+                    "clubName" => (request.OrderDir.Equals("asc"))
+                   ? dbQuery.OrderBy(o => o.Trainer.Club.Name)
+                   : dbQuery.OrderByDescending(o => o.Trainer.Club.Name),
                     _ => (request.OrderDir.Equals("asc"))
                         ? dbQuery.OrderBy(o => o.Id)
                         : dbQuery.OrderByDescending(o => o.Id)
@@ -150,7 +148,7 @@ namespace WebTournament.Business.Services
             }
 
             // total count
-            var totalItemCount = dbQuery.Count();
+            var totalItemCount = await dbQuery.CountAsync();
 
             // paging
             dbQuery = dbQuery.Skip((request.PageNumber - 1) * request.PageSize).Take(request.PageSize);
@@ -159,6 +157,7 @@ namespace WebTournament.Business.Services
             {
                 Id = x.Id,
                 Age = x.Age,
+                BirthDate = x.BirthDate,
                 BeltId = x.BeltId,
                 BeltName = x.Belt.ShortName,
                 City = x.City,
@@ -169,8 +168,9 @@ namespace WebTournament.Business.Services
                 TournamentId = x.TournamentId,
                 TournamentName = x.Tournament.Name,
                 TrainerId = x.TrainerId,
-                TrainerName = $"{x.Trainer.Surname} {x.Trainer.Name[0]}.{x.Trainer.Patronymic[0]}"
-                
+                TrainerName = $"{x.Trainer.Surname} {x.Trainer.Name[0]}.{x.Trainer.Patronymic[0]}",
+                WeightCategorieName = $"{x.WeightCategorie.AgeGroup.Name} {x.WeightCategorie.WeightName}",
+                ClubName = x.Trainer.Club.Name
             }).ToArrayAsync();
 
             return new PagedResponse<FighterViewModel[]>(dbItems, totalItemCount, request.PageNumber, request.PageSize);
@@ -178,11 +178,18 @@ namespace WebTournament.Business.Services
 
         public async Task<FighterViewModel> GetFighter(Guid id)
         {
-            var fighter = await appDbContext.Fighters.FindAsync(id);
+            var fighter = await appDbContext.Fighters
+                .Include(x => x.Tournament)
+                .Include(x => x.Belt)
+                .Include(x => x.Trainer)
+                .Include(x => x.WeightCategorie.AgeGroup)
+                .FirstOrDefaultAsync(x => x.Id == id);
+
             var viewModel = new FighterViewModel()
             {
                 Id = fighter.Id,
                 Age = fighter.Age,
+                BirthDate = fighter.BirthDate,
                 Gender = fighter.Gender.MapToString(),
                 WeightCategorieId = fighter.WeightCategorieId,
                 Name = fighter.Name,
@@ -210,6 +217,7 @@ namespace WebTournament.Business.Services
             {
                 Id = fighter.Id,
                 Age = fighter.Age,
+                BirthDate = fighter.BirthDate,
                 Gender = fighter.Gender.MapToString(),
                 WeightCategorieId = fighter.WeightCategorieId,
                 Name = fighter.Name,

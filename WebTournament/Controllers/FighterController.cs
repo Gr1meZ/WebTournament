@@ -10,20 +10,26 @@ namespace WebTournament.WebApp.Controllers
     public class FighterController : Controller
     {
         private readonly IFighterService _fighterService;
+        private readonly ITournamentService _tournamentService;
 
-        public FighterController(IFighterService fighterSErvice)
+        public FighterController(IFighterService fighterSErvice, ITournamentService tournamentService)
         {
             _fighterService = fighterSErvice;
+            _tournamentService = tournamentService;
         }
 
-        public IActionResult Index()
+        [HttpGet("[controller]/{tournamentId}")]
+        public async Task<IActionResult> Index(Guid tournamentId)
         {
-            return View();
+            var tournament = await _tournamentService.GetTournament(tournamentId);
+            ViewData["Tournament"] = tournament.Name;
+            return View(tournamentId);
         }
 
-        public IActionResult AddIndex()
+        [HttpGet("[controller]/[action]/{tournamentId}")]
+        public IActionResult AddIndex(Guid tournamentId)
         {
-            return View();
+            return View(new FighterViewModel() {TournamentId = tournamentId});
         }
 
         [HttpGet("[controller]/{id}/[action]")]
@@ -33,9 +39,9 @@ namespace WebTournament.WebApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> List([FromBody] DtQuery query)
+        public async Task<IActionResult> List([FromBody] DtQuery query, Guid tournamentId)
         {
-            return Json(await _fighterService.FightersList(query));
+            return Json(await _fighterService.FightersList(query, tournamentId));
         }
 
         [HttpPost]
@@ -43,16 +49,16 @@ namespace WebTournament.WebApp.Controllers
         {
             if (!ModelState.IsValid) return View();
             await _fighterService.AddFighter(fighterViewModel);
-            return RedirectToAction("Index");
+            return new EmptyResult();
         }
 
         [HttpPost]
         public async Task<IActionResult> EditModel(FighterViewModel fighterViewModel)
         {
-            if (!ModelState.IsValid) return View("EditIndex");
+            if (!ModelState.IsValid) return BadRequest();
 
             await _fighterService.EditFighter(fighterViewModel);
-            return RedirectToAction("Index");
+            return Ok();
         }
 
         [HttpDelete("[controller]/{id}")]

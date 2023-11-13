@@ -4,7 +4,7 @@
     Layout = null;
 }
 
-@using (Html.BeginForm("EditModel", "AgeGroup", FormMethod.Post, new { enctype = "multipart/form-data", id = "sbmForm" }))
+@using (Html.BeginForm("EditModel", "Trainer", FormMethod.Post, new { enctype = "multipart/form-data", id = "sbmForm" }))
 {
     <div class="modal-content">
         <div class="modal-header">
@@ -16,7 +16,7 @@
             <div class="form-group">
                 <label asp-for="ClubId">Клуб</label>
                 <select asp-for="ClubId" id="ClubId" name="ClubId" data-placeholder="Выберите тренера..." class="form-control">
-                    <option id="@Model.ClubId">@Model.ClubName</option>
+                    <option id="@Model.ClubId" value="@Model.ClubId">@Model.ClubName</option>
                 </select>
                 <span asp-validation-for="ClubId" class="errorSpan"></span>
             </div>
@@ -47,8 +47,7 @@
             <button type="submit" class="btn btn-primary" id="btnSubmit">Сохранить</button>
         </div>
     </div>
-    @Html.HiddenFor(x => x.Id)
-    ;
+    @Html.HiddenFor(x => x.Id);
 
 }
 

@@ -18,9 +18,14 @@ namespace DataAccess.Common.Extensions
                 _ => "Мужской"
             };
         }
-        public static T ParseEnum<T>(this string value)
+        public static Gender ParseEnum(string value)
         {
-            return (T)Enum.Parse(typeof(T), value, true);
+            return value switch
+            {
+                "Мужской" => Gender.Male,
+                "Женский" => Gender.Female,
+                _ => Gender.Male
+            };
         }
     }
 }

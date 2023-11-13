@@ -12,7 +12,6 @@ namespace DataAccess.MSSQL.Configuration
         {
             builder.HasKey(x => x.Id);
 
-            builder.Property(x => x.BirthDate).HasConversion<DateOnlyConverter, DateOnlyComparer>();
 
             builder.HasOne(x => x.Trainer)
                 .WithMany(x => x.Fighters)

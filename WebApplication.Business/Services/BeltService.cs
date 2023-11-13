@@ -96,10 +96,7 @@ namespace WebTournament.Business.Services
 
         public async Task DeleteBelt(Guid id)
         {
-            var belt = await appDbContext.Belts.FindAsync(id);
-
-            if (belt == null)
-                throw new ValidationException("Belt not found");
+            var belt = await appDbContext.Belts.FindAsync(id) ?? throw new ValidationException("Belt not found");
             appDbContext.Belts.Remove(belt);
 
             await appDbContext.SaveChangesAsync();

@@ -41,18 +41,18 @@ namespace WebTournament.WebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> AddModel(AgeGroupViewModel ageGroupViewModel)
         {
-            if (!ModelState.IsValid) return View("AddIndex");
+            if (!ModelState.IsValid) return BadRequest(ModelState.Values.SelectMany(v => v.Errors).Select(x => x.ErrorMessage).ToList());
             await _ageGroupService.AddAgeGroup(ageGroupViewModel);
-            return RedirectToAction("Index");
+            return Ok();
         }
 
         [HttpPost]
         public async Task<IActionResult> EditModel(AgeGroupViewModel ageGroupViewModel)
         {
-            if (!ModelState.IsValid) return View("EditIndex");
+            if (!ModelState.IsValid) return BadRequest(ModelState.Values.SelectMany(v => v.Errors).Select(x => x.ErrorMessage).ToList());
 
             await _ageGroupService.EditAgeGroup(ageGroupViewModel);
-            return RedirectToAction("Index");
+            return Ok();
         }
 
         [HttpDelete("[controller]/{id}")]

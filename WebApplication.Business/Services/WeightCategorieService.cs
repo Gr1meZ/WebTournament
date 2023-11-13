@@ -40,10 +40,7 @@ namespace WebTournament.Business.Services
 
         public async Task DeleteWeightCategorie(Guid id)
         {
-            var weightCategorie = await appDbContext.WeightCategories.FindAsync(id);
-
-            if (weightCategorie == null)
-                throw new ValidationException("Weight categorie not found");
+            var weightCategorie = await appDbContext.WeightCategories.FindAsync(id) ?? throw new ValidationException("Weight categorie not found");
             appDbContext.WeightCategories.Remove(weightCategorie);
 
             await appDbContext.SaveChangesAsync();

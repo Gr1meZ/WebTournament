@@ -4,6 +4,7 @@ using Infrastructure.DataAccess.MSSQL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccess.MSSQL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231112200012_BirthDateChange")]
+    partial class BirthDateChange
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -40,7 +43,7 @@ namespace DataAccess.MSSQL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("AgeGroups", (string)null);
+                    b.ToTable("AgeGroups");
                 });
 
             modelBuilder.Entity("DataAccess.Domain.Models.Belt", b =>
@@ -62,7 +65,7 @@ namespace DataAccess.MSSQL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Belts", (string)null);
+                    b.ToTable("Belts");
                 });
 
             modelBuilder.Entity("DataAccess.Domain.Models.Club", b =>
@@ -77,7 +80,7 @@ namespace DataAccess.MSSQL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Clubs", (string)null);
+                    b.ToTable("Clubs");
                 });
 
             modelBuilder.Entity("DataAccess.Domain.Models.Fighter", b =>
@@ -134,7 +137,7 @@ namespace DataAccess.MSSQL.Migrations
 
                     b.HasIndex("WeightCategorieId");
 
-                    b.ToTable("Fighters", (string)null);
+                    b.ToTable("Fighters");
                 });
 
             modelBuilder.Entity("DataAccess.Domain.Models.Tournament", b =>
@@ -156,7 +159,7 @@ namespace DataAccess.MSSQL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tournaments", (string)null);
+                    b.ToTable("Tournaments");
                 });
 
             modelBuilder.Entity("DataAccess.Domain.Models.Trainer", b =>
@@ -188,7 +191,7 @@ namespace DataAccess.MSSQL.Migrations
 
                     b.HasIndex("ClubId");
 
-                    b.ToTable("Trainers", (string)null);
+                    b.ToTable("Trainers");
                 });
 
             modelBuilder.Entity("DataAccess.Domain.Models.WeightCategorie", b =>
@@ -211,7 +214,7 @@ namespace DataAccess.MSSQL.Migrations
 
                     b.HasIndex("AgeGroupId");
 
-                    b.ToTable("WeightCategories", (string)null);
+                    b.ToTable("WeightCategories");
                 });
 
             modelBuilder.Entity("DataAccess.IdentityModels.AppRole", b =>

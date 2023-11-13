@@ -40,10 +40,7 @@ namespace WebTournament.Business.Services
 
         public async Task DeleteTournament(Guid id)
         {
-            var tournament = await appDbContext.Tournaments.FindAsync(id);
-
-            if (tournament == null)
-                throw new ValidationException("Tournament not found");
+            var tournament = await appDbContext.Tournaments.FindAsync(id) ?? throw new ValidationException("Tournament not found");
             appDbContext.Tournaments.Remove(tournament);
 
             await appDbContext.SaveChangesAsync();

@@ -8,7 +8,7 @@ namespace WebTournament.Business.Abstract
         Task AddFighter(FighterViewModel fighterViewModel);
         Task EditFighter(FighterViewModel fighterViewModel);
         Task DeleteFighter(Guid id);
-        Task<PagedResponse<FighterViewModel[]>> FightersList(PagedRequest request);
+        Task<PagedResponse<FighterViewModel[]>> FightersList(PagedRequest request, Guid tournamentId);
         Task<FighterViewModel> GetFighter(Guid id);
         Task<List<FighterViewModel>> GetFighters();
     }

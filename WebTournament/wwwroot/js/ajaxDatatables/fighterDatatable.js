@@ -1,4 +1,4 @@
-﻿let GetTournamentDatatable = function () {
+﻿let GetFighterDatatable = function (tournamentId) {
 
     let $deleteItemModal = $('#deleteItemModal');
     let $editItemModal = $('#myModal');
@@ -18,35 +18,33 @@
             ordering: true,
             order: [[ 1, "desc" ]],
             rowId: 'id',
-            ajax: function(data, callback, settings) {
-                dtAjaxHandler('/Tournament/List', data, callback)
+            ajax: function (data, callback, settings) {
+                dtAjaxHandler('/fighter/List?tournamentId=' + tournamentId, data, callback)
                 
             },
             columnDefs: [
                 { targets: 0, title: "ID", data: "id", visible: false },
-                { targets: 1, title: "Название", data: "name" },
-                { targets: 2, render: DataTable.render.datetime('DD.MM.YYYY HH:mm'), title: "Дата", data: "startDate" },
-
-                { targets: 3, title: "Адрес", data: "address" },
+                { targets: 1, title: "Фамилия", data: "surname" },
+                { targets: 2, title: "Имя", data: "name" },
+                { targets: 3, title: "Дата рождения", data: "birthDate" },
+                { targets: 4, title: "Возраст", data: "age" },
+                { targets: 5, title: "Пояс", data: "beltName" },
+                { targets: 6, title: "Страна", data: "country" },
+                { targets: 7, title: "Город", data: "city" },
+                { targets: 8, title: "Пол", data: "gender" },
+                { targets: 9, title: "Весовая категория", data: "weightCategorieName" },
+                { targets: 10, title: "Тренер", data: "trainerName" },
+                { targets: 11, title: "Клуб", data: "clubName" },
                 {
-                    targets: 4, title: "", data: "id", className: "text-center", orderable: false,
-                    render: function (itemId, type, row, meta) {
-
-                        return `<a  class="btn btn-success" href="/fighter/${itemId}"><i class="bi bi-people"></i></a>`
-
-                    }
-                },
-                {
-                    targets: 5, title: "", data: "id", className: "text-center", orderable: false,
-                    render: function (itemId, type, row, meta) {
+                    targets: 12, title: "", data: "id", className: "text-center", orderable: false,
+                    render: function ( itemId, type, row, meta ) {
 
                         return `<button  class="btn btn-info" data-action="showEditItemModal" id="showEditItemModal"><i class="bi bi-pencil"></i></button>`
 
                     }
                 },
-               
                 {
-                    targets: 6, title: "", data: "itemId", className: "text-center", orderable: false,
+                    targets: 13, title: "", data: "itemId", className: "text-center", orderable: false,
                     render: function ( itemId, type, row, meta ) {
 
                         return `<button data-action="showDeleteItemModal" type="button" class="btn btn-danger " title="Delete item"><i class="bi bi-trash"></i></button>`
@@ -69,7 +67,7 @@
         $tbl.on('click', 'button[data-action="showEditItemModal"]', function (ev) {
             let $row = $(ev.currentTarget).closest('tr');
             let itemId = $row.attr('id');
-            $.get(`/Tournament/${itemId}/EditIndex`, function(data){
+            $.get(`/Fighter/${itemId}/EditIndex`, function(data){
                 $editDialogItemModal.html(data);
                 $editItemModal.data('itemId', itemId)
                 $editItemModal.modal('show')
@@ -83,7 +81,7 @@
             console.log("test")
             console.log(itemId)
             $.ajax({
-                url: '/Tournament/' + itemId,
+                url: '/Fighter/' + itemId,
                 type: 'DELETE',
                 success: function () {
                     $tbl.ajax.reload();
