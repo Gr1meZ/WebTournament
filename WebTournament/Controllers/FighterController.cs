@@ -47,15 +47,15 @@ namespace WebTournament.WebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> AddModel(FighterViewModel fighterViewModel)
         {
-            if (!ModelState.IsValid) return View();
+            if (!ModelState.IsValid) return BadRequest(ModelState.Values.SelectMany(v => v.Errors).Select(x => x.ErrorMessage).ToList());
             await _fighterService.AddFighter(fighterViewModel);
-            return new EmptyResult();
+            return Ok();
         }
 
         [HttpPost]
         public async Task<IActionResult> EditModel(FighterViewModel fighterViewModel)
         {
-            if (!ModelState.IsValid) return BadRequest();
+            if (!ModelState.IsValid) return BadRequest(ModelState.Values.SelectMany(v => v.Errors).Select(x => x.ErrorMessage).ToList());
 
             await _fighterService.EditFighter(fighterViewModel);
             return Ok();

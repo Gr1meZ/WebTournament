@@ -12,21 +12,22 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
             </button>
             </div>
+        <div id="alertMessage" class="alert alert-danger collapse">
+            <div id="alertText"></div>
+            <div class="text-center"><btn class="btn" id="linkClose">Закрыть</btn></div>
+        </div>
             <div class="modal-body">
                 <div class="form-group">
                     <label asp-for="Name">Название</label>
                     <input type="text" class="form-control" placeholder="Введите название турнира" asp-for="Name">
-                <span asp-validation-for="Name" class="errorSpan"></span>
                 </div>
             <div class="form-group">
                 <label asp-for="StartDate">Дата</label>
                 <input class="form-control bg-white datepicker" data-date-format="m.d.Y G:iK" data-enable-time="true" asp-for="StartDate">
-                <span asp-validation-for="StartDate" class="errorSpan"></span>
             </div>
                 <div class="form-group">
                     <label asp-for="Address">Адрес</label>
                 <input type="text" class="form-control" placeholder="Введите адрес" asp-for="Address">
-                    <span asp-validation-for="Address" class="errorSpan" ></span>
                 </div>
                 
                 </div>
@@ -42,7 +43,11 @@
         $('.datepicker').flatpickr({
             "locale": "ru"
         });
+    $('#linkClose').click(function () {
+        $('#alertMessage').hide('fade');
+        $("#alertText").empty();
 
+    });
 </script>
 <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
 <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>

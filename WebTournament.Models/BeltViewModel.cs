@@ -10,11 +10,11 @@ namespace WebTournament.Models
     public class BeltViewModel
     {
         public Guid Id { get; set; }
-        [Required(ErrorMessage = "Поле не заполнено")]
+        [Range(1, 10, ErrorMessage = "Номер пояса должен быть от {1} до {2}")]
         public int BeltNumber { get; set; }
-        [Required(ErrorMessage = "Поле не заполнено")]
+        [Required(ErrorMessage = "Сокращенное название не заполнено")]
         public string ShortName { get; set; }
-        [Required(ErrorMessage = "Поле не заполнено")]
+        [Required(ErrorMessage = "Полное название не заполнено")]
         public string FullName { get; set; }
     }
 }

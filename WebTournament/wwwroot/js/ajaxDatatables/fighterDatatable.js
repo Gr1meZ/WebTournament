@@ -26,7 +26,7 @@
                 { targets: 0, title: "ID", data: "id", visible: false },
                 { targets: 1, title: "Фамилия", data: "surname" },
                 { targets: 2, title: "Имя", data: "name" },
-                { targets: 3, title: "Дата рождения", data: "birthDate" },
+                { targets: 3, render: DataTable.render.datetime('DD.MM.YYYY'), title: "Дата рождения", data: "birthDate" },
                 { targets: 4, title: "Возраст", data: "age" },
                 { targets: 5, title: "Пояс", data: "beltName" },
                 { targets: 6, title: "Страна", data: "country" },

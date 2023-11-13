@@ -42,18 +42,18 @@ namespace WebTournament.WebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> AddModel(TrainerViewModel trainerViewModel)
         {
-            if (!ModelState.IsValid) return View("Index");
+            if (!ModelState.IsValid) return BadRequest(ModelState.Values.SelectMany(v => v.Errors).Select(x => x.ErrorMessage).ToList());
             await _trainerService.AddTrainer(trainerViewModel);
-            return RedirectToAction("Index");
+            return Ok();
         }
 
         [HttpPost]
         public async Task<IActionResult> EditModel(TrainerViewModel trainerViewModel)
         {
-            if (!ModelState.IsValid) return View("EditIndex");
+            if (!ModelState.IsValid) return BadRequest(ModelState.Values.SelectMany(v => v.Errors).Select(x => x.ErrorMessage).ToList());
 
             await _trainerService.EditTrainer(trainerViewModel);
-            return RedirectToAction("Index");
+            return Ok();
         }
 
         [HttpDelete("[controller]/{id}")]

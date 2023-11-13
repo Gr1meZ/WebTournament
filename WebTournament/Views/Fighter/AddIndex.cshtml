@@ -12,31 +12,35 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
             </button>
         </div>
+        <div id="alertMessage" class="alert alert-danger collapse">
+            <div id="alertText"></div>
+            <div class="text-center"><btn class="btn" id="linkClose">Закрыть</btn></div>
+        </div>
         <div class="modal-body">
              <div class="form-group">
                 <label asp-for="Surname">Фамилия</label>
                 <input type="text" class="form-control" placeholder="Введите фамилию" asp-for="Surname">
-                <span asp-validation-for="Surname" class="errorSpan"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Name">Имя</label>
                 <input type="text" class="form-control" placeholder="Введите имя" asp-for="Name">
-                <span asp-validation-for="Name" class="errorSpan"></span>
             </div>
             <div class="form-group">
                 <label asp-for="BirthDate">Дата рождения</label>
-                <input class="form-control bg-white datepicker" data-date-format="m.d.Y" data-enable-time="false" asp-for="BirthDate">
-                <span asp-validation-for="BirthDate" class="errorSpan"></span>
+                <div class="input-group date" id="datetimepicker">
+                    <input type="text" class="form-control" asp-for="BirthDate" readonly>
+                    <div class="input-group-addon">
+                        <span class="glyphicon glyphicon-th"></span>
+                    </div>
+                </div>
             </div>
             <div class="form-group">
                 <label asp-for="Country">Страна</label>
                 <input type="text" class="form-control" placeholder="Введите страну" asp-for="Country">
-                <span asp-validation-for="Country" class="errorSpan"></span>
             </div>
             <div class="form-group">
                 <label asp-for="City">Город</label>
                 <input type="text" class="form-control" placeholder="Введите город" asp-for="City">
-                <span asp-validation-for="City" class="errorSpan"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Gender">Пол</label>
@@ -44,22 +48,18 @@
                     <option>Мужской</option>
                     <option>Женский</option>
                 </select>
-                <span asp-validation-for="Gender" class="errorSpan"></span>
             </div>
             <div class="form-group">
                 <label asp-for="BeltId">Пояс</label>
                 <select asp-for="BeltId" name="BeltId" data-placeholder="Выберите пояс..." class="form-control"></select>
-                <span asp-validation-for="Gender" class="errorSpan"></span>
             </div>
             <div class="form-group">
                 <label asp-for="TrainerId">Выберите тренера</label>
                 <select asp-for="TrainerId" name="TrainerId" data-placeholder="Выберите тренера..." class="form-control"></select>
-                <span asp-validation-for="TrainerId" class="errorSpan"></span>
             </div>
             <div class="form-group">
                 <label asp-for="WeightCategorieId">Весовая категория</label>
                 <select asp-for="WeightCategorieId" name="WeightCategorieId" data-placeholder="Выберите весовую категорию..." class="form-control"></select>
-                <span asp-validation-for="WeightCategorieId" class="errorSpan"></span>
             </div>
         </div>
 
@@ -71,13 +71,21 @@
     @Html.HiddenFor(x => x.TournamentId);
 }
 <script type="text/javascript">
-    $('.datepicker').flatpickr({
-        enableTime : false,
-        "locale": "ru"
+
+    $("#datetimepicker").datepicker({
+        format: 'dd.mm.yyyy',
+        language: 'ru',
+        "setDate": new Date()
     });
+    $('#datetimepicker').datepicker('update', new Date());
 
 </script>
 <script>
+    $('#linkClose').click(function () {
+        $('#alertMessage').hide('fade');
+        $("#alertText").empty();
+
+    });
 
     initAjaxAutoCompleteSelect({
         selector: 'select[name="BeltId"]',
@@ -102,7 +110,6 @@
     $('#btnSubmit').click(function (ev) {
 
         let $btn = $(ev.currentTarget);
-        $btn.text('Generating...');
 
         let $form = $('#sbmForm');
         console.log($form.serialize())
@@ -118,32 +125,24 @@
                         if (xhr.status === 200) {
                             xhr.responseType = "text";
                         }
-
                     }
                 };
                 return xhr;
             },
             success: function (data) {
                 $("#myModal").modal('hide');
-                document.location.href = "/Fighter/@Model.TournamentId"
+                document.location.reload();
             },
             error: function (data) {
                 console.log(data);
-                /*  if (data.status === 400) {
-                      $('#alertMessage1').show('fade');
-                      $btn.prop('disabled', false);
-                      $btn.text('Подтвердить');
-                  }
-                  else {
-                      $('#alertMessage').show('fade');
-                      $btn.prop('disabled', false);
-                      $btn.text('Подтвердить');
-                  }
-                  */
+                $("#alertText").empty();
+                data.responseJSON.forEach(x => {
+                    $("#alertText").append(`<div>${x}</div>`);
+                    $('#alertMessage').show('fade');
+                });
             }
         });
     });
 
 </script>
-<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
-<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+

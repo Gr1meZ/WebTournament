@@ -29,15 +29,15 @@ namespace WebTournament.Business.Services
             {
                 Age = AgeCalculator.CalculateAge(fighterViewModel.BirthDate),
                 BirthDate = fighterViewModel.BirthDate,
-                BeltId = fighterViewModel.BeltId,
+                BeltId = fighterViewModel.BeltId ?? Guid.Empty,
                 City = fighterViewModel.City,
                 Country = fighterViewModel.Country,
                 Gender = GenderExtension.ParseEnum(fighterViewModel.Gender),
                 Surname = fighterViewModel.Surname,
                 Name = fighterViewModel.Name,
-                TournamentId = fighterViewModel.TournamentId,
-                TrainerId = fighterViewModel.TrainerId,
-                WeightCategorieId = fighterViewModel.WeightCategorieId
+                TournamentId = fighterViewModel.TournamentId ?? Guid.Empty,
+                TrainerId = fighterViewModel.TrainerId ?? Guid.Empty,
+                WeightCategorieId = fighterViewModel.WeightCategorieId ?? Guid.Empty
             };
 
             appDbContext.Fighters.Add(fighter);
@@ -63,14 +63,14 @@ namespace WebTournament.Business.Services
             fighter.Name = fighterViewModel.Name;
             fighter.BirthDate = fighterViewModel.BirthDate;
             fighter.Age = AgeCalculator.CalculateAge(fighterViewModel.BirthDate);
-            fighter.BeltId = fighterViewModel.BeltId;
+            fighter.BeltId = fighterViewModel.BeltId ?? Guid.Empty;
             fighter.City = fighterViewModel.City;
             fighter.Country = fighterViewModel.Country;
             fighter.Gender = GenderExtension.ParseEnum(fighterViewModel.Gender);
             fighter.Surname = fighterViewModel.Surname;
-            fighter.TournamentId = fighterViewModel.TournamentId;
-            fighter.TrainerId = fighterViewModel.TrainerId;
-            fighter.WeightCategorieId = fighterViewModel.WeightCategorieId;
+            fighter.TournamentId = fighterViewModel.TournamentId ?? Guid.Empty;
+            fighter.TrainerId = fighterViewModel.TrainerId ?? Guid.Empty;
+            fighter.WeightCategorieId = fighterViewModel.WeightCategorieId ?? Guid.Empty;
             
             await appDbContext.SaveChangesAsync();
         }
