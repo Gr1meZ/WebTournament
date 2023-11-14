@@ -37,6 +37,7 @@ namespace Infrastructure.DependencyInjection
             services.AddScoped<ITournamentService, TournamentService>();
             services.AddScoped<ITrainerService, TrainerService>();
             services.AddScoped<IWeightCategorieService, WeightCategorieService>();
+            services.AddScoped<IExcelParserService, ExcelParserService>();
 
 
             return services;

@@ -25,7 +25,7 @@
             columnDefs: [
                 { targets: 0, title: "ID", data: "id", visible: false },
                 { targets: 1, title: "Название", data: "name" },
-                { targets: 2, render: DataTable.render.datetime('DD.MM.YYYY HH:mm'), title: "Дата", data: "startDate" },
+                { targets: 2, render: DataTable.render.datetime('DD.MM.YYYY'), title: "Дата", data: "startDate" },
 
                 { targets: 3, title: "Адрес", data: "address" },
                 {

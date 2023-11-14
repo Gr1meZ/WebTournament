@@ -30,7 +30,7 @@ namespace WebTournament.Business.Services
 
             var belt = new Belt()
             {
-                BeltNumber = beltViewModel.BeltNumber,
+                BeltNumber = beltViewModel.BeltNumber ?? 0,
                 FullName = beltViewModel.FullName,
                 ShortName = beltViewModel.ShortName,
             };
@@ -111,7 +111,7 @@ namespace WebTournament.Business.Services
 
 
             belt.ShortName = beltViewModel.ShortName;
-            belt.BeltNumber = beltViewModel.BeltNumber;
+            belt.BeltNumber = beltViewModel.BeltNumber ?? 0;
             belt.FullName = beltViewModel.FullName;
 
             await appDbContext.SaveChangesAsync();

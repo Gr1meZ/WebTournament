@@ -19,7 +19,7 @@
         <div class="modal-body">
             <div class="form-group">
                 <label asp-for="Name">Название</label>
-                <input type="text" class="form-control" placeholder="Введите название" asp-for="Name">
+                <input type="text" id="name" class="form-control" placeholder="Введите название" asp-for="Name">
             </div>
 
         </div>
@@ -37,6 +37,12 @@
         $('#alertMessage').hide('fade');
         $("#alertText").empty();
 
+    });
+
+    document.getElementById('name').addEventListener('keypress', function (event) {
+        if (event.keyCode == 13) {
+            event.preventDefault();
+        }
     });
 
     $('#btnSubmit').click(function (ev) {

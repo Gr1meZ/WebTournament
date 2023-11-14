@@ -2,6 +2,18 @@
     ViewData["Title"] = "Игроки";
 }
 
+<style>
+    input[type="file"] {
+        display: none;
+    }
+
+    .custom-file-upload {
+        border: 1px solid #ccc;
+        display: inline-block;
+        padding: 6px 12px;
+        cursor: pointer;
+    }
+</style>
 <div>
 </div>
 <div class="row justify-content-center">
@@ -14,8 +26,21 @@
             </div>
             <header class="text-center display-2" id="header">@ViewData["Tournament"]</header>
             <table id="item-tbl" class="table">
-                <a class="btn btn btn-info compItem" asp-controller="Fighter" asp-route-id="@Model" asp-action="AddIndex">Добавить игрока <i class="bi bi-plus-circle"></i></a>
-                <a class="btn btn btn-success mx-4" asp-action="AddIndex">Добавить заявку <i class="bi bi-file-excel"></i></a>
+                <div class="second">
+                    <div class="col-md-12">
+                        <form>
+                            <a class="btn btn btn-info compItem " asp-controller="Fighter" asp-route-id="@Model" asp-action="AddIndex">Добавить игрока <i class="bi bi-plus-circle"></i> </a>
+                            <label for="file-upload" class="custom-file-upload">
+                                Custom Upload
+                            </label>
+                            <input id="file-upload" type="file" name="formFile" />
+                            <button class="btn btn-success " id="generateBtn" type="button">Добавить заявку </button>
+                        </form>
+                    </div>
+                </div>
+                <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
+                  
+                </div>
             </table>
         </div>
     </div>
@@ -53,6 +78,49 @@
     <script>
 
         $(document).ready(function () {
+            $('#generateBtn').click(function () {
+                // Создаем input элемент типа file
+                var fileInput = $('<input type="file">');
+
+                // Устанавливаем свойства и стили для input
+                fileInput.attr('accept', '.xlsx'); // Принять только файлы с расширением .xlsx
+                fileInput.hide(); // Скрываем input
+
+                // Добавляем input в документ
+                $('body').append(fileInput);
+
+                // Эмулируем клик для открытия проводника
+                fileInput.click();
+
+                // Обрабатываем выбранный файл после его выбора
+                fileInput.change(function () {
+                    var selectedFile = fileInput[0].files[0];
+
+                    // Создаем объект FormData для отправки файла на сервер
+                    var formData = new FormData();
+                    formData.append('file', selectedFile);
+                    console.log(formData)
+                    // Отправляем файл на asp.net core controller с помощью $.ajax
+                    $.ajax({
+                        url: '/ExcelParser/Read', // Замените '/your_controller_path' на путь к вашему контроллеру
+                        type: 'POST',
+                        data: formData,
+                        contentType: false,
+                        processData: false,
+                        success: function (response) {
+                            console.log('Файл успешно загружен');
+                            // Другие действия после успешной загрузки файла
+                        },
+                        error: function () {
+                            console.log('Ошибка загрузки файла');
+                            // Действия в случае ошибки загрузки файла
+                        }
+                    });
+                });
+            });
+
+           
+
             const fighterDatatable = GetFighterDatatable('@Model');
             fighterDatatable.init();
 
