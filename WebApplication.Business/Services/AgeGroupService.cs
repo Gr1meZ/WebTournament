@@ -25,8 +25,8 @@ namespace WebTournament.Business.Services
 
             var ageGroup = new AgeGroup()
             {
-                MaxAge = ageGroupViewModel.MaxAge,
-                MinAge = ageGroupViewModel.MinAge,
+                MaxAge = ageGroupViewModel.MaxAge ?? 0,
+                MinAge = ageGroupViewModel.MinAge ?? 0,
                 Name = ageGroupViewModel.Name
             };
 
@@ -91,10 +91,7 @@ namespace WebTournament.Business.Services
 
         public async Task DeleteAgeGroup(Guid id)
         {
-            var ageGroup = await appDbContext.AgeGroups.FindAsync(id);
-
-            if (ageGroup == null)
-                throw new ValidationException("Age group not found");
+            var ageGroup = await appDbContext.AgeGroups.FindAsync(id) ?? throw new ValidationException("Age group not found");
             appDbContext.AgeGroups.Remove(ageGroup);
 
             await appDbContext.SaveChangesAsync();
@@ -110,8 +107,8 @@ namespace WebTournament.Business.Services
 
 
             ageGroup.Name = ageGroupViewModel.Name;
-            ageGroup.MaxAge = ageGroupViewModel.MaxAge;
-            ageGroup.MinAge = ageGroupViewModel.MinAge;
+            ageGroup.MaxAge = ageGroupViewModel.MaxAge ?? 0;
+            ageGroup.MinAge = ageGroupViewModel.MinAge ?? 0;
 
             await appDbContext.SaveChangesAsync();
         }

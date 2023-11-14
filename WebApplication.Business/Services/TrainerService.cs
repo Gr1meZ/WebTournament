@@ -30,7 +30,7 @@ namespace WebTournament.Business.Services
             var ageGroup = new Trainer()
             {
                 Name = trainerViewModel.Name,
-                ClubId = trainerViewModel.ClubId,
+                ClubId = trainerViewModel.ClubId ?? Guid.Empty,
                 Patronymic = trainerViewModel.Patronymic,
                 Phone = trainerViewModel.Phone,
                 Surname = trainerViewModel.Surname
@@ -42,10 +42,7 @@ namespace WebTournament.Business.Services
 
         public async Task DeleteTrainer(Guid id)
         {
-            var trainer = await appDbContext.Trainers.FindAsync(id);
-
-            if (trainer == null)
-                throw new ValidationException("Trainer not found");
+            var trainer = await appDbContext.Trainers.FindAsync(id) ?? throw new ValidationException("Trainer not found");
             appDbContext.Trainers.Remove(trainer);
 
             await appDbContext.SaveChangesAsync();
@@ -62,7 +59,7 @@ namespace WebTournament.Business.Services
             trainer.Name = trainerViewModel.Name;
             trainer.Surname = trainerViewModel.Surname;
             trainer.Patronymic = trainerViewModel.Patronymic;
-            trainer.ClubId = trainerViewModel.ClubId;
+            trainer.ClubId = trainerViewModel.ClubId ?? Guid.Empty;
             trainer.Phone = trainerViewModel.Phone;
             
             await appDbContext.SaveChangesAsync();

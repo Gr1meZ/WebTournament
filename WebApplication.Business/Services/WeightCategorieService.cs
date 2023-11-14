@@ -29,8 +29,8 @@ namespace WebTournament.Business.Services
 
             var weightCategorie = new WeightCategorie()
             {
-                AgeGroupId = weightCategorieViewModel.AgeGroupId,
-                MaxWeight = weightCategorieViewModel.MaxWeight,
+                AgeGroupId = weightCategorieViewModel.AgeGroupId ?? Guid.Empty,
+                MaxWeight = weightCategorieViewModel.MaxWeight ?? 0,
                 WeightName = weightCategorieViewModel.WeightName
             };
 
@@ -53,9 +53,9 @@ namespace WebTournament.Business.Services
 
             var weightCategorie = await appDbContext.WeightCategories.FindAsync(weightCategorieViewModel.Id);
 
-            weightCategorie.AgeGroupId = weightCategorieViewModel.AgeGroupId;
+            weightCategorie.AgeGroupId = weightCategorieViewModel.AgeGroupId ?? Guid.Empty;
             weightCategorie.WeightName = weightCategorieViewModel.WeightName;
-            weightCategorie.MaxWeight = weightCategorieViewModel.MaxWeight;
+            weightCategorie.MaxWeight = weightCategorieViewModel.MaxWeight ?? 0;
 
             await appDbContext.SaveChangesAsync();
         }

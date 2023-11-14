@@ -6,6 +6,8 @@ using Infrastructure.DataAccess.MSSQL;
 using DataAccess.IdentityModels;
 using WebTournament.Business.Abstract;
 using WebTournament.Business.Services;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Infrastructure.DependencyInjection
 {
@@ -22,7 +24,7 @@ namespace Infrastructure.DependencyInjection
                .EnableSensitiveDataLogging(),ServiceLifetime.Transient);
 
 
-            services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            services.AddDefaultIdentity<AppUser>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddRoles<AppRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
@@ -35,6 +37,7 @@ namespace Infrastructure.DependencyInjection
             services.AddScoped<ITournamentService, TournamentService>();
             services.AddScoped<ITrainerService, TrainerService>();
             services.AddScoped<IWeightCategorieService, WeightCategorieService>();
+
 
             return services;
         }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,11 +11,14 @@ namespace WebTournament.Models
     public class WeightCategorieViewModel
     {
         public Guid Id { get; set; }
-        public Guid AgeGroupId { get; set; }
+
+        [Required(ErrorMessage = "Возрастная категория не выбрана")]
+        public Guid? AgeGroupId { get; set; }
         public string AgeGroupName { get; init; } = string.Empty;
-        [Required(ErrorMessage = "Поле не заполнено")]
-        public int MaxWeight { get; set; }
-        [Required(ErrorMessage = "Поле не заполнено")]
+
+        [Range(1, 100, ErrorMessage = "Предельный вес должен находиться в диапозоне от 1 до 100"), Required(ErrorMessage = "Предельный вес должнен быть заполнен")]
+        public int? MaxWeight { get; init; } = 0; 
+        [Required(ErrorMessage = "Название не заполнено")]
         public string WeightName { get; set; }
     }
 }

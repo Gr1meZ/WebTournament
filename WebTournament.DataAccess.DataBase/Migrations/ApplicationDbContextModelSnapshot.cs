@@ -40,7 +40,7 @@ namespace DataAccess.MSSQL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("AgeGroups", (string)null);
+                    b.ToTable("AgeGroups");
                 });
 
             modelBuilder.Entity("DataAccess.Domain.Models.Belt", b =>
@@ -62,7 +62,7 @@ namespace DataAccess.MSSQL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Belts", (string)null);
+                    b.ToTable("Belts");
                 });
 
             modelBuilder.Entity("DataAccess.Domain.Models.Club", b =>
@@ -77,7 +77,7 @@ namespace DataAccess.MSSQL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Clubs", (string)null);
+                    b.ToTable("Clubs");
                 });
 
             modelBuilder.Entity("DataAccess.Domain.Models.Fighter", b =>
@@ -134,7 +134,7 @@ namespace DataAccess.MSSQL.Migrations
 
                     b.HasIndex("WeightCategorieId");
 
-                    b.ToTable("Fighters", (string)null);
+                    b.ToTable("Fighters");
                 });
 
             modelBuilder.Entity("DataAccess.Domain.Models.Tournament", b =>
@@ -156,7 +156,7 @@ namespace DataAccess.MSSQL.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tournaments", (string)null);
+                    b.ToTable("Tournaments");
                 });
 
             modelBuilder.Entity("DataAccess.Domain.Models.Trainer", b =>
@@ -188,7 +188,7 @@ namespace DataAccess.MSSQL.Migrations
 
                     b.HasIndex("ClubId");
 
-                    b.ToTable("Trainers", (string)null);
+                    b.ToTable("Trainers");
                 });
 
             modelBuilder.Entity("DataAccess.Domain.Models.WeightCategorie", b =>
@@ -211,7 +211,7 @@ namespace DataAccess.MSSQL.Migrations
 
                     b.HasIndex("AgeGroupId");
 
-                    b.ToTable("WeightCategories", (string)null);
+                    b.ToTable("WeightCategories");
                 });
 
             modelBuilder.Entity("DataAccess.IdentityModels.AppRole", b =>
@@ -359,12 +359,10 @@ namespace DataAccess.MSSQL.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ProviderKey")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("nvarchar(max)");
@@ -400,12 +398,10 @@ namespace DataAccess.MSSQL.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("LoginProvider")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
-                        .HasMaxLength(128)
-                        .HasColumnType("nvarchar(128)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");

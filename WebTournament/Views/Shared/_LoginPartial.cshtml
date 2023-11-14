@@ -7,12 +7,12 @@
 @if (SignInManager.IsSignedIn(User))
 {
     <form id="submitForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new {area = ""})">
-        <a href="#" id="submit_link" class="nav_link active"> <i class='bx bx-grid-alt nav_icon'></i> <span class="nav_name">Выйти</span> </a>
+        <a href="#" id="submit_link" class="nav_link active text-decoration-none"> <i class='bx bx-log-out nav_icon'></i> <span class="nav_name">Выйти</span> </a>
     </form>
 
 }
 else
 {
-    <a asp-area="Identity" asp-page="/Account/Login" class="nav_link active"> <i class='bx bx-grid-alt nav_icon'></i> <span class="nav_name">Войти</span> </a>
+    <a asp-area="Identity" asp-page="/Account/Login" class="nav_link active text-decoration-none"> <i class='bx bx-log-in nav_icon'></i> <span class="nav_name">Войти</span> </a>
 
 }

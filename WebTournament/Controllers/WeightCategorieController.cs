@@ -43,7 +43,7 @@ namespace WebTournament.WebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> AddModel(WeightCategorieViewModel weightCategorie)
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState.Values.SelectMany(v => v.Errors).Select(x => x.ErrorMessage).ToList());
+            if (!ModelState.IsValid || !weightCategorie.AgeGroupId.HasValue) return BadRequest(ModelState.Values.SelectMany(v => v.Errors).Select(x => x.ErrorMessage).ToList());
             await _weightCategorieService.AddWeightCategorie(weightCategorie);
             return Ok();
         }

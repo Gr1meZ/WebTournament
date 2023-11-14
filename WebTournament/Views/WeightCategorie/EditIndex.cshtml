@@ -20,7 +20,7 @@
             <div class="form-group">
                 <label asp-for="AgeGroupId">Возрастная категория</label>
                 <select asp-for="AgeGroupId" name="AgeGroupId" data-placeholder="Выберите категорию..." class="form-control">
-                    <option id="@Model.AgeGroupId">@Model.AgeGroupName</option>
+                    <option value="@Model.AgeGroupId">@Model.AgeGroupName</option>
                 </select>
             </div>
             <div class="form-group">
@@ -29,7 +29,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="MaxWeight">Предельный вес</label>
-                <input type="number" class="form-control" placeholder="Введите вес" asp-for="MaxWeight">
+                <input type="number" min="0"  class="form-control" placeholder="Введите вес" asp-for="MaxWeight">
             </div>
         </div>
 
@@ -39,14 +39,8 @@
         </div>
     </div>
     @Html.HiddenFor(x => x.Id);
-
+    
 }
-
-  $('#linkClose').click(function () {
-        $('#alertMessage').hide('fade');
-        $("#alertText").empty();
-
-    });
 
 <script>
     initAjaxAutoCompleteSelect({
@@ -56,12 +50,15 @@
 
     });
 
+    $('#linkClose').click(function () {
+        $('#alertMessage').hide('fade');
+        $("#alertText").empty();
+
+    });
 
     $('#btnSubmit').click(function (ev) {
 
         let $btn = $(ev.currentTarget);
-        $btn.prop('disabled', true);
-        $btn.text('Generating...');
 
         let $form = $('#sbmForm');
         console.log($form.serialize())
@@ -77,33 +74,24 @@
                         if (xhr.status === 200) {
                             xhr.responseType = "text";
                         }
-
                     }
                 };
                 return xhr;
             },
             success: function (data) {
                 $("#myModal").modal('hide');
-                document.location.href = "/WeightCategorie/"
+                document.location.reload();
             },
             error: function (data) {
                 console.log(data);
-                /*  if (data.status === 400) {
-                      $('#alertMessage1').show('fade');
-                      $btn.prop('disabled', false);
-                      $btn.text('Подтвердить');
-                  }
-                  else {
-                      $('#alertMessage').show('fade');
-                      $btn.prop('disabled', false);
-                      $btn.text('Подтвердить');
-                  }
-                  */
+                $("#alertText").empty();
+                data.responseJSON.forEach(x => {
+                    $("#alertText").append(`<div>${x}</div>`);
+                    $('#alertMessage').show('fade');
+                });
             }
         });
     });
 
 
 </script>
-<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
-<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
