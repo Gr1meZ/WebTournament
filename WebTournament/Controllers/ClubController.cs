@@ -3,7 +3,6 @@ using WebTournament.Business.Abstract;
 using WebTournament.Models.Helpers;
 using WebTournament.Models;
 using Microsoft.AspNetCore.Authorization;
-using WebTournament.Business.Services;
 
 namespace WebTournament.WebApp.Controllers
 {
@@ -57,7 +56,7 @@ namespace WebTournament.WebApp.Controllers
         }
 
         [HttpDelete("[controller]/{id}")]
-        public async Task<IActionResult> DeleteModelt(Guid id)
+        public async Task<IActionResult> DeleteModel(Guid id)
         {
             await _clubService.DeleteClub(id);
             return Ok();

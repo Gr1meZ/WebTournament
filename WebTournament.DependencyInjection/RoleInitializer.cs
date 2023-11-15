@@ -1,5 +1,4 @@
-﻿using DataAccess.Domain.Models;
-using DataAccess.IdentityModels;
+﻿using DataAccess.Common.IdentityModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -16,14 +15,13 @@ namespace DependencyInjection
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
 
             string[] roleNames = { "Admin" };
-            IdentityResult roleResult;
 
             foreach (var roleName in roleNames)
             {
                 var roleExist = await roleManager.RoleExistsAsync(roleName);
                 if (!roleExist)
                 {
-                    roleResult = await roleManager.CreateAsync(new AppRole(roleName));
+                    await roleManager.CreateAsync(new AppRole(roleName));
                 }
             }
 
@@ -36,7 +34,7 @@ namespace DependencyInjection
                 EmailConfirmed = true
 
             };
-            var userPwd = "Admin1*";
+            const string userPwd = "Admin1*";
             var user = await userManager.FindByEmailAsync("admin@mail.ru");
 
             if (user == null)

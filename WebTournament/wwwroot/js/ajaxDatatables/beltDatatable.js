@@ -18,7 +18,7 @@
             ordering: true,
             order: [[ 1, "desc" ]],
             rowId: 'id',
-            ajax: function(data, callback, settings) {
+            ajax: function(data, callback) {
                 dtAjaxHandler('/Belt/List', data, callback)
                 
             },
@@ -30,7 +30,7 @@
 
                 {
                     targets: 4, title: "", data: "id", className: "text-center", orderable: false,
-                    render: function ( itemId, type, row, meta ) {
+                    render: function () {
 
                         return `<button  class="btn btn-info" data-action="showEditItemModal" id="showEditItemModal"><i class="bi bi-pencil"></i></button>`
 
@@ -38,7 +38,7 @@
                 },
                 {
                     targets: 5, title: "", data: "itemId", className: "text-center", orderable: false,
-                    render: function ( itemId, type, row, meta ) {
+                    render: function () {
 
                         return `<button data-action="showDeleteItemModal" type="button" class="btn btn-danger " title="Delete item"><i class="bi bi-trash"></i></button>`
 

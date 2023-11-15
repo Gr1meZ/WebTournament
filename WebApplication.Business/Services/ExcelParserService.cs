@@ -1,12 +1,6 @@
-﻿using Infrastructure.DataAccess.Abstract;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using OfficeOpenXml;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+using DataAccess.Abstract;
 using WebTournament.Business.Abstract;
 
 namespace WebTournament.Business.Services
@@ -15,7 +9,8 @@ namespace WebTournament.Business.Services
     {
         private readonly IApplicationDbContext _appDbContext;
         public ExcelParserService(IApplicationDbContext appDbContext) {
-            this._appDbContext = appDbContext;
+            
+            _appDbContext = appDbContext;
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
         }
@@ -33,9 +28,9 @@ namespace WebTournament.Business.Services
             var rowCount = worksheet.Dimension.Rows;
             var colCount = worksheet.Dimension.Columns;
 
-            for (int row = 1; row <= rowCount; row++)
+            for (var row = 1; row <= rowCount; row++)
             {
-                for (int col = 1; col <= colCount; col++)
+                for (var col = 1; col <= colCount; col++)
                 {
                     Console.Write("{0}\t", worksheet.Cells[row, col].Value);
                 }

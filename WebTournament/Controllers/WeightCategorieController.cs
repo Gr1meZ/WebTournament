@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebTournament.Business.Abstract;
-using WebTournament.Business.Services;
 using WebTournament.Models;
 using WebTournament.Models.Helpers;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace WebTournament.WebApp.Controllers
 {
@@ -58,7 +56,7 @@ namespace WebTournament.WebApp.Controllers
         }
 
         [HttpDelete("[controller]/{id}")]
-        public async Task<IActionResult> DeleteModelt(Guid id)
+        public async Task<IActionResult> DeleteModel(Guid id)
         {
             await _weightCategorieService.DeleteWeightCategorie(id);
             return Ok();

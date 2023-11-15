@@ -3,12 +3,12 @@
 #nullable disable
 
 using System.ComponentModel.DataAnnotations;
+using DataAccess.Common.IdentityModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using DataAccess.IdentityModels;
 
 namespace WebTournament.WebApp.Areas.Identity.Pages.Account
 {

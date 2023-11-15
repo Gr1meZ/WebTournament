@@ -56,7 +56,7 @@ namespace WebTournament.WebApp.Controllers
         }
 
         [HttpDelete("[controller]/{id}")]
-        public async Task<IActionResult> DeleteModelt(Guid id)
+        public async Task<IActionResult> DeleteModel(Guid id)
         {
             await _ageGroupService.DeleteAgeGroup(id);
             return Ok();

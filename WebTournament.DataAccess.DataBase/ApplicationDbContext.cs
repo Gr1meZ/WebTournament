@@ -1,14 +1,13 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Infrastructure.DataAccess.Abstract;
-using Microsoft.EntityFrameworkCore;
+﻿using DataAccess.Abstract;
+using DataAccess.Common.Enums;
+using DataAccess.Common.IdentityModels;
 using DataAccess.Domain.Models;
 using DataAccess.MSSQL.Configuration;
-using DataAccess.IdentityModels;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using DataAccess.Common.Enums;
 
-
-namespace Infrastructure.DataAccess.MSSQL
+namespace DataAccess.MSSQL
 {
     public class ApplicationDbContext : IdentityDbContext<AppUser, AppRole, Guid>, IApplicationDbContext
     {

@@ -1,15 +1,13 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Infrastructure.DataAccess.Abstract;
+﻿using DataAccess.Abstract;
+using DataAccess.Common.IdentityModels;
+using DataAccess.MSSQL;
 using Microsoft.EntityFrameworkCore;
-using Infrastructure.DataAccess.MSSQL;
-using DataAccess.IdentityModels;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using WebTournament.Business.Abstract;
 using WebTournament.Business.Services;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace Infrastructure.DependencyInjection
+namespace DependencyInjection
 {
     public static class DependencyInjection
     {

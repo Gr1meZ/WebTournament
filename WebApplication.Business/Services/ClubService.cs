@@ -1,12 +1,7 @@
 ﻿using DataAccess.Domain.Models;
-using Infrastructure.DataAccess.Abstract;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using DataAccess.Abstract;
 using WebTournament.Business.Abstract;
 using WebTournament.Models;
 using WebTournament.Models.Helpers;
@@ -15,11 +10,11 @@ namespace WebTournament.Business.Services
 {
     public class ClubService : IClubService
     {
-        private readonly IApplicationDbContext appDbContext;
+        private readonly IApplicationDbContext _appDbContext;
 
         public ClubService(IApplicationDbContext appDbContext)
         {
-            this.appDbContext = appDbContext;
+            this._appDbContext = appDbContext;
         }
 
         public async Task AddClub(ClubViewModel clubViewModel)
@@ -32,21 +27,21 @@ namespace WebTournament.Business.Services
                  Name = clubViewModel.Name
             };
 
-            appDbContext.Clubs.Add(club);
-            await appDbContext.SaveChangesAsync();
+            _appDbContext.Clubs.Add(club);
+            await _appDbContext.SaveChangesAsync();
         }
 
         public async Task<PagedResponse<ClubViewModel[]>> ClubList(PagedRequest request)
         {
-            var dbQuery = appDbContext.Clubs
+            var dbQuery = _appDbContext.Clubs
               .AsQueryable()
               .AsNoTracking();
 
             // searching
-            var lowerQ = request.Search?.ToLower();
+            var lowerQ = request.Search.ToLower();
             if (!string.IsNullOrWhiteSpace(lowerQ))
             {
-                dbQuery = (lowerQ?.Split(' ')).Aggregate(dbQuery, (current, searchWord) =>
+                dbQuery = (lowerQ.Split(' ')).Aggregate(dbQuery, (current, searchWord) =>
                     current.Where(f => f.Name.ToLower().Contains(searchWord.ToLower())));
             }
 
@@ -81,13 +76,13 @@ namespace WebTournament.Business.Services
 
         public async Task DeleteClub(Guid id)
         {
-            var club = await appDbContext.Clubs.FindAsync(id);
+            var club = await _appDbContext.Clubs.FindAsync(id);
 
             if (club == null)
                 throw new ValidationException("Club not found");
-            appDbContext.Clubs.Remove(club);
+            _appDbContext.Clubs.Remove(club);
 
-            await appDbContext.SaveChangesAsync();
+            await _appDbContext.SaveChangesAsync();
         }
 
         public async Task EditClub(ClubViewModel clubViewModel)
@@ -95,16 +90,20 @@ namespace WebTournament.Business.Services
             if (clubViewModel == null)
                 throw new ValidationException("Club model is null");
 
-            var club = await appDbContext.Clubs.FindAsync(clubViewModel.Id);
+            var club = await _appDbContext.Clubs.FindAsync(clubViewModel.Id);
 
-            club.Name = clubViewModel.Name;
+            club!.Name = clubViewModel.Name;
 
-            await appDbContext.SaveChangesAsync();
+            await _appDbContext.SaveChangesAsync();
         }
 
         public async Task<ClubViewModel> GetClub(Guid id)
         {
-            var club = await appDbContext.Clubs.FindAsync(id);
+            var club = await _appDbContext.Clubs.FindAsync(id);
+            
+            if (club == null)
+                throw new ValidationException("Club not found");
+            
             var viewModel = new ClubViewModel()
             {
                 Id = club.Id,
@@ -116,7 +115,7 @@ namespace WebTournament.Business.Services
 
         public async Task<List<ClubViewModel>> GetClubs()
         {
-            var clubs = appDbContext.Clubs.AsNoTracking();
+            var clubs = _appDbContext.Clubs.AsNoTracking();
 
             return await clubs.Select(x => new ClubViewModel()
             {
@@ -127,7 +126,7 @@ namespace WebTournament.Business.Services
 
         public async Task<Select2Response> GetAutoCompleteClubs(Select2Request request)
         {
-            var clubs = appDbContext.Clubs
+            var clubs = _appDbContext.Clubs
               .AsNoTracking()
               .AsQueryable();
 

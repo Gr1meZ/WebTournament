@@ -12,9 +12,9 @@ namespace WebTournament.WebApp.Controllers
         private readonly IFighterService _fighterService;
         private readonly ITournamentService _tournamentService;
 
-        public FighterController(IFighterService fighterSErvice, ITournamentService tournamentService)
+        public FighterController(IFighterService fighterService, ITournamentService tournamentService)
         {
-            _fighterService = fighterSErvice;
+            _fighterService = fighterService;
             _tournamentService = tournamentService;
         }
 
@@ -62,7 +62,7 @@ namespace WebTournament.WebApp.Controllers
         }
 
         [HttpDelete("[controller]/{id}")]
-        public async Task<IActionResult> DeleteModelt(Guid id)
+        public async Task<IActionResult> DeleteModel(Guid id)
         {
             await _fighterService.DeleteFighter(id);
             return Ok();

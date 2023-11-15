@@ -1,7 +1,7 @@
 ﻿using DataAccess.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.DataAccess.Abstract
+namespace DataAccess.Abstract
 {
     public interface IApplicationDbContext
     {

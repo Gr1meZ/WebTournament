@@ -1,12 +1,8 @@
 ﻿using DataAccess.Domain.Models;
-using Infrastructure.DataAccess.Abstract;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Globalization;
+using DataAccess.Abstract;
 using WebTournament.Business.Abstract;
 using WebTournament.Models;
 using WebTournament.Models.Helpers;
@@ -15,11 +11,11 @@ namespace WebTournament.Business.Services
 {
     public class TournamentService : ITournamentService
     {
-        private readonly IApplicationDbContext appDbContext;
+        private readonly IApplicationDbContext _appDbContext;
 
         public TournamentService(IApplicationDbContext appDbContext)
         {
-            this.appDbContext = appDbContext;
+            _appDbContext = appDbContext;
         }
 
         public async Task AddTournament(TournamentViewModel tournamentViewModel)
@@ -34,16 +30,16 @@ namespace WebTournament.Business.Services
                 StartDate = tournamentViewModel.StartDate,
             };
 
-            appDbContext.Tournaments.Add(tournament);
-            await appDbContext.SaveChangesAsync();
+            _appDbContext.Tournaments.Add(tournament);
+            await _appDbContext.SaveChangesAsync();
         }
 
         public async Task DeleteTournament(Guid id)
         {
-            var tournament = await appDbContext.Tournaments.FindAsync(id) ?? throw new ValidationException("Tournament not found");
-            appDbContext.Tournaments.Remove(tournament);
+            var tournament = await _appDbContext.Tournaments.FindAsync(id) ?? throw new ValidationException("Tournament not found");
+            _appDbContext.Tournaments.Remove(tournament);
 
-            await appDbContext.SaveChangesAsync();
+            await _appDbContext.SaveChangesAsync();
         }
 
         public async Task EditTournament(TournamentViewModel tournamentViewModel)
@@ -51,19 +47,23 @@ namespace WebTournament.Business.Services
             if (tournamentViewModel == null)
                 throw new ValidationException("Tournament model is null");
 
-            var tournament = await appDbContext.Tournaments.FindAsync(tournamentViewModel.Id);
+            var tournament = await _appDbContext.Tournaments.FindAsync(tournamentViewModel.Id);
 
 
-            tournament.Name = tournamentViewModel.Name;
+            tournament!.Name = tournamentViewModel.Name;
             tournament.Address = tournamentViewModel.Address;
             tournament.StartDate = tournamentViewModel.StartDate;
 
-            await appDbContext.SaveChangesAsync();
+            await _appDbContext.SaveChangesAsync();
         }
 
         public async Task<TournamentViewModel> GetTournament(Guid id)
         {
-            var tournament = await appDbContext.Tournaments.FindAsync(id);
+            var tournament = await _appDbContext.Tournaments.FindAsync(id);
+            
+            if (tournament == null)
+                throw new ValidationException("Tournament not found");
+            
             var viewModel = new TournamentViewModel()
             {
                 Id = tournament.Id,
@@ -77,7 +77,7 @@ namespace WebTournament.Business.Services
 
         public async Task<List<TournamentViewModel>> GetTournaments()
         {
-            var tournaments = appDbContext.Tournaments.AsNoTracking();
+            var tournaments = _appDbContext.Tournaments.AsNoTracking();
 
             return await tournaments.Select(x => new TournamentViewModel()
             {
@@ -90,15 +90,15 @@ namespace WebTournament.Business.Services
 
         public async Task<PagedResponse<TournamentViewModel[]>> TournamentsList(PagedRequest request)
         {
-            var dbQuery = appDbContext.Tournaments
+            var dbQuery = _appDbContext.Tournaments
               .AsQueryable()
               .AsNoTracking();
 
             // searching
-            var lowerQ = request.Search?.ToLower();
+            var lowerQ = request.Search.ToLower();
             if (!string.IsNullOrWhiteSpace(lowerQ))
             {
-                dbQuery = (lowerQ?.Split(' ')).Aggregate(dbQuery, (current, searchWord) =>
+                dbQuery = (lowerQ.Split(' ')).Aggregate(dbQuery, (current, searchWord) =>
                     current.Where(f =>
                         f.Name.ToLower().Contains(searchWord.ToLower()) ||
                         f.StartDate.ToString().ToLower().Contains(searchWord.ToLower()) ||
@@ -145,7 +145,7 @@ namespace WebTournament.Business.Services
 
         public async Task<Select2Response> GetAutoCompleteTournaments(Select2Request request)
         {
-            var tournaments = appDbContext.Tournaments
+            var tournaments = _appDbContext.Tournaments
               .AsNoTracking()
               .AsQueryable();
 

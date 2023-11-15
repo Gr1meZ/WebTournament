@@ -1,8 +1,4 @@
 using DependencyInjection;
-using Infrastructure.DependencyInjection;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Infrastructure.DataAccess.MSSQL;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,8 +11,8 @@ builder.Services.AddRazorPages();
 
 var app = builder.Build();
 
-var loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
-var logger = loggerFactory.CreateLogger<Program>();
+var loggerFactory = LoggerFactory.Create(loggingBuilder => loggingBuilder.AddConsole());
+loggerFactory.CreateLogger<Program>();
 
 await app.Services.AutoMigrateDatabase();
 await app.Services.CreateRoles();

@@ -16,9 +16,9 @@ namespace WebTournament.WebApp.Controllers
         public async Task<IActionResult> Read(CancellationToken cancellationToken)
         {
             var formFile = Request.Form.Files[0];
-            var filePath = Path.GetTempFileName();
+            Path.GetTempFileName();
 
-            if (formFile == null || formFile.Length <= 0)
+            if (formFile is not { Length: > 0 })
                 return BadRequest("Файл пустой");
 
             if (!Path.GetExtension(formFile.FileName).Equals(".xlsx", StringComparison.OrdinalIgnoreCase))

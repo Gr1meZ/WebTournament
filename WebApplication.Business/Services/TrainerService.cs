@@ -1,12 +1,7 @@
 ﻿using DataAccess.Domain.Models;
-using Infrastructure.DataAccess.Abstract;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using DataAccess.Abstract;
 using WebTournament.Business.Abstract;
 using WebTournament.Models;
 using WebTournament.Models.Helpers;
@@ -15,11 +10,11 @@ namespace WebTournament.Business.Services
 {
     public class TrainerService : ITrainerService
     {
-        private readonly IApplicationDbContext appDbContext;
+        private readonly IApplicationDbContext _appDbContext;
 
         public TrainerService(IApplicationDbContext appDbContext)
         {
-            this.appDbContext = appDbContext;
+            _appDbContext = appDbContext;
         }
 
         public async Task AddTrainer(TrainerViewModel trainerViewModel)
@@ -36,16 +31,16 @@ namespace WebTournament.Business.Services
                 Surname = trainerViewModel.Surname
             };
 
-            appDbContext.Trainers.Add(ageGroup);
-            await appDbContext.SaveChangesAsync();
+            _appDbContext.Trainers.Add(ageGroup);
+            await _appDbContext.SaveChangesAsync();
         }
 
         public async Task DeleteTrainer(Guid id)
         {
-            var trainer = await appDbContext.Trainers.FindAsync(id) ?? throw new ValidationException("Trainer not found");
-            appDbContext.Trainers.Remove(trainer);
+            var trainer = await _appDbContext.Trainers.FindAsync(id) ?? throw new ValidationException("Trainer not found");
+            _appDbContext.Trainers.Remove(trainer);
 
-            await appDbContext.SaveChangesAsync();
+            await _appDbContext.SaveChangesAsync();
         }
 
         public async Task EditTrainer(TrainerViewModel trainerViewModel)
@@ -53,21 +48,25 @@ namespace WebTournament.Business.Services
             if (trainerViewModel == null)
                 throw new ValidationException("Trainer model is null");
 
-            var trainer = await appDbContext.Trainers.Include(x => x.Club).FirstOrDefaultAsync(x => x.Id == trainerViewModel.Id);
+            var trainer = await _appDbContext.Trainers.Include(x => x.Club).FirstOrDefaultAsync(x => x.Id == trainerViewModel.Id);
 
 
-            trainer.Name = trainerViewModel.Name;
+            trainer!.Name = trainerViewModel.Name;
             trainer.Surname = trainerViewModel.Surname;
             trainer.Patronymic = trainerViewModel.Patronymic;
             trainer.ClubId = trainerViewModel.ClubId ?? Guid.Empty;
             trainer.Phone = trainerViewModel.Phone;
             
-            await appDbContext.SaveChangesAsync();
+            await _appDbContext.SaveChangesAsync();
         }
 
         public async Task<TrainerViewModel> GetTrainer(Guid id)
         {
-            var trainer = await appDbContext.Trainers.Include(x => x.Club).FirstOrDefaultAsync(y => y.Id == id);
+            var trainer = await _appDbContext.Trainers.Include(x => x.Club).FirstOrDefaultAsync(y => y.Id == id);
+            
+            if (trainer == null)
+                throw new ValidationException("Trainer not found");
+            
             var viewModel = new TrainerViewModel()
             {
                 Id = trainer.Id,
@@ -84,7 +83,7 @@ namespace WebTournament.Business.Services
 
         public async Task<List<TrainerViewModel>> GetTrainers()
         {
-            var trainer = appDbContext.Trainers.AsNoTracking();
+            var trainer = _appDbContext.Trainers.AsNoTracking();
 
             return await trainer.Select(trainer => new TrainerViewModel()
             {
@@ -99,7 +98,7 @@ namespace WebTournament.Business.Services
 
         public async Task<PagedResponse<TrainerViewModel[]>> TrainersList(PagedRequest request)
         {
-            var dbQuery = appDbContext.Trainers
+            var dbQuery = _appDbContext.Trainers
                .AsQueryable()
                .AsNoTracking();
 
@@ -161,7 +160,7 @@ namespace WebTournament.Business.Services
 
         public async Task<Select2Response> GetAutoCompleteTrainers(Select2Request request)
         {
-            var ageGroups = appDbContext.Trainers
+            var ageGroups = _appDbContext.Trainers
               .AsNoTracking()
               .AsQueryable();
 

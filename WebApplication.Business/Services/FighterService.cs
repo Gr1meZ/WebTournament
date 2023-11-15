@@ -1,23 +1,23 @@
 ﻿using DataAccess.Common.Extensions;
 using DataAccess.Domain.Models;
-using Infrastructure.DataAccess.Abstract;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using WebTournament.Business.Abstract;
 using WebTournament.Models;
 using WebTournament.Models.Helpers;
 using WebTournament.Business.Helpers;
-using System.Security.Cryptography.Xml;
+using DataAccess.Abstract;
 
 namespace WebTournament.Business.Services
 {
     public class FighterService : IFighterService
     {
-        private readonly IApplicationDbContext appDbContext;
+        private readonly IApplicationDbContext _appDbContext;
 
         public FighterService(IApplicationDbContext appDbContext)
         {
-            this.appDbContext = appDbContext;
+            this._appDbContext = appDbContext;
         }
 
         public async Task AddFighter(FighterViewModel fighterViewModel)
@@ -40,16 +40,16 @@ namespace WebTournament.Business.Services
                 WeightCategorieId = fighterViewModel.WeightCategorieId ?? Guid.Empty
             };
 
-            appDbContext.Fighters.Add(fighter);
-            await appDbContext.SaveChangesAsync();
+            _appDbContext.Fighters.Add(fighter);
+            await _appDbContext.SaveChangesAsync();
         }
 
         public async Task DeleteFighter(Guid id)
         {
-            var fighter = await appDbContext.Fighters.FindAsync(id) ?? throw new ValidationException("Fighter not found");
-            appDbContext.Fighters.Remove(fighter);
+            var fighter = await _appDbContext.Fighters.FindAsync(id) ?? throw new ValidationException("Fighter not found");
+            _appDbContext.Fighters.Remove(fighter);
 
-            await appDbContext.SaveChangesAsync();
+            await _appDbContext.SaveChangesAsync();
         }
 
         public async Task EditFighter(FighterViewModel fighterViewModel)
@@ -57,10 +57,10 @@ namespace WebTournament.Business.Services
             if (fighterViewModel == null)
                 throw new ValidationException("Fighter model is null");
 
-            var fighter = await appDbContext.Fighters.FindAsync(fighterViewModel.Id);
+            var fighter = await _appDbContext.Fighters.FindAsync(fighterViewModel.Id);
 
 
-            fighter.Name = fighterViewModel.Name;
+            fighter!.Name = fighterViewModel.Name;
             fighter.BirthDate = fighterViewModel.BirthDate;
             fighter.Age = AgeCalculator.CalculateAge(fighterViewModel.BirthDate);
             fighter.BeltId = fighterViewModel.BeltId ?? Guid.Empty;
@@ -72,22 +72,23 @@ namespace WebTournament.Business.Services
             fighter.TrainerId = fighterViewModel.TrainerId ?? Guid.Empty;
             fighter.WeightCategorieId = fighterViewModel.WeightCategorieId ?? Guid.Empty;
             
-            await appDbContext.SaveChangesAsync();
+            await _appDbContext.SaveChangesAsync();
         }
 
         public async Task<PagedResponse<FighterViewModel[]>> FightersList(PagedRequest request, Guid tournamentId)
         {
-            var dbQuery = appDbContext.Tournaments
+            var dbQuery = _appDbContext.Tournaments
               .SelectMany(x => x.Fighters)
               .Include(x => x.Trainer.Club).Include(x => x.Belt).Include(x => x.Tournament).Include(x => x.WeightCategorie.AgeGroup)
+              .Where(x => x.TournamentId ==  tournamentId)
               .AsQueryable()
               .AsNoTracking();
 
             // searching
-            var lowerQ = request.Search?.ToLower();
+            var lowerQ = request.Search.ToLower();
             if (!string.IsNullOrWhiteSpace(lowerQ))
             {
-                dbQuery = (lowerQ?.Split(' ')).Aggregate(dbQuery, (current, searchWord) =>
+                dbQuery = (lowerQ.Split(' ')).Aggregate(dbQuery, (current, searchWord) =>
                     current.Where(f =>
                         f.Name.ToLower().Contains(searchWord.ToLower()) ||
                         f.Age.ToString().ToLower().Contains(searchWord.ToLower()) ||
@@ -178,13 +179,16 @@ namespace WebTournament.Business.Services
 
         public async Task<FighterViewModel> GetFighter(Guid id)
         {
-            var fighter = await appDbContext.Fighters
+            var fighter = await _appDbContext.Fighters
                 .Include(x => x.Tournament)
                 .Include(x => x.Belt)
                 .Include(x => x.Trainer)
                 .Include(x => x.WeightCategorie.AgeGroup)
                 .FirstOrDefaultAsync(x => x.Id == id);
-
+            
+            if (fighter == null)
+                throw new ValidationException("Fighter not found");
+            
             var viewModel = new FighterViewModel()
             {
                 Id = fighter.Id,
@@ -211,7 +215,7 @@ namespace WebTournament.Business.Services
 
         public async Task<List<FighterViewModel>> GetFighters()
         {
-            var fighters = appDbContext.Fighters.AsNoTracking();
+            var fighters = _appDbContext.Fighters.AsNoTracking();
 
             return await fighters.Select(fighter => new FighterViewModel()
             {

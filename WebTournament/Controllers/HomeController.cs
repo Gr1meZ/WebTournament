@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
-using WebTournament.Models;
+﻿using System.Diagnostics;
+using Microsoft.AspNetCore.Mvc;
+using WebTournament.WebApp.Models;
 
-namespace WebTournament.Controllers
+namespace WebTournament.WebApp.Controllers
 {
     public class HomeController : Controller
     {

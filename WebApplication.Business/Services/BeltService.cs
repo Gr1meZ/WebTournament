@@ -1,12 +1,7 @@
 ﻿using DataAccess.Domain.Models;
-using Infrastructure.DataAccess.Abstract;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using DataAccess.Abstract;
 using WebTournament.Business.Abstract;
 using WebTournament.Models;
 using WebTournament.Models.Helpers;
@@ -16,11 +11,11 @@ namespace WebTournament.Business.Services
     
     public class BeltService : IBeltService
     {
-        private readonly IApplicationDbContext appDbContext;
+        private readonly IApplicationDbContext _appDbContext;
 
         public BeltService(IApplicationDbContext appDbContext)
         {
-            this.appDbContext = appDbContext;
+            this._appDbContext = appDbContext;
         }
 
         public async Task AddBelt(BeltViewModel beltViewModel)
@@ -35,21 +30,21 @@ namespace WebTournament.Business.Services
                 ShortName = beltViewModel.ShortName,
             };
 
-            appDbContext.Belts.Add(belt);
-            await appDbContext.SaveChangesAsync();
+            _appDbContext.Belts.Add(belt);
+            await _appDbContext.SaveChangesAsync();
         }
 
         public async Task<PagedResponse<BeltViewModel[]>> BeltList(PagedRequest request)
         {
-            var dbQuery = appDbContext.Belts
+            var dbQuery = _appDbContext.Belts
                .AsQueryable()
                .AsNoTracking();
 
             // searching
-            var lowerQ = request.Search?.ToLower();
+            var lowerQ = request.Search.ToLower();
             if (!string.IsNullOrWhiteSpace(lowerQ))
             {
-                dbQuery = (lowerQ?.Split(' ')).Aggregate(dbQuery, (current, searchWord) =>
+                dbQuery = lowerQ.Split(' ').Aggregate(dbQuery, (current, searchWord) =>
                     current.Where(f =>
                         f.ShortName.ToLower().Contains(searchWord.ToLower()) ||
                         f.FullName.ToLower().Contains(searchWord.ToLower()) ||
@@ -96,10 +91,10 @@ namespace WebTournament.Business.Services
 
         public async Task DeleteBelt(Guid id)
         {
-            var belt = await appDbContext.Belts.FindAsync(id) ?? throw new ValidationException("Belt not found");
-            appDbContext.Belts.Remove(belt);
+            var belt = await _appDbContext.Belts.FindAsync(id) ?? throw new ValidationException("Belt not found");
+            _appDbContext.Belts.Remove(belt);
 
-            await appDbContext.SaveChangesAsync();
+            await _appDbContext.SaveChangesAsync();
         }
 
         public async Task EditBelt(BeltViewModel beltViewModel)
@@ -107,19 +102,23 @@ namespace WebTournament.Business.Services
             if (beltViewModel == null)
                 throw new ValidationException("Age group model is null");
 
-            var belt = await appDbContext.Belts.FindAsync(beltViewModel.Id);
+            var belt = await _appDbContext.Belts.FindAsync(beltViewModel.Id);
 
 
-            belt.ShortName = beltViewModel.ShortName;
+            belt!.ShortName = beltViewModel.ShortName;
             belt.BeltNumber = beltViewModel.BeltNumber ?? 0;
             belt.FullName = beltViewModel.FullName;
 
-            await appDbContext.SaveChangesAsync();
+            await _appDbContext.SaveChangesAsync();
         }
 
         public async Task<BeltViewModel> GetBelt(Guid id)
         {
-            var belt = await appDbContext.Belts.FindAsync(id);
+            var belt = await _appDbContext.Belts.FindAsync(id);
+
+            if (belt == null)
+                throw new ValidationException("Belt is not found");
+            
             var viewModel = new BeltViewModel()
             {
                 Id = belt.Id,
@@ -133,7 +132,7 @@ namespace WebTournament.Business.Services
 
         public async Task<List<BeltViewModel>> GetBelts()
         {
-            var belts = appDbContext.Belts.AsNoTracking();
+            var belts = _appDbContext.Belts.AsNoTracking();
 
             return await belts.Select(x => new BeltViewModel()
             {
@@ -146,7 +145,7 @@ namespace WebTournament.Business.Services
 
         public async Task<Select2Response> GetAutoCompleteBelts(Select2Request request)
         {
-            var belts = appDbContext.Belts
+            var belts = _appDbContext.Belts
                .AsNoTracking()
                .AsQueryable();
 

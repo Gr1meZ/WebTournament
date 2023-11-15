@@ -1,8 +1,7 @@
 ﻿using DataAccess.Domain.Models;
-using Infrastructure.DataAccess.Abstract;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
+using DataAccess.Abstract;
 using WebTournament.Business.Abstract;
 using WebTournament.Models;
 using WebTournament.Models.Helpers;
@@ -11,11 +10,11 @@ namespace WebTournament.Business.Services
 {
     public class AgeGroupService : IAgeGroupService
     {
-        private readonly IApplicationDbContext appDbContext;
+        private readonly IApplicationDbContext _appDbContext;
 
         public AgeGroupService(IApplicationDbContext appDbContext)
         {
-            this.appDbContext = appDbContext; 
+            this._appDbContext = appDbContext; 
         }
 
         public async Task AddAgeGroup(AgeGroupViewModel ageGroupViewModel)
@@ -30,21 +29,21 @@ namespace WebTournament.Business.Services
                 Name = ageGroupViewModel.Name
             };
 
-            appDbContext.AgeGroups.Add(ageGroup);
-            await appDbContext.SaveChangesAsync();
+            _appDbContext.AgeGroups.Add(ageGroup);
+            await _appDbContext.SaveChangesAsync();
         }
 
         public async Task<PagedResponse<AgeGroupViewModel[]>> AgeGroupList(PagedRequest request)
         {
-            var dbQuery = appDbContext.AgeGroups
+            var dbQuery = _appDbContext.AgeGroups
                .AsQueryable()
                .AsNoTracking();
 
             // searching
-            var lowerQ = request.Search?.ToLower();
+            var lowerQ = request.Search.ToLower();
             if (!string.IsNullOrWhiteSpace(lowerQ))
             {
-                dbQuery = (lowerQ?.Split(' ')).Aggregate(dbQuery, (current, searchWord) =>
+                dbQuery = (lowerQ.Split(' ')).Aggregate(dbQuery, (current, searchWord) =>
                     current.Where(f =>
                         f.Name.ToLower().Contains(searchWord.ToLower()) ||
                         f.MinAge.ToString().ToLower().Contains(searchWord.ToLower()) ||
@@ -91,10 +90,10 @@ namespace WebTournament.Business.Services
 
         public async Task DeleteAgeGroup(Guid id)
         {
-            var ageGroup = await appDbContext.AgeGroups.FindAsync(id) ?? throw new ValidationException("Age group not found");
-            appDbContext.AgeGroups.Remove(ageGroup);
+            var ageGroup = await _appDbContext.AgeGroups.FindAsync(id) ?? throw new ValidationException("Age group not found");
+            _appDbContext.AgeGroups.Remove(ageGroup);
 
-            await appDbContext.SaveChangesAsync();
+            await _appDbContext.SaveChangesAsync();
         }
 
         public async Task EditAgeGroup(AgeGroupViewModel ageGroupViewModel)
@@ -103,19 +102,23 @@ namespace WebTournament.Business.Services
             if (ageGroupViewModel == null)
                 throw new ValidationException("Age group model is null");
 
-            var ageGroup = await appDbContext.AgeGroups.FindAsync(ageGroupViewModel.Id);
+            var ageGroup = await _appDbContext.AgeGroups.FindAsync(ageGroupViewModel.Id);
 
 
-            ageGroup.Name = ageGroupViewModel.Name;
+            ageGroup!.Name = ageGroupViewModel.Name;
             ageGroup.MaxAge = ageGroupViewModel.MaxAge ?? 0;
             ageGroup.MinAge = ageGroupViewModel.MinAge ?? 0;
 
-            await appDbContext.SaveChangesAsync();
+            await _appDbContext.SaveChangesAsync();
         }
 
         public async Task<AgeGroupViewModel> GetAgeGroup(Guid id)
         {
-            var ageGroup = await appDbContext.AgeGroups.FindAsync(id);
+            var ageGroup = await _appDbContext.AgeGroups.FindAsync(id);
+            
+            if (ageGroup == null)
+                throw new ValidationException("Age group is not found");
+            
             var viewModel = new AgeGroupViewModel()
             {
                 Id = ageGroup.Id,
@@ -130,7 +133,7 @@ namespace WebTournament.Business.Services
 
         public async Task<List<AgeGroupViewModel>> GetAgeGroups()
         {
-            var ageGroups = appDbContext.AgeGroups.AsNoTracking();
+            var ageGroups = _appDbContext.AgeGroups.AsNoTracking();
 
             return await ageGroups.Select(x => new AgeGroupViewModel()
             {
@@ -143,7 +146,7 @@ namespace WebTournament.Business.Services
 
         public async Task<Select2Response> GetAutoCompleteAgeGroups(Select2Request request)
         {
-            var ageGroups = appDbContext.AgeGroups
+            var ageGroups = _appDbContext.AgeGroups
               .AsNoTracking()
               .AsQueryable();
 

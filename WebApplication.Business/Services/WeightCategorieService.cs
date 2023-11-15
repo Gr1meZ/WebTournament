@@ -1,12 +1,7 @@
 ﻿using DataAccess.Domain.Models;
-using Infrastructure.DataAccess.Abstract;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using DataAccess.Abstract;
 using WebTournament.Business.Abstract;
 using WebTournament.Models;
 using WebTournament.Models.Helpers;
@@ -15,11 +10,11 @@ namespace WebTournament.Business.Services
 {
     public class WeightCategorieService : IWeightCategorieService
     {
-        private readonly IApplicationDbContext appDbContext;
+        private readonly IApplicationDbContext _appDbContext;
 
         public WeightCategorieService(IApplicationDbContext appDbContext)
         {
-            this.appDbContext = appDbContext;
+            _appDbContext = appDbContext;
         }
 
         public async Task AddWeightCategorie(WeightCategorieViewModel weightCategorieViewModel)
@@ -34,16 +29,16 @@ namespace WebTournament.Business.Services
                 WeightName = weightCategorieViewModel.WeightName
             };
 
-            appDbContext.WeightCategories.Add(weightCategorie);
-            await appDbContext.SaveChangesAsync();
+            _appDbContext.WeightCategories.Add(weightCategorie);
+            await _appDbContext.SaveChangesAsync();
         }
 
         public async Task DeleteWeightCategorie(Guid id)
         {
-            var weightCategorie = await appDbContext.WeightCategories.FindAsync(id) ?? throw new ValidationException("Weight categorie not found");
-            appDbContext.WeightCategories.Remove(weightCategorie);
+            var weightCategorie = await _appDbContext.WeightCategories.FindAsync(id) ?? throw new ValidationException("Weight categorie not found");
+            _appDbContext.WeightCategories.Remove(weightCategorie);
 
-            await appDbContext.SaveChangesAsync();
+            await _appDbContext.SaveChangesAsync();
         }
 
         public async Task EditWeightCategorie(WeightCategorieViewModel weightCategorieViewModel)
@@ -51,18 +46,22 @@ namespace WebTournament.Business.Services
             if (weightCategorieViewModel == null)
                 throw new ValidationException("Weight categorie model is null");
 
-            var weightCategorie = await appDbContext.WeightCategories.FindAsync(weightCategorieViewModel.Id);
+            var weightCategorie = await _appDbContext.WeightCategories.FindAsync(weightCategorieViewModel.Id);
 
-            weightCategorie.AgeGroupId = weightCategorieViewModel.AgeGroupId ?? Guid.Empty;
+            weightCategorie!.AgeGroupId = weightCategorieViewModel.AgeGroupId ?? Guid.Empty;
             weightCategorie.WeightName = weightCategorieViewModel.WeightName;
             weightCategorie.MaxWeight = weightCategorieViewModel.MaxWeight ?? 0;
 
-            await appDbContext.SaveChangesAsync();
+            await _appDbContext.SaveChangesAsync();
         }
 
         public async Task<WeightCategorieViewModel> GetWeightCategorie(Guid id)
         {
-            var weightCategorie = await appDbContext.WeightCategories.Include(x => x.AgeGroup).FirstOrDefaultAsync(x => x.Id == id);
+            var weightCategorie = await _appDbContext.WeightCategories.Include(x => x.AgeGroup).FirstOrDefaultAsync(x => x.Id == id);
+
+            if (weightCategorie == null)
+                throw new ValidationException("Weight categorie not found");
+            
             var viewModel = new WeightCategorieViewModel()
             {
                 Id = weightCategorie.Id,
@@ -77,7 +76,7 @@ namespace WebTournament.Business.Services
 
         public async Task<List<WeightCategorieViewModel>> GetWeightCategories()
         {
-            var weightCategories = appDbContext.WeightCategories.AsNoTracking();
+            var weightCategories = _appDbContext.WeightCategories.AsNoTracking();
 
             return await weightCategories.Select(weightCategorieViewModel => new WeightCategorieViewModel()
             {
@@ -91,16 +90,16 @@ namespace WebTournament.Business.Services
 
         public async Task<PagedResponse<WeightCategorieViewModel[]>> WeightCategoriesList(PagedRequest request)
         {
-            var dbQuery = appDbContext.WeightCategories
+            var dbQuery = _appDbContext.WeightCategories
                .Include(x => x.AgeGroup)
                .AsQueryable()
                .AsNoTracking();
 
             // searching
-            var lowerQ = request.Search?.ToLower();
+            var lowerQ = request.Search.ToLower();
             if (!string.IsNullOrWhiteSpace(lowerQ))
             {
-                dbQuery = (lowerQ?.Split(' ')).Aggregate(dbQuery, (current, searchWord) =>
+                dbQuery = (lowerQ.Split(' ')).Aggregate(dbQuery, (current, searchWord) =>
                     current.Where(f =>
                         f.AgeGroup.Name.ToLower().Contains(searchWord.ToLower()) ||
                         f.MaxWeight.ToString().ToLower().Contains(searchWord.ToLower()) ||
@@ -148,7 +147,7 @@ namespace WebTournament.Business.Services
 
         public async Task<Select2Response> GetAutoCompleteWeightCategories(Select2Request request)
         {
-            var ageGroups = appDbContext.WeightCategories
+            var ageGroups = _appDbContext.WeightCategories
              .AsNoTracking()
              .AsQueryable();
 
