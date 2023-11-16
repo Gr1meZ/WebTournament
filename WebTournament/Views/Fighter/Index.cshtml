@@ -30,9 +30,6 @@
                     <div class="col-md-12">
                         <form>
                             <a class="btn btn btn-info compItem " asp-controller="Fighter" asp-route-id="@Model" asp-action="AddIndex">Добавить игрока <i class="bi bi-plus-circle"></i> </a>
-                            <label for="file-upload" class="custom-file-upload">
-                                Custom Upload
-                            </label>
                             <input id="file-upload" type="file" name="formFile" />
                             <button class="btn btn-success " id="generateBtn" type="button">Добавить заявку </button>
                         </form>
@@ -72,7 +69,7 @@
 </div>
 
 @section Scripts
-    {
+{
 
     <script asp-append-version="true" src="~/js//ajaxDatatables/fighterDatatable.js"></script>
     <script>
@@ -102,7 +99,7 @@
                     console.log(formData)
                     // Отправляем файл на asp.net core controller с помощью $.ajax
                     $.ajax({
-                        url: '/ExcelParser/Read', // Замените '/your_controller_path' на путь к вашему контроллеру
+                        url: `/ExcelParser/Read?tournamentId=` + '@Model', // Замените '/your_controller_path' на путь к вашему контроллеру
                         type: 'POST',
                         data: formData,
                         contentType: false,

@@ -13,7 +13,7 @@ namespace WebTournament.WebApp.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Read(CancellationToken cancellationToken)
+        public async Task<IActionResult> Read([FromQuery]Guid tournamentId, CancellationToken cancellationToken)
         {
             var formFile = Request.Form.Files[0];
             Path.GetTempFileName();
@@ -24,7 +24,7 @@ namespace WebTournament.WebApp.Controllers
             if (!Path.GetExtension(formFile.FileName).Equals(".xlsx", StringComparison.OrdinalIgnoreCase))
                 return BadRequest("Не поддерживаемый формат файла");
 
-            await _excelParserService.GenerateFromExcelAsync(formFile, cancellationToken);
+            await _excelParserService.GenerateFromExcelAsync(formFile, tournamentId, cancellationToken);
             return Ok();
         }
     }

@@ -130,7 +130,7 @@ namespace WebTournament.Business.Services
                     "gender" => (request.OrderDir.Equals("asc"))
                     ? dbQuery.OrderBy(o => o.Gender)
                     : dbQuery.OrderByDescending(o => o.Gender),
-                    "beltName" => (request.OrderDir.Equals("asc"))
+                    "beltShortName" => (request.OrderDir.Equals("asc"))
                     ? dbQuery.OrderBy(o => o.Belt.ShortName)
                     : dbQuery.OrderByDescending(o => o.Belt.ShortName),
                     "trainerName" => (request.OrderDir.Equals("asc"))
@@ -160,7 +160,7 @@ namespace WebTournament.Business.Services
                 Age = x.Age,
                 BirthDate = x.BirthDate,
                 BeltId = x.BeltId,
-                BeltName = x.Belt.ShortName,
+                BeltShortName = $"{x.Belt.BeltNumber} {x.Belt.ShortName}",
                 City = x.City,
                 Surname = x.Surname,
                 Country = x.Country,
@@ -201,7 +201,7 @@ namespace WebTournament.Business.Services
                 TournamentId= fighter.TournamentId,
                 Surname= fighter.Surname,
                 BeltId = fighter.BeltId,
-                BeltName = fighter.Belt.ShortName,
+                BeltShortName = fighter.Belt.ShortName,
                 City = fighter.City,
                 Country = fighter.Country,
                 TournamentName= fighter.Tournament.Name,
@@ -229,7 +229,7 @@ namespace WebTournament.Business.Services
                 TournamentId = fighter.TournamentId,
                 Surname = fighter.Surname,
                 BeltId = fighter.BeltId,
-                BeltName = fighter.Belt.ShortName,
+                BeltShortName = fighter.Belt.ShortName,
                 City = fighter.City,
                 Country = fighter.Country,
                 TournamentName = fighter.Tournament.Name,

@@ -173,5 +173,7 @@ namespace WebTournament.Business.Services
                 Total = total
             };
         }
+
+        
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using DataAccess.Common.Enums;
 
 namespace WebTournament.Models
 {
@@ -14,5 +15,8 @@ namespace WebTournament.Models
         public int? MaxWeight { get; init; } = 0; 
         [Required(ErrorMessage = "Название не заполнено")]
         public string WeightName { get; set; }
+        
+        [Required(ErrorMessage = "Пол не заполнен")]
+        public string Gender { get; set; }
     }
 }

@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using DataAccess.Abstract;
+using DataAccess.Common.Extensions;
 using WebTournament.Business.Abstract;
 using WebTournament.Models;
 using WebTournament.Models.Helpers;
@@ -26,7 +27,8 @@ namespace WebTournament.Business.Services
             {
                 AgeGroupId = weightCategorieViewModel.AgeGroupId ?? Guid.Empty,
                 MaxWeight = weightCategorieViewModel.MaxWeight ?? 0,
-                WeightName = weightCategorieViewModel.WeightName
+                WeightName = weightCategorieViewModel.WeightName,
+                Gender = GenderExtension.ParseEnum(weightCategorieViewModel.Gender)
             };
 
             _appDbContext.WeightCategories.Add(weightCategorie);
@@ -51,7 +53,8 @@ namespace WebTournament.Business.Services
             weightCategorie!.AgeGroupId = weightCategorieViewModel.AgeGroupId ?? Guid.Empty;
             weightCategorie.WeightName = weightCategorieViewModel.WeightName;
             weightCategorie.MaxWeight = weightCategorieViewModel.MaxWeight ?? 0;
-
+            weightCategorie.Gender = GenderExtension.ParseEnum(weightCategorieViewModel.Gender);
+            
             await _appDbContext.SaveChangesAsync();
         }
 
@@ -68,7 +71,8 @@ namespace WebTournament.Business.Services
                 AgeGroupId = weightCategorie.AgeGroupId,
                 AgeGroupName = weightCategorie.AgeGroup.Name,
                 MaxWeight = weightCategorie.MaxWeight,
-                WeightName = weightCategorie.WeightName
+                WeightName = weightCategorie.WeightName,
+                Gender = weightCategorie.Gender.MapToString()
             };
 
             return viewModel;
@@ -84,7 +88,8 @@ namespace WebTournament.Business.Services
                 AgeGroupId = weightCategorieViewModel.AgeGroupId,
                 AgeGroupName = weightCategorieViewModel.WeightName,
                 MaxWeight = weightCategorieViewModel.MaxWeight,
-                WeightName = weightCategorieViewModel.WeightName
+                WeightName = weightCategorieViewModel.WeightName,
+                Gender = weightCategorieViewModel.Gender.MapToString()
             }).ToListAsync();
         }
 
@@ -121,6 +126,9 @@ namespace WebTournament.Business.Services
                     "ageGroupName" => (request.OrderDir.Equals("asc"))
                         ? dbQuery.OrderBy(o => o.AgeGroup.Name)
                         : dbQuery.OrderByDescending(o => o.AgeGroup.Name),
+                    "gender" => (request.OrderDir.Equals("asc"))
+                        ? dbQuery.OrderBy(o => o.Gender)
+                        : dbQuery.OrderByDescending(o => o.Gender),
                     _ => (request.OrderDir.Equals("asc"))
                         ? dbQuery.OrderBy(o => o.Id)
                         : dbQuery.OrderByDescending(o => o.Id)
@@ -139,7 +147,8 @@ namespace WebTournament.Business.Services
                 AgeGroupId = x.AgeGroupId,
                 MaxWeight = x.MaxWeight,
                 WeightName = x.WeightName,
-                AgeGroupName = x.AgeGroup.Name
+                AgeGroupName = x.AgeGroup.Name,
+                Gender = x.Gender.MapToString()
             }).ToArrayAsync();
 
             return new PagedResponse<WeightCategorieViewModel[]>(dbItems, totalItemCount, request.PageNumber, request.PageSize);

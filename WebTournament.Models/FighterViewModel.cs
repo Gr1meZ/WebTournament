@@ -23,7 +23,7 @@ namespace WebTournament.Models
         [Required(ErrorMessage = "Дата рождения не заполнена")]
         public DateTime BirthDate { get; set; }
         [Required(ErrorMessage = "Возраст не заполнен")]
-        public int Age { get; init; }
+        public int Age { get; set; }
         [Required(ErrorMessage = "Страна не заполнена")]
         public string Country { get; set; }
         [Required(ErrorMessage = "Город не заполнен")]
@@ -35,8 +35,11 @@ namespace WebTournament.Models
         //for reading
         public string TournamentName { get; init; } = string.Empty;
         public string WeightCategorieName { get; init; } = string.Empty;
-        public string BeltName { get; init; } = string.Empty;
-        public string TrainerName { get; init; } = string.Empty;
-        public string ClubName { get; init; } = string.Empty;
+        public int WeightNumber { get; set; } 
+        public string BeltShortName { get; set; } 
+        public int BeltNumber { get; set; }
+        public string TrainerName { get; set; } 
+        public string ClubName { get; set; } 
+        
     }
 }

@@ -27,9 +27,10 @@
                 { targets: 1, title: "Возрастная категория", data: "ageGroupName" },
                 { targets: 2, title: "Название весовой категории", data: "weightName" },
                 { targets: 3, title: "Предельный вес", data: "maxWeight" },
+                { targets: 4, title: "Пол", data: "gender" },
 
                 {
-                    targets: 4, title: "", data: "id", className: "text-center", orderable: false,
+                    targets: 5, title: "", data: "id", className: "text-center", orderable: false,
                     render: function ( itemId, type, row, meta ) {
 
                         return `<button  class="btn btn-info" data-action="showEditItemModal" id="showEditItemModal"><i class="bi bi-pencil"></i></button>`
@@ -37,7 +38,7 @@
                     }
                 },
                 {
-                    targets: 5, title: "", data: "itemId", className: "text-center", orderable: false,
+                    targets: 6, title: "", data: "itemId", className: "text-center", orderable: false,
                     render: function ( itemId, type, row, meta ) {
 
                         return `<button data-action="showDeleteItemModal" type="button" class="btn btn-danger " title="Delete item"><i class="bi bi-trash"></i></button>`

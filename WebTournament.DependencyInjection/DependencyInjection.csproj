@@ -21,10 +21,16 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DataAccess.Common\DataAccess.Common.csproj" />
+    <ProjectReference Include="..\DataAccess.MSSQL\DataAccess.MSSQL.csproj" />
     <ProjectReference Include="..\WebApplication.Business\WebTournament.Business.csproj" />
     <ProjectReference Include="..\WebTournament.Business.Abstract\WebTournament.Business.Abstract.csproj" />
     <ProjectReference Include="..\WebTournament.DataAccess.Abstract\DataAccess.Abstract.csproj" />
-    <ProjectReference Include="..\WebTournament.DataAccess.DataBase\DataAccess.MSSQL.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="DataAccess.MSSQL">
+      <HintPath>..\WebTournament\bin\Debug\net7.0\DataAccess.MSSQL.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
