@@ -1,7 +1,13 @@
+using DataAccess.Common.Fitlers;
 using DependencyInjection;
 
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddMvc(options =>
+{
+    options.Filters.Add<ApiExceptionFilterAttribute>();
+});
 
 builder.Services.AddServices(builder.Configuration);
 

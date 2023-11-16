@@ -84,7 +84,8 @@
     $('#linkClose').click(function () {
         $('#alertMessage').hide('fade');
         $("#alertText").empty();
-
+        $('#alertSuccessMessage').hide('fade');
+        $("#alertSucessText").empty();
     });
 
     initAjaxAutoCompleteSelect({
@@ -112,7 +113,6 @@
         let $btn = $(ev.currentTarget);
 
         let $form = $('#sbmForm');
-        console.log($form.serialize())
         $.ajax({
             url: '/Fighter/AddModel',
             method: 'POST',
@@ -131,7 +131,7 @@
             },
             success: function (data) {
                 $("#myModal").modal('hide');
-                document.location.reload();
+                
             },
             error: function (data) {
                 console.log(data);

@@ -2,7 +2,6 @@
 using DataAccess.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
-using System.Globalization;
 using WebTournament.Business.Abstract;
 using WebTournament.Models;
 using WebTournament.Models.Helpers;
