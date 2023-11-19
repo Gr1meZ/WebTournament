@@ -12,5 +12,6 @@ namespace DataAccess.Domain.Models
         public DateTime StartDate { get; set; }
         public  string Address { get; set; }
         public ICollection<Fighter> Fighters { get; set; }
+        public ICollection<Bracket> Brackets { get; set; }
     }
 }

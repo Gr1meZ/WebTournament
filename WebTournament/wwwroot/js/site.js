@@ -118,3 +118,70 @@ function initAjaxAutoCompleteSelect(options) {
     $(options.selector).select2(select2Options);
 
 }
+
+function initAjaxAutoCompleteMultiplySelect(options) {
+    let pageSize = 30;
+    console.log(options)
+    let select2Options = {
+        dropdownParent: $('#myModal'),
+        containerCssClass : "form-control",
+        placeholder: $(this).data('placeholder'),
+        multiple: true,
+        width: '100%',
+        dropdownAutoWidth : true,
+        ajax: {
+            url: options.url,
+            dataType: 'json',
+            delay: 250,
+            method: 'POST',
+            data: function(params)
+            {
+
+                return {
+                    search: params.term,
+                    skip: (parseInt(params.page || 1) - 1) * pageSize,
+                    pageSize: pageSize
+                };
+                cache: true
+            },
+
+            processResults: function(data, params)
+            {
+                params.page = params.page || 1;
+                return {
+                    results: data.data,
+                    pagination:
+                        {
+                            more: (params.page * pageSize) < data.total
+                        }
+                };
+            }
+        },
+        escapeMarkup: function(markup)
+        {
+            return markup;
+        },
+        minimumInputLength: 0,
+        templateResult: function (item) {
+            if (item.loading)
+                return item.text;
+
+            return "<div class='select2-result-repository clearfix d-flex'>" +
+                "<div class='select2-result-repository__meta'>" +
+                "<div class='select2-result-repository__title fs-lg fw-500'>" + item.name + "</div>"
+                + "</div></div>";
+        },
+        templateSelection: function (item) {
+            if (item.text)
+                return item.text;
+
+            return '<div data-id="'+ item.name +'"> '+item.name+'</div>';
+        }
+    };
+
+    if(options.maxItems)
+        select2Options.maximumSelectionLength = options.maxItems;
+
+    $(options.selector).select2(select2Options);
+
+}

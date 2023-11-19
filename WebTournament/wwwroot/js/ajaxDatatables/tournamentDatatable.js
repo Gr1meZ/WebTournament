@@ -40,13 +40,21 @@
                     targets: 5, title: "", data: "id", className: "text-center", orderable: false,
                     render: function (itemId, type, row, meta) {
 
+                        return `<a  class="btn btn-info" href="/Bracket/TournamentBrackets/${itemId}"><i class="bi bi-trophy-fill"></i></a>`
+
+                    }
+                },
+                {
+                    targets: 6, title: "", data: "id", className: "text-center", orderable: false,
+                    render: function (itemId, type, row, meta) {
+
                         return `<button  class="btn btn-info" data-action="showEditItemModal" id="showEditItemModal"><i class="bi bi-pencil"></i></button>`
 
                     }
                 },
                
                 {
-                    targets: 6, title: "", data: "itemId", className: "text-center", orderable: false,
+                    targets: 7, title: "", data: "itemId", className: "text-center", orderable: false,
                     render: function ( itemId, type, row, meta ) {
 
                         return `<button data-action="showDeleteItemModal" type="button" class="btn btn-danger " title="Delete item"><i class="bi bi-trash"></i></button>`

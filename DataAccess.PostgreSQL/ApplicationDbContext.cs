@@ -24,6 +24,7 @@ namespace DataAccess.PostgreSQL
         public DbSet<Trainer> Trainers { get; set; }
         public DbSet<WeightCategorie> WeightCategories { get; set; }
         public DbSet<AgeGroup> AgeGroups { get; set; }
+        public DbSet<Bracket> Brackets { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

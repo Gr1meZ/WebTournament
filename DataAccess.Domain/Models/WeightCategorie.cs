@@ -15,7 +15,7 @@ namespace DataAccess.Domain.Models
         public  string WeightName { get; set; }
         public Gender Gender { get; set; }
         public ICollection<Fighter> Fighters { get; set; }
-
+        public ICollection<Bracket> Brackets { get; set; }
 
     }
 }

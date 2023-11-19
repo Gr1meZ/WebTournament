@@ -13,6 +13,7 @@ namespace DataAccess.Domain.Models
         public Guid WeightCategorieId { get; set; }
         public Guid BeltId { get; set; }
         public Guid TrainerId { get; set; }
+        public Guid? BracketId { get; set; }
         public  string Name { get; set; }
         public  string Surname { get; set; }
         public DateTime BirthDate { get; set; }
@@ -25,6 +26,7 @@ namespace DataAccess.Domain.Models
         public  WeightCategorie WeightCategorie { get; set;}
         public  Belt Belt { get; set;}  
         public  Trainer Trainer { get; set;}    
+        public Bracket Bracket { get; set; }
 
     }
 }

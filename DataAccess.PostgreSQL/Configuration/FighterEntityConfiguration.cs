@@ -31,6 +31,10 @@ namespace DataAccess.PostgreSQL.Configuration
                .WithMany(x => x.Fighters)
                .HasForeignKey(x => x.TournamentId)
                .IsRequired();
+
+            builder.HasOne(x => x.Bracket)
+                .WithMany(x => x.Fighters)
+                .HasForeignKey(x => x.BracketId).IsRequired(false);
         }
     }
 }

@@ -3,6 +3,7 @@ using System;
 using DataAccess.PostgreSQL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DataAccess.PostgreSQL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231119172055_TournamentBracket")]
+    partial class TournamentBracket
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -217,6 +220,7 @@ namespace DataAccess.PostgreSQL.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid?>("BracketId")
+                        .IsRequired()
                         .HasColumnType("uuid");
 
                     b.Property<string>("City")
@@ -479,7 +483,9 @@ namespace DataAccess.PostgreSQL.Migrations
 
                     b.HasOne("DataAccess.Domain.Models.Bracket", "Bracket")
                         .WithMany("Fighters")
-                        .HasForeignKey("BracketId");
+                        .HasForeignKey("BracketId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("DataAccess.Domain.Models.Tournament", "Tournament")
                         .WithMany("Fighters")

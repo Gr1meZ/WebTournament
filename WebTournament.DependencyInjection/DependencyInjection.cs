@@ -36,6 +36,7 @@ namespace DependencyInjection
             services.AddScoped<ITrainerService, TrainerService>();
             services.AddScoped<IWeightCategorieService, WeightCategorieService>();
             services.AddScoped<IExcelParserService, ExcelParserService>();
+            services.AddScoped<IBracketService, BracketService>();
 
 
             return services;

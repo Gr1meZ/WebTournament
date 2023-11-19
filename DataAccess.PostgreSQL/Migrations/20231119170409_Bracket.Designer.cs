@@ -3,6 +3,7 @@ using System;
 using DataAccess.PostgreSQL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DataAccess.PostgreSQL.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231119170409_Bracket")]
+    partial class Bracket
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -171,17 +174,10 @@ namespace DataAccess.PostgreSQL.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<Guid>("TournamentId")
-                        .HasColumnType("uuid");
-
                     b.Property<Guid>("WeightCategorieId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("TournamentId");
-
-                    b.HasIndex("WeightCategorieId");
 
                     b.ToTable("Brackets");
                 });
@@ -216,7 +212,7 @@ namespace DataAccess.PostgreSQL.Migrations
                     b.Property<DateTime>("BirthDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid?>("BracketId")
+                    b.Property<Guid>("BracketId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("City")
@@ -450,25 +446,6 @@ namespace DataAccess.PostgreSQL.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("DataAccess.Domain.Models.Bracket", b =>
-                {
-                    b.HasOne("DataAccess.Domain.Models.Tournament", "Tournament")
-                        .WithMany("Brackets")
-                        .HasForeignKey("TournamentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DataAccess.Domain.Models.WeightCategorie", "WeightCategorie")
-                        .WithMany("Brackets")
-                        .HasForeignKey("WeightCategorieId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Tournament");
-
-                    b.Navigation("WeightCategorie");
-                });
-
             modelBuilder.Entity("DataAccess.Domain.Models.Fighter", b =>
                 {
                     b.HasOne("DataAccess.Domain.Models.Belt", "Belt")
@@ -477,9 +454,11 @@ namespace DataAccess.PostgreSQL.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DataAccess.Domain.Models.Bracket", "Bracket")
+                    b.HasOne("DataAccess.Domain.Models.Bracket", null)
                         .WithMany("Fighters")
-                        .HasForeignKey("BracketId");
+                        .HasForeignKey("BracketId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("DataAccess.Domain.Models.Tournament", "Tournament")
                         .WithMany("Fighters")
@@ -500,8 +479,6 @@ namespace DataAccess.PostgreSQL.Migrations
                         .IsRequired();
 
                     b.Navigation("Belt");
-
-                    b.Navigation("Bracket");
 
                     b.Navigation("Tournament");
 
@@ -605,8 +582,6 @@ namespace DataAccess.PostgreSQL.Migrations
 
             modelBuilder.Entity("DataAccess.Domain.Models.Tournament", b =>
                 {
-                    b.Navigation("Brackets");
-
                     b.Navigation("Fighters");
                 });
 
@@ -617,8 +592,6 @@ namespace DataAccess.PostgreSQL.Migrations
 
             modelBuilder.Entity("DataAccess.Domain.Models.WeightCategorie", b =>
                 {
-                    b.Navigation("Brackets");
-
                     b.Navigation("Fighters");
                 });
 #pragma warning restore 612, 618

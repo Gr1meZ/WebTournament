@@ -16,6 +16,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
 var app = builder.Build();
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 var loggerFactory = LoggerFactory.Create(loggingBuilder => loggingBuilder.AddConsole());
 loggerFactory.CreateLogger<Program>();
