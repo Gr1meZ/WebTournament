@@ -2,12 +2,12 @@
 using DataAccess.Common.Enums;
 using DataAccess.Common.IdentityModels;
 using DataAccess.Domain.Models;
-using DataAccess.MSSQL.Configuration;
+using DataAccess.PostgreSQL.Configuration;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace DataAccess.MSSQL
+namespace DataAccess.PostgreSQL
 {
     public class ApplicationDbContext : IdentityDbContext<AppUser, AppRole, Guid>, IApplicationDbContext
     {

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 
-namespace DataAccess.MSSQL.Configuration
+namespace DataAccess.PostgreSQL.Configuration
 {
     internal class FighterEntityConfiguration : IEntityTypeConfiguration<Fighter>
     {

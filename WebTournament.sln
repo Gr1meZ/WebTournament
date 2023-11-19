@@ -5,7 +5,7 @@ VisualStudioVersion = 17.7.34221.43
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebTournament.WebApp", "WebTournament\WebTournament.WebApp.csproj", "{6DE1071A-8333-4718-B94B-F71397292E8E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataAccess.MSSQL", "DataAccess.MSSQL\DataAccess.MSSQL.csproj", "{C514515C-6C6C-4A34-BCA4-C3F218FEB577}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataAccess.PostgreSQL", "DataAccess.PostgreSQL\DataAccess.PostgreSQL.csproj", "{C514515C-6C6C-4A34-BCA4-C3F218FEB577}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataAccess.Abstract", "WebTournament.DataAccess.Abstract\DataAccess.Abstract.csproj", "{7B5E965C-E610-489A-B743-370E1357528B}"
 EndProject

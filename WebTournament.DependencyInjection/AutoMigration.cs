@@ -1,4 +1,4 @@
-﻿using DataAccess.MSSQL;
+﻿using DataAccess.PostgreSQL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 

@@ -1,6 +1,6 @@
 ﻿using DataAccess.Abstract;
 using DataAccess.Common.IdentityModels;
-using DataAccess.MSSQL;
+using DataAccess.PostgreSQL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,7 +17,7 @@ namespace DependencyInjection
             var connectionString = configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
             services.AddDbContext<ApplicationDbContext>(options =>
-               options.UseSqlServer(connectionString,
+               options.UseNpgsql(connectionString,
                b => b.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName))
                .EnableSensitiveDataLogging(),ServiceLifetime.Transient);
 
