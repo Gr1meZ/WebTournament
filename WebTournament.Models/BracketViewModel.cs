@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace WebTournament.Models;
 
 public class BracketViewModel

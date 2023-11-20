@@ -18,6 +18,21 @@ public class BracketService : IBracketService
     {
         _appDbContext = appDbContext;
     }
+
+    public async Task<BracketState> GetBracket(Guid bracketId)
+    {
+        var bracket = await _appDbContext.Brackets.FindAsync(bracketId);
+        
+        if (bracket == null)
+            throw new ValidationException("ValidationException", "Bracket not found");
+        
+        var bracketViewModel = new BracketState()
+        {
+            Id = bracket.Id,
+            State = bracket.State
+        };
+        return bracketViewModel;
+    }
     public async Task GenerateBrackets(BracketViewModel bracketViewModel)
     {
         
@@ -44,13 +59,18 @@ public class BracketService : IBracketService
     
     public async Task DistributeAllPlayers(Guid tournamentId)
     {
-        var fighters = _appDbContext.Tournaments.SelectMany(x => x.Fighters)
-            .Where(x => x.TournamentId == tournamentId);
+        var fighters = await _appDbContext.Tournaments.SelectMany(x => x.Fighters)
+            .Include(x => x.WeightCategorie.AgeGroup)
+            .Include(x => x.Belt)
+            .Include(x => x.Bracket)
+            .Include(x => x.Tournament)
+            .Where(x => x.TournamentId == tournamentId)
+            .ToListAsync();
         
         foreach (var fighter in fighters)
         {
             var bracketId = await _appDbContext.Brackets
-                .Where(x => x.WeightCategorieId == fighter.WeightCategorieId && x.Division.Contains(fighter.BeltId))
+                .Where(x => x.WeightCategorieId == fighter.WeightCategorieId && x.Division.Contains(fighter.BeltId) && x.TournamentId == tournamentId)
                 .Select(x => x.Id).FirstOrDefaultAsync();
 
             if (bracketId == Guid.Empty)
@@ -59,7 +79,7 @@ public class BracketService : IBracketService
             fighter.BracketId = bracketId;
         }
         
-        DrawFighters(tournamentId);
+        await DrawFighters(tournamentId);
         await _appDbContext.SaveChangesAsync();
     }
     
@@ -128,7 +148,12 @@ public class BracketService : IBracketService
 
     public async Task DeleteAllBrackets(Guid tournamentId)
     {
-        var brackets =  await _appDbContext.Brackets.Where(x => x.TournamentId == tournamentId).ToListAsync();
+        var brackets = _appDbContext.Brackets
+            .Include(x => x.Fighters)
+            .Include(x => x.WeightCategorie.AgeGroup)
+            .Include(x => x.Tournament)
+            .Where(x => x.TournamentId == tournamentId);
+        
          _appDbContext.Brackets.RemoveRange(brackets);
          await _appDbContext.SaveChangesAsync();
     }
@@ -140,13 +165,30 @@ public class BracketService : IBracketService
             throw new ValidationException("ValidationException", "Данная турнирная сетка уже сгенерирована для данного турнира");
     }
     
-    private void DrawFighters(Guid tournamentId)
+    private async Task DrawFighters(Guid tournamentId)
     {
-        var brackets =  _appDbContext.Brackets.Where(x => x.TournamentId == tournamentId);
+        var brackets =  await _appDbContext.Brackets
+            .Include(x => x.Fighters)
+            .Include( x => x.WeightCategorie.AgeGroup)
+            .Include(x => x.Tournament)
+            .Where(x => x.TournamentId == tournamentId)
+            .ToListAsync();
+        
         foreach (var bracket in brackets)
         {
-            var bracketData = new BracketData();
-            var players = bracket.Fighters.ToList();
+            var bracketData = new BracketData()
+            {
+                teams = new List<List<Team>>(),
+                results = new List<int>()
+            };
+            
+            var playersFromQuery = bracket.Fighters.Select(x => x.Id).ToList();
+            
+            var players = await _appDbContext.Fighters.Where(x => playersFromQuery.Contains(x.Id))
+                .Include(x => x.WeightCategorie.AgeGroup)
+                .Include(x => x.Tournament)
+                .Include(x => x.Trainer.Club)
+                .ToListAsync();
             
             if (players.Count == 0)
                 throw new ValidationException("ValidationException", "Игроки не найдены");
@@ -157,21 +199,42 @@ public class BracketService : IBracketService
                 var secondPlayer = players.FirstOrDefault(x => x.Country != firstPlayer?.Country
                                                                || x.City != firstPlayer.City
                                                                || x.Trainer.ClubId != firstPlayer.Trainer.ClubId
-                                                               || x.TrainerId != firstPlayer.TrainerId) ?? players.FirstOrDefault();
+                                                               || x.TrainerId != firstPlayer.TrainerId) ?? players.FirstOrDefault(x => x != firstPlayer);
                 
-                bracketData.Teams.Add(new List<Team>()
+                bracketData.teams.Add(new List<Team>()
                 {
-                    new Team() {Name = firstPlayer!.Surname},
-                    new Team(){Name = secondPlayer!.Surname}
+                    new() {name = firstPlayer!.Surname},
+                    (secondPlayer == null ? null : new() {name = secondPlayer!.Surname})! 
                 });
                 
                 players.Remove(firstPlayer);
                 players.Remove(secondPlayer);
             }
 
+            ValidateBracketData(bracketData);
             bracket.State = JsonConvert.SerializeObject(bracketData);
         }
 
     }
-   
+
+    private void ValidateBracketData(BracketData bracketData)
+    {
+        var count = bracketData.teams.Count;
+        var nearestPowerOfTwo = 1;
+        
+        while (nearestPowerOfTwo < count)
+        {
+            nearestPowerOfTwo *= 2;
+        }
+
+        if (nearestPowerOfTwo <= count) return;
+        var numberOfEmptyPlayers = nearestPowerOfTwo - count;
+        for (var i = 0; i < numberOfEmptyPlayers; i++)
+        {
+            bracketData.teams.Add(new List<Team>()
+            {
+                null!, null!
+            });
+        }
+    }
 }

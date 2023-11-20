@@ -15,9 +15,12 @@
             </div>
 
             <table id="item-tbl" class="table">
-                <a class="btn btn btn-info compItem" asp-action="AddIndex" asp-controller="Bracket" asp-route-tournamentId="@Model">Добавить <i class="bi bi-plus-circle"></i></a>
-                <button class="btn btn btn-danger compItem" >Удалить все сетки <i class="bi bi-plus-circle"></i></button>
-
+                <div class="px-lg-2">
+                     <a class="btn btn btn-info compItem" asp-action="AddIndex" asp-controller="Bracket" asp-route-tournamentId="@Model">Добавить <i class="bi bi-plus-circle"></i></a>
+                    <button class="btn btn btn-success" id="generateBtn">Жеребить </button>
+                    <button class="btn btn btn-danger compDlt">Удалить все сетки</button>
+                </div>
+                
             </table>
         </div>
     </div>
@@ -58,12 +61,20 @@
             const bracketDatatable = GetBracketDatatable('@Model');
             bracketDatatable.init();
 
-            $(".compItem").click(function (e) {
-                console.log(e);
-                e.preventDefault();
-                $('#deleteItemModal').modal('show');
-
-            });
+           $(".compItem").click(function (e) {
+                          console.log(e);
+                          e.preventDefault();
+                          $.get(this.href, function (data) {
+                              $('#dialogContent').html(data);
+                              $('#myModal').modal('show');
+                          });
+                      });
+            
+            $(".compDlt").click(function (e) {
+                            console.log(e);
+                            e.preventDefault();
+                            $('#deleteItemModal').modal('show');
+                        });
             
               $('#deleteItemBtn').click(function (ev) {
             
@@ -93,6 +104,34 @@
                         }
                     });
                 });
+              
+              $('#generateBtn').click(function (ev) {
+                          
+                                  let $btn = $(ev.currentTarget);
+                          
+                                  $.ajax({
+                                      url: '/Bracket/DrawFighters/' + '@Model',
+                                      method: 'POST',
+                                      cache: false,
+                                      xhr: function () {
+                                          let xhr = new XMLHttpRequest();
+                                          xhr.onreadystatechange = function () {
+                                              if (xhr.readyState === 2) {
+                                                  if (xhr.status === 200) {
+                                                      xhr.responseType = "text";
+                                                  }
+                                              }
+                                          };
+                                          return xhr;
+                                      },
+                                      success: function (data) {
+                                          document.location.reload();
+                                      },
+                                      error: function (data) {
+                                          console.log(data);
+                                      }
+                                  });
+                              });
         });
     </script>
 }

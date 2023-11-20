@@ -57,4 +57,16 @@ public class BracketController : Controller
         await _bracketService.GenerateBrackets(bracketViewModel);
         return Ok();
     }
+    
+    [HttpPost("[controller]/[action]/{tournamentId}")]
+    public async Task<IActionResult> DrawFighters(Guid tournamentId)
+    {
+        if (!ModelState.IsValid) return BadRequest(ModelState.Values.SelectMany(v => v.Errors).Select(x => x.ErrorMessage).ToList());
+        await _bracketService.DistributeAllPlayers(tournamentId);
+        return Ok();
+    }
+    
+    [HttpGet("[controller]/[action]/{bracketId}")]
+    public async Task<IActionResult> GetBracket(Guid bracketId) => View("Bracket", await _bracketService.GetBracket(bracketId));
+
 }

@@ -27,9 +27,16 @@
                 { targets: 1, title: "Дивизион", data: "divisionName" },
                 { targets: 2, title: "Категория", data: "categoriesName" },
                 { targets: 3, title: "Вес, кг", data: "maxWeight" },
-                
                 {
-                    targets: 4, title: "", data: "itemId", className: "text-center", orderable: false,
+                    targets: 4, title: "", data: "id", className: "text-center", orderable: false,
+                    render: function (itemId) {
+
+                        return `<a data-action="showDeleteItemModal" type="button" class="btn btn-success " href="/Bracket/GetBracket/${itemId}"><i class="bi bi-table"></i></a>`
+
+                    }
+                },
+                {
+                    targets: 5, title: "", data: "itemId", className: "text-center", orderable: false,
                     render: function () {
 
                         return `<button data-action="showDeleteItemModal" type="button" class="btn btn-danger " title="Delete item"><i class="bi bi-trash"></i></button>`
