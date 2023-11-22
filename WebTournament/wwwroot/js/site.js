@@ -123,11 +123,10 @@ function initAjaxAutoCompleteMultiplySelect(options) {
     let pageSize = 30;
     console.log(options)
     let select2Options = {
-        dropdownParent: $('#myModal'),
         containerCssClass : "form-control",
         placeholder: $(this).data('placeholder'),
         multiple: true,
-        width: '100%',
+        width: '50%',
         dropdownAutoWidth : true,
         ajax: {
             url: options.url,
@@ -166,7 +165,7 @@ function initAjaxAutoCompleteMultiplySelect(options) {
             if (item.loading)
                 return item.text;
 
-            return "<div class='select2-result-repository clearfix d-flex'>" +
+            return "<div class='select2-result-repository clearfix '>" +
                 "<div class='select2-result-repository__meta'>" +
                 "<div class='select2-result-repository__title fs-lg fw-500'>" + item.name + "</div>"
                 + "</div></div>";

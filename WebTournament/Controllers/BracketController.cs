@@ -1,5 +1,7 @@
+using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using WebTournament.Business.Abstract;
 using WebTournament.Models;
 using WebTournament.Models.Helpers;
@@ -65,14 +67,25 @@ public class BracketController : Controller
         await _bracketService.DistributeAllPlayers(tournamentId);
         return Ok();
     }
-    
+
     [HttpGet("[controller]/[action]/{bracketId}")]
-    public async Task<IActionResult> GetBracket(Guid bracketId) => View("Bracket", await _bracketService.GetBracket(bracketId));
+    public async Task<IActionResult> GetBracket(Guid bracketId)
+    {
+        var bracket = await _bracketService.GetBracket(bracketId);
+        ViewData["Winners"] = JsonConvert.SerializeObject(bracket.Winners);
+        return View("Bracket", bracket);
+    }
 
     [HttpPost]
     public async Task<IActionResult> SaveState(BracketState bracketState)
     {
         await _bracketService.SaveState(bracketState);
         return Ok();
+    }
+    
+    [HttpPost("[controller]/[action]/{bracketId}")]
+    public async Task<IActionResult> Select2BracketFighters([FromForm]Select2Request request, Guid bracketId)
+    {
+        return Ok(await _bracketService.GetAutoCompleteBracketFighters(request, bracketId));
     }
 }

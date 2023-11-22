@@ -3,8 +3,8 @@
     let $deleteItemModal = $('#deleteItemModal');
     let $editItemModal = $('#myModal');
     let $editDialogItemModal = $('#dialogContent');
-
-
+    let $winnersDialogModal = $('#winnersDialogModal');
+    let $winnersModal = $('#winnersModal');
     function init() {
         const $tbl = $('#item-tbl').DataTable({
             language: {
@@ -48,13 +48,21 @@
                     targets: 6, title: "", data: "id", className: "text-center", orderable: false,
                     render: function (itemId, type, row, meta) {
 
+                        return `<button  class="btn btn-info" data-action="showWinners" id="showWinners"><i class="bi bi-list-task"></i></button>`
+
+                    }
+                },
+                {
+                    targets: 7, title: "", data: "id", className: "text-center", orderable: false,
+                    render: function (itemId, type, row, meta) {
+
                         return `<button  class="btn btn-info" data-action="showEditItemModal" id="showEditItemModal"><i class="bi bi-pencil"></i></button>`
 
                     }
                 },
                
                 {
-                    targets: 7, title: "", data: "itemId", className: "text-center", orderable: false,
+                    targets: 8, title: "", data: "itemId", className: "text-center", orderable: false,
                     render: function ( itemId, type, row, meta ) {
 
                         return `<button data-action="showDeleteItemModal" type="button" class="btn btn-danger " title="Delete item"><i class="bi bi-trash"></i></button>`
@@ -82,7 +90,17 @@
                 $editItemModal.data('itemId', itemId)
                 $editItemModal.modal('show')
             });
+        })
 
+        $tbl.on('click', 'button[data-action="showWinners"]', function (ev) {
+                let $row = $(ev.currentTarget).closest('tr');
+                let itemId = $row.attr('id');
+                $.get(`/Tournament/${itemId}/Winners`, function(data){
+                    console.log(data);
+                    $winnersDialogModal.html(data);
+                    $winnersModal.data('itemId', itemId)
+                    $winnersModal.modal('show')
+                });
 
         })
 

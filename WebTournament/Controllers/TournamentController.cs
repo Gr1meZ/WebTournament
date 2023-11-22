@@ -31,7 +31,13 @@ namespace WebTournament.WebApp.Controllers
         {
             return View(await _tournamentService.GetTournament(id));
         }
-
+        
+        [HttpGet("[controller]/{id}/[action]")]
+        public async Task<IActionResult> Winners(Guid id)
+        {
+            return View(await _tournamentService.GetTournamentResults(id));
+        }
+        
         [HttpPost]
         public async Task<IActionResult> List([FromBody] DtQuery query)
         {

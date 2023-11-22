@@ -12,4 +12,5 @@ public interface IBracketService
     public Task DeleteAllBrackets(Guid tournamentId);
     Task<PagedResponse<BracketViewModel[]>> BracketsList(PagedRequest request, Guid tournamentId);
     Task DeleteBracket(Guid bracketId);
+    Task<Select2Response> GetAutoCompleteBracketFighters(Select2Request request,  Guid bracketId);
 }

@@ -19,27 +19,64 @@ public class BracketService : IBracketService
     {
         _appDbContext = appDbContext;
     }
+    
+    public async Task<Select2Response> GetAutoCompleteBracketFighters(Select2Request request, Guid bracketId)
+    {
+        var fighters = _appDbContext.Fighters
+            .Where(x => x.BracketId == bracketId)
+            .AsNoTracking()
+            .AsQueryable();
 
+        var dbQuery = fighters;
+        var total = await fighters.CountAsync();
+
+        if (!IsNullOrWhiteSpace(request.Search))
+        {
+            dbQuery = dbQuery.Where(x => x.Surname.ToLower().Contains(request.Search.ToLower()));
+        }
+
+        if (request.PageSize != -1)
+            dbQuery = dbQuery.Skip(request.Skip).Take(request.PageSize);
+
+        var data = dbQuery.Select(x => new Select2Data()
+            {
+                Id = x.Id,
+                Name = $"{x.Surname}"
+            })
+            .ToArray();
+
+        return new Select2Response()
+        {
+            Data = data,
+            Total = total
+        };
+    }
+    
     public async Task SaveState(BracketState bracketState)
     {
         var bracket = await _appDbContext.Brackets.FindAsync(bracketState.Id);
         if (bracket != null)
         {
             bracket.State = bracketState.State;
-            await SyncWinners(bracket);
+            SyncWinners(bracketState);
             await _appDbContext.SaveChangesAsync();
         }
     }
     
-    private async Task SyncWinners(Bracket bracket)
+    private void SyncWinners(BracketState bracketState)
     {
+
+        if (bracketState.Winners?.Count == null)
+            return;
+
+        _appDbContext.BracketWinners.Update(new BracketWinner()
+        {
+            Id = bracketState.Id,
+            FirstPlaceId = bracketState.Winners.ElementAtOrDefault(0) == Guid.Empty ? null : bracketState.Winners[0], 
+            SecondPlaceId = bracketState.Winners.ElementAtOrDefault(1) == Guid.Empty ? null : bracketState.Winners[1],
+            ThirdPlaceId = bracketState.Winners.ElementAtOrDefault(2) == Guid.Empty ? null : bracketState.Winners[2]
+        });
         
-         var bracketData = JsonSerializer.Deserialize<BracketData>(bracket.State);
-        
-        if (bracketData == null)
-            throw new ValidationException("ValidationException", "State of bracket is null");
-       
-       
         /*_appDbContext.BracketWinners.Update(new BracketWinner
     {
         Id = bracket.Id,
@@ -60,7 +97,8 @@ public class BracketService : IBracketService
         var bracketViewModel = new BracketState()
         {
             Id = bracket.Id,
-            State = bracket.State
+            State = bracket.State,
+            Winners = new List<Guid>()
         };
         return bracketViewModel;
     }

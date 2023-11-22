@@ -6,6 +6,7 @@ using DataAccess.Abstract;
 using WebTournament.Business.Abstract;
 using WebTournament.Models;
 using WebTournament.Models.Helpers;
+using static System.String;
 
 namespace WebTournament.Business.Services
 {
@@ -96,7 +97,7 @@ namespace WebTournament.Business.Services
 
             // searching
             var lowerQ = request.Search.ToLower();
-            if (!string.IsNullOrWhiteSpace(lowerQ))
+            if (!IsNullOrWhiteSpace(lowerQ))
             {
                 dbQuery = (lowerQ.Split(' ')).Aggregate(dbQuery, (current, searchWord) =>
                     current.Where(f =>
@@ -107,7 +108,7 @@ namespace WebTournament.Business.Services
             }
 
             // sorting
-            if (!string.IsNullOrWhiteSpace(request.OrderColumn) && !string.IsNullOrWhiteSpace(request.OrderDir))
+            if (!IsNullOrWhiteSpace(request.OrderColumn) && !IsNullOrWhiteSpace(request.OrderDir))
             {
                 dbQuery = request.OrderColumn switch
                 {
@@ -152,7 +153,7 @@ namespace WebTournament.Business.Services
             var dbQuery = tournaments;
             var total = await tournaments.CountAsync();
 
-            if (!string.IsNullOrWhiteSpace(request.Search))
+            if (!IsNullOrWhiteSpace(request.Search))
             {
                 dbQuery = dbQuery.Where(x => x.Name.ToLower().Contains(request.Search.ToLower()));
             }
@@ -172,6 +173,33 @@ namespace WebTournament.Business.Services
                 Data = data,
                 Total = total
             };
+        }
+
+        public async Task<List<BracketWinnerViewModel>> GetTournamentResults(Guid tournamentId)
+        {
+            var bracketResults = await _appDbContext.BracketWinners.Where(x => x.Bracket.TournamentId == tournamentId && (x.FirstPlaceId != null || x.SecondPlaceId != null || x.ThirdPlaceId != null))
+                .Include(x => x.Bracket.WeightCategorie.AgeGroup)
+                .Include(x => x.FirstPlacePlayer.Trainer.Club)
+                .Include(x => x.SecondPlacePlayer.Trainer.Club)
+                .Include(x => x.ThirdPlacePlayer.Trainer.Club)
+                .Include(x => x.FirstPlacePlayer.Tournament)
+                .OrderBy(x => x.Bracket.WeightCategorie.AgeGroup.MinAge).ThenBy(x => x.Bracket.WeightCategorie.MaxWeight)
+                .ToListAsync();
+            
+            return bracketResults.Select(x => new BracketWinnerViewModel()
+            {
+                Id = x.Id,
+                Division = Join(", ",  _appDbContext.Belts.OrderBy(belt => belt.BeltNumber)
+                    .Where(belt => x.Bracket.Division.Contains(belt.Id)).Select(y => $"{y.BeltNumber} {y.ShortName}")),
+                TournamentName = x.FirstPlacePlayer.Tournament.Name,
+                FirstPlayerClubName = x.FirstPlacePlayer?.Trainer?.Club?.Name ?? Empty,
+                FirstPlayerFullName = $"{x.FirstPlacePlayer?.Surname} {x.FirstPlacePlayer?.Name}",
+                SecondPlayerClubName = x.SecondPlacePlayer?.Trainer?.Club?.Name ?? Empty,
+                SecondPlayerFullName = $"{x.SecondPlacePlayer?.Surname} {x.SecondPlacePlayer?.Name}",
+                ThirdPlayerClubName = x.ThirdPlacePlayer?.Trainer?.Club?.Name ?? Empty,
+                ThirdPlayerFullName = $"{x.ThirdPlacePlayer?.Surname} {x.ThirdPlacePlayer?.Name}",
+                CategorieName = $"{x.FirstPlacePlayer?.WeightCategorie?.AgeGroup?.Name} - {x.FirstPlacePlayer?.WeightCategorie?.WeightName}"
+            }).ToList();
         }
     }
 }
