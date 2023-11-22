@@ -69,4 +69,10 @@ public class BracketController : Controller
     [HttpGet("[controller]/[action]/{bracketId}")]
     public async Task<IActionResult> GetBracket(Guid bracketId) => View("Bracket", await _bracketService.GetBracket(bracketId));
 
+    [HttpPost]
+    public async Task<IActionResult> SaveState(BracketState bracketState)
+    {
+        await _bracketService.SaveState(bracketState);
+        return Ok();
+    }
 }

@@ -56,7 +56,10 @@ namespace WebTournament.Business.Services
                             fighterViewModel.Name = cellValue.ToString() ?? string.Empty;
                             break;
                         case "Дата рождения":
-                            fighterViewModel.BirthDate = Convert.ToDateTime(cellValue);
+                            if (DateTime.TryParse(cellValue.ToString(), out var value))
+                                fighterViewModel.BirthDate = value;
+                            else
+                                throw new ValidationException("ValidationException", $"Неизвестный формат даты {cellValue}");
                             break;
                         case "Номер пояса":
                             fighterViewModel.BeltNumber = Convert.ToInt32(cellValue);

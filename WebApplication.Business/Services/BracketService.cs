@@ -7,6 +7,7 @@ using WebTournament.Business.Abstract;
 using WebTournament.Models;
 using WebTournament.Models.Helpers;
 using static System.String;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace WebTournament.Business.Services;
 
@@ -19,6 +20,36 @@ public class BracketService : IBracketService
         _appDbContext = appDbContext;
     }
 
+    public async Task SaveState(BracketState bracketState)
+    {
+        var bracket = await _appDbContext.Brackets.FindAsync(bracketState.Id);
+        if (bracket != null)
+        {
+            bracket.State = bracketState.State;
+            await SyncWinners(bracket);
+            await _appDbContext.SaveChangesAsync();
+        }
+    }
+    
+    private async Task SyncWinners(Bracket bracket)
+    {
+        
+         var bracketData = JsonSerializer.Deserialize<BracketData>(bracket.State);
+        
+        if (bracketData == null)
+            throw new ValidationException("ValidationException", "State of bracket is null");
+       
+       
+        /*_appDbContext.BracketWinners.Update(new BracketWinner
+    {
+        Id = bracket.Id,
+        FirstPlaceId = winners[0].HasValue ? Guid.Parse(winners[0].ToString() ?? Empty) : null,
+        SecondPlaceId = winners[1].HasValue ? Guid.Parse(winners[1].ToString() ?? Empty) : null,
+        ThirdPlaceId = winners[2].HasValue ? Guid.Parse(winners[2].ToString() ?? Empty) : null
+    });
+    */
+    }
+    
     public async Task<BracketState> GetBracket(Guid bracketId)
     {
         var bracket = await _appDbContext.Brackets.FindAsync(bracketId);
@@ -38,7 +69,7 @@ public class BracketService : IBracketService
         
         var weightCategoriesId =  await _appDbContext.AgeGroups
             .SelectMany(x => x.WeightCategories)
-            .Where(x => x.AgeGroupId == bracketViewModel.AgeGroupId && x.Fighters.Any(y => y.WeightCategorieId == x.Id && bracketViewModel.Division.Contains(y.BeltId)))
+            .Where(x => x.AgeGroupId == bracketViewModel.AgeGroupId)
             .Select(x => x.Id)
             .ToListAsync();
         
@@ -53,10 +84,22 @@ public class BracketService : IBracketService
                 State = Empty
             });
         }
-
         await _appDbContext.SaveChangesAsync();
     }
-    
+
+    private async Task CreateBracketWinners()
+    {
+        var bracketIds = _appDbContext.Brackets.Select(x => x.Id);
+        if (bracketIds.Any())
+        {
+            var bracketWinners = bracketIds.Select(x => new BracketWinner
+            {
+                Id = x
+            });
+
+            await _appDbContext.BracketWinners.AddRangeAsync(bracketWinners);
+        }
+    }
     public async Task DistributeAllPlayers(Guid tournamentId)
     {
         var fighters = await _appDbContext.Tournaments.SelectMany(x => x.Fighters)
@@ -64,6 +107,7 @@ public class BracketService : IBracketService
             .Include(x => x.Belt)
             .Include(x => x.Bracket)
             .Include(x => x.Tournament)
+            .Include( x => x.Trainer.Club)
             .Where(x => x.TournamentId == tournamentId)
             .ToListAsync();
         
@@ -74,12 +118,13 @@ public class BracketService : IBracketService
                 .Select(x => x.Id).FirstOrDefaultAsync();
 
             if (bracketId == Guid.Empty)
-                throw new ValidationException("ValidationException", "Не найдена подходящая сетка для игрока");
+                throw new ValidationException("ValidationException", $"Не найдена подходящая сетка для игрока {fighter.Surname} {fighter.Name}. Создайте все необходимые сетки перед жеребьевкой!");
 
             fighter.BracketId = bracketId;
         }
         
-        await DrawFighters(tournamentId);
+        await DrawFighters(tournamentId, fighters);
+        await CreateBracketWinners();
         await _appDbContext.SaveChangesAsync();
     }
     
@@ -100,7 +145,7 @@ public class BracketService : IBracketService
                     current.Where(f =>
                         f.Tournament.Name.ToLower().Contains(searchWord.ToLower()) ||
                         f.WeightCategorie.WeightName.ToLower().Contains(searchWord.ToLower()) ||
-                        f.WeightCategorie.WeightName.ToLower().Contains(searchWord.ToLower()) ||
+                        f.WeightCategorie.MaxWeight.ToString().Contains(searchWord.ToLower()) ||
                         f.WeightCategorie.AgeGroup.Name.ToLower().Contains(searchWord.ToLower())
                     ));
             }
@@ -110,15 +155,18 @@ public class BracketService : IBracketService
             {
                 dbQuery = request.OrderColumn switch
                 {
-                    "tournamentName" => (request.OrderDir.Equals("asc"))
-                        ? dbQuery.OrderBy(o => o.Tournament.Name)
-                        : dbQuery.OrderByDescending(o => o.Tournament.Name),
-                    "ageGroup" => (request.OrderDir.Equals("asc"))
-                    ? dbQuery.OrderBy(o => o.WeightCategorie.AgeGroup.Name)
-                    : dbQuery.OrderByDescending(o => o.WeightCategorie.AgeGroup.Name),
+                    "divisionName" => (request.OrderDir.Equals("asc"))
+                        ? dbQuery.OrderBy(o => o.Division)
+                        : dbQuery.OrderByDescending(o => o.Division),
+                    "categoriesName" => (request.OrderDir.Equals("asc"))
+                    ? dbQuery.OrderBy(o => o.WeightCategorie.AgeGroup.MinAge)
+                    : dbQuery.OrderByDescending(o => o.WeightCategorie.AgeGroup.MinAge),
+                    "maxWeight" => (request.OrderDir.Equals("asc"))
+                        ? dbQuery.OrderBy(o => o.WeightCategorie.MaxWeight)
+                        : dbQuery.OrderByDescending(o => o.WeightCategorie.MaxWeight),
                     _ => (request.OrderDir.Equals("asc"))
-                        ? dbQuery.OrderBy(o => o.Id)
-                        : dbQuery.OrderByDescending(o => o.Id)
+                        ? dbQuery.OrderBy(o => o.WeightCategorie.MaxWeight)
+                        : dbQuery.OrderByDescending(o => o.WeightCategorie.MaxWeight)
                 };
             }
 
@@ -130,7 +178,8 @@ public class BracketService : IBracketService
             var dbItems = await dbQuery.Select(x => new BracketViewModel()
             {
                 Id = x.Id,
-                DivisionName = Join(", ",  _appDbContext.Belts.Where(belt => x.Division.Contains(belt.Id)).Select(y => $"{y.BeltNumber} {y.ShortName}")),
+                DivisionName = Join(", ",  _appDbContext.Belts.OrderBy(belt => belt.BeltNumber)
+                    .Where(belt => x.Division.Contains(belt.Id)).Select(y => $"{y.BeltNumber} {y.ShortName}")),
                 CategoriesName = $"{x.WeightCategorie.AgeGroup.Name} - {x.WeightCategorie.WeightName}",
                 MaxWeight = x.WeightCategorie.MaxWeight
             }).ToArrayAsync();
@@ -165,12 +214,9 @@ public class BracketService : IBracketService
             throw new ValidationException("ValidationException", "Данная турнирная сетка уже сгенерирована для данного турнира");
     }
     
-    private async Task DrawFighters(Guid tournamentId)
+    private async Task DrawFighters(Guid tournamentId, List<Fighter> fighters)
     {
         var brackets =  await _appDbContext.Brackets
-            .Include(x => x.Fighters)
-            .Include( x => x.WeightCategorie.AgeGroup)
-            .Include(x => x.Tournament)
             .Where(x => x.TournamentId == tournamentId)
             .ToListAsync();
         
@@ -179,36 +225,33 @@ public class BracketService : IBracketService
             var bracketData = new BracketData()
             {
                 teams = new List<List<Team>>(),
-                results = new List<int>()
+                results = new List<List<List<List<int?>>>>()
             };
-            
-            var playersFromQuery = bracket.Fighters.Select(x => x.Id).ToList();
-            
-            var players = await _appDbContext.Fighters.Where(x => playersFromQuery.Contains(x.Id))
-                .Include(x => x.WeightCategorie.AgeGroup)
-                .Include(x => x.Tournament)
-                .Include(x => x.Trainer.Club)
-                .ToListAsync();
-            
-            if (players.Count == 0)
-                throw new ValidationException("ValidationException", "Игроки не найдены");
-            
-            while (players.Count > 0)
+
+            var bracketFighters = fighters.Where(x => x.BracketId == bracket.Id).ToList();
+
+            if (bracketFighters.Count == 0)
             {
-                var firstPlayer = players.FirstOrDefault();
-                var secondPlayer = players.FirstOrDefault(x => x.Country != firstPlayer?.Country
-                                                               || x.City != firstPlayer.City
-                                                               || x.Trainer.ClubId != firstPlayer.Trainer.ClubId
-                                                               || x.TrainerId != firstPlayer.TrainerId) ?? players.FirstOrDefault(x => x != firstPlayer);
+                _appDbContext.Brackets.Remove(bracket);
+                continue;
+            }
+            
+            while (bracketFighters.Count > 0)
+            {
+                var firstPlayer = bracketFighters.FirstOrDefault();
+                var secondPlayer = bracketFighters.FirstOrDefault(x => x.Country != firstPlayer?.Country
+                                                                       || x.City != firstPlayer.City
+                                                                       || x.Trainer.ClubId != firstPlayer.Trainer.ClubId
+                                                                       || x.TrainerId != firstPlayer.TrainerId) ?? bracketFighters.FirstOrDefault(x => x != firstPlayer);
                 
                 bracketData.teams.Add(new List<Team>()
                 {
-                    new() {name = firstPlayer!.Surname},
-                    (secondPlayer == null ? null : new() {name = secondPlayer!.Surname})! 
+                    new() {name = firstPlayer!.Surname, id = firstPlayer.Id.ToString()},
+                    (secondPlayer == null ? null : new Team {name = secondPlayer.Surname, id = secondPlayer.Id.ToString()})! 
                 });
                 
-                players.Remove(firstPlayer);
-                players.Remove(secondPlayer);
+                bracketFighters.Remove(firstPlayer);
+                if (secondPlayer != null) bracketFighters.Remove(secondPlayer);
             }
 
             ValidateBracketData(bracketData);

@@ -35,6 +35,8 @@ namespace DataAccess.PostgreSQL.Configuration
             builder.HasOne(x => x.Bracket)
                 .WithMany(x => x.Fighters)
                 .HasForeignKey(x => x.BracketId).IsRequired(false);
+            
+           
         }
     }
 }

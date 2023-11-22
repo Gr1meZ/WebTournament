@@ -9,5 +9,4 @@ public class Bracket : BaseEntity
     public WeightCategorie WeightCategorie { get; set; }
     public Tournament Tournament { get; set; }
     public ICollection<Fighter> Fighters { get; set; }
-    
 }

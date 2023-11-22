@@ -1,16 +1,23 @@
 @model BracketState
 
-<button id="saveButton" class="btn btn-check">Сохранить</button>
-
 @if (Model.State == string.Empty)
 {
   <div>Сделайте жеребьевку игроков!</div>
 }
 else
 {
+  <div id="alertMessage" class="alert alert-success collapse">
+    <div id="alertText">Турнирная сетка успешно сохранена</div>
+    <div class="text-center"><btn class="btn" id="linkClose">Закрыть</btn></div>
+  </div>
+  <nav class="navbar bg-light navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+      <button class="btn btn-success" id="saveButton">Сохранить</button>
+      <button class="btn btn-success" onclick="history.back()">Назад</button>
+    </div>
+  </nav>
   <div class="container-fluid pt-lg-5">
     <div class="demo align-content-center">
-        @Model.State
       </div>
   </div>
   
@@ -18,7 +25,11 @@ else
 @section Scripts
 {
   <script type="text/javascript">
-    
+  
+  $('#linkClose').click(function () {
+          $('#alertMessage').hide('fade');
+          $("#alertText").empty();
+      });
   
     var customData = @Html.Raw(Model.State);
     console.log(customData)
@@ -39,16 +50,6 @@ else
       })
     }
   
-    /* Render function is called for each team label when data is changed, data
-     * contains the data object given in init and belonging to this slot.
-     *
-     * 'state' is one of the following strings:
-     * - empty-bye: No data or score and there won't team advancing to this place
-     * - empty-tbd: No data or score yet. A team will advance here later
-     * - entry-no-score: Data available, but no score given yet
-     * - entry-default-win: Data available, score will never be given as opponent is BYE
-     * - entry-complete: Data and score available
-     */
     function render_fn(container, data, score, state) {
       switch(state) {
         case "empty-bye":
@@ -65,8 +66,37 @@ else
           return;
       }
     }
+    $("#saveButton").click(function(e) {
+                    console.log(e);
+                    var bracketData = $('.demo').bracket('data');
+                    let bracketState = {id : '@Model.Id', state : JSON.stringify(bracketData)};
+                    $.ajax({
+                                url: '/Bracket/SaveState',
+                                method: 'POST',
+                                data: bracketState,
+                                cache: false,
+                                xhr: function () {
+                                    let xhr = new XMLHttpRequest();
+                                    xhr.onreadystatechange = function () {
+                                        if (xhr.readyState === 2) {
+                                            if (xhr.status === 200) {
+                                                xhr.responseType = "text";
+                                            }
+                                        }
+                                    };
+                                    return xhr;
+                                },
+                                success: function (data) {
+                                $('#alertMessage').show('fade');
+          
+                                },
+                                error: function (data) {
+                                    console.log(data);
+                                   
+                                }
+                            });
+                  });
      $(function() {
-       console.log(customData)
        $('.demo').bracket({
         init: customData,
         skipConsolationRound: true,
@@ -81,10 +111,7 @@ else
         roundMargin: 84
       });
   
-      $("#saveButton").click(function() {
-        var data = $('.demo').bracket('data');
-        console.log(data);
-      });
+      
   });
   
 </script>

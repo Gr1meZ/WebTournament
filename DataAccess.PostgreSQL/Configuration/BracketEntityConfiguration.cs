@@ -19,5 +19,7 @@ public class BracketEntityConfiguration : IEntityTypeConfiguration<Bracket>
             .WithMany(x => x.Brackets)
             .HasForeignKey(x => x.TournamentId)
             .IsRequired();
+
+        
     }
 }
