@@ -89,7 +89,10 @@ public class BracketService : IBracketService
     
     public async Task<BracketState> GetBracket(Guid bracketId)
     {
-        var bracket = await _appDbContext.Brackets.FindAsync(bracketId);
+        var bracket = await _appDbContext.Brackets
+            .Include(x => x.WeightCategorie.AgeGroup)
+            .FirstOrDefaultAsync(x => x.Id == bracketId);
+            
         
         if (bracket == null)
             throw new ValidationException("ValidationException", "Bracket not found");
@@ -98,12 +101,18 @@ public class BracketService : IBracketService
         {
             Id = bracket.Id,
             State = bracket.State,
-            Winners = new List<Guid>()
+            Winners = new List<Guid>(),
+            CategorieName = $"{bracket.WeightCategorie.AgeGroup.Name} - {bracket.WeightCategorie.WeightName} - {Join(", ",  _appDbContext.Belts.OrderBy(belt => belt.BeltNumber)
+                .Where(belt => bracket.Division.Contains(belt.Id)).Select(y => $"{y.BeltNumber} {y.ShortName}"))}"
         };
         return bracketViewModel;
     }
     public async Task GenerateBrackets(BracketViewModel bracketViewModel)
     {
+        if (bracketViewModel?.AgeGroupId == Guid.Empty)
+        {
+            throw new ValidationException("ValidationException", "Не выбрана возрастная группа!");
+        }
         
         var weightCategoriesId =  await _appDbContext.AgeGroups
             .SelectMany(x => x.WeightCategories)
@@ -125,10 +134,10 @@ public class BracketService : IBracketService
         await _appDbContext.SaveChangesAsync();
     }
 
-    private async Task CreateBracketWinners()
+    private async  Task CreateBracketWinners()
     {
-        var bracketIds = _appDbContext.Brackets.Select(x => x.Id);
-        if (bracketIds.Any())
+        var bracketIds = _appDbContext.Brackets.Select(x => x.Id).ToList();
+        if (!bracketIds.Any() || _appDbContext.BracketWinners.Any(x => bracketIds.Contains(x.Id))) return;
         {
             var bracketWinners = bracketIds.Select(x => new BracketWinner
             {
@@ -161,7 +170,7 @@ public class BracketService : IBracketService
             fighter.BracketId = bracketId;
         }
         
-        await DrawFighters(tournamentId, fighters);
+        await DrawFighters(tournamentId, fighters); 
         await CreateBracketWinners();
         await _appDbContext.SaveChangesAsync();
     }
@@ -295,8 +304,7 @@ public class BracketService : IBracketService
             ValidateBracketData(bracketData);
             bracket.State = JsonConvert.SerializeObject(bracketData);
         }
-
-    }
+   }
 
     private void ValidateBracketData(BracketData bracketData)
     {

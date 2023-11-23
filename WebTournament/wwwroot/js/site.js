@@ -126,7 +126,7 @@ function initAjaxAutoCompleteMultiplySelect(options) {
         containerCssClass : "form-control",
         placeholder: $(this).data('placeholder'),
         multiple: true,
-        width: '50%',
+        width: options.width,
         dropdownAutoWidth : true,
         ajax: {
             url: options.url,

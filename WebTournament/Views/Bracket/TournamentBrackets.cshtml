@@ -2,6 +2,10 @@
     ViewData["Title"] = "Турнирные сетки";
 }
 
+@{
+    ViewData["Title"] = "Турнирные сетки";
+}
+
 <div id="alertMessage" class="alert alert-success collapse">
     <div id="alertText">Жеребьевка прошла успешно! Ожидайте...</div>
     <div class="text-center"><btn class="btn" id="linkClose">Закрыть</btn></div>
@@ -22,7 +26,7 @@
             <table id="item-tbl" class="table">
                 <div class="px-lg-2">
                      <a class="btn btn btn-info compItem" asp-action="AddIndex" asp-controller="Bracket" asp-route-tournamentId="@Model">Добавить <i class="bi bi-plus-circle"></i></a>
-                    <button class="btn btn btn-success" id="generateBtn">Жеребить </button>
+                    <button class="btn btn btn-success compDraw">Жеребить </button>
                     <button class="btn btn btn-danger compDlt">Удалить все сетки</button>
                 </div>
                 
@@ -55,6 +59,25 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="drawModal" tabindex="-1">
+     <div class="modal-dialog modal-dialog-centered">
+         <div class="modal-content" id="drawContent">
+             <div class="modal-header">
+                 <h5 class="modal-title">Жеребьевка</h5>
+                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                 </button>
+             </div>
+             <div class="modal-body">
+                 Вы действительно хотите провести жеребьевку? Предыдущие результаты жеребьевки будут удалены!
+             </div>
+             <div class="modal-footer">
+                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                 <button id="generateBtn" type="button" class="btn btn-success" data-bs-dismiss="modal">Подтвердить</button>
+             </div>
+         </div>
+     </div>
+ </div>
 
 @section Scripts
     {
@@ -90,6 +113,12 @@
                             e.preventDefault();
                             $('#deleteItemModal').modal('show');
                         });
+            
+            $(".compDraw").click(function (e) {
+             console.log(e);
+             e.preventDefault();
+             $('#drawModal').modal('show');
+             });
             
               $('#deleteItemBtn').click(function (ev) {
             
@@ -140,7 +169,7 @@
                                           return xhr;
                                       },
                                       success: function (data) {
-                                          
+                                          $('#drawModal').hide();
                                           $('#alertMessage').show('fade');
                                           setTimeout(function() {
                                           document.location.reload();

@@ -6,6 +6,7 @@ public class BracketViewModel
 {
     public Guid Id { get; set; }
     public Guid TournamentId { get; set; }
+    [Required(ErrorMessage = "Выберите пояса")]
     public Guid[] Division { get; set; }
     public Guid AgeGroupId { get; set; }
     

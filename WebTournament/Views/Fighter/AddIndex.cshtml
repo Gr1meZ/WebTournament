@@ -12,9 +12,9 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
             </button>
         </div>
-        <div id="alertMessage" class="alert alert-danger collapse">
-            <div id="alertText"></div>
-            <div class="text-center"><btn class="btn" id="linkClose">Закрыть</btn></div>
+        <div id="alertMessage1" class="alert alert-danger collapse">
+            <div id="alertText1"></div>
+            <div class="text-center"><btn class="btn" id="linkClose1">Закрыть</btn></div>
         </div>
         <div class="modal-body">
              <div class="form-group">
@@ -81,11 +81,9 @@
 
 </script>
 <script>
-    $('#linkClose').click(function () {
-        $('#alertMessage').hide('fade');
-        $("#alertText").empty();
-        $('#alertSuccessMessage').hide('fade');
-        $("#alertSucessText").empty();
+    $('#linkClose1').click(function () {
+        $('#alertMessage1').hide('fade');
+        $("#alertText1").empty();
     });
 
     initAjaxAutoCompleteSelect({
@@ -131,15 +129,24 @@
             },
             success: function (data) {
                 $("#myModal").modal('hide');
-                
+                document.location.reload();
             },
             error: function (data) {
                 console.log(data);
-                $("#alertText").empty();
-                data.responseJSON.forEach(x => {
-                    $("#alertText").append(`<div>${x}</div>`);
-                    $('#alertMessage').show('fade');
-                });
+                try {
+                   $("#alertText1").empty();
+                   data.responseJSON.forEach(x => {
+                   $("#alertText1").append(`<div>${x}</div>`);
+                   $('#alertMessage1').show('fade');
+                   });
+                }
+                catch (e){}
+                try {
+                   $("#alertText1").append(`<div>${data.responseJSON.errors.ValidationException[0]}</div>`);
+                   $('#alertMessage1').show('fade');
+                }
+               catch (e) {}
+                
             }
         });
     });

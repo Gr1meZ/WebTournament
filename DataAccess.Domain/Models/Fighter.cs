@@ -1,6 +1,7 @@
 ﻿using DataAccess.Common.Enums;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,6 +17,7 @@ namespace DataAccess.Domain.Models
         public Guid? BracketId { get; set; }
         public  string Name { get; set; }
         public  string Surname { get; set; }
+        [Column(TypeName = "timestamp")]
         public DateTime BirthDate { get; set; }
         public int Age { get; set; }
         public  string Country { get; set; }

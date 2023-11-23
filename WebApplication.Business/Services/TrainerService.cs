@@ -99,6 +99,7 @@ namespace WebTournament.Business.Services
         public async Task<PagedResponse<TrainerViewModel[]>> TrainersList(PagedRequest request)
         {
             var dbQuery = _appDbContext.Trainers
+                .Include( x => x.Club)
                .AsQueryable()
                .AsNoTracking();
 
@@ -106,12 +107,13 @@ namespace WebTournament.Business.Services
             var lowerQ = request.Search?.ToLower();
             if (!string.IsNullOrWhiteSpace(lowerQ))
             {
-                dbQuery = (lowerQ?.Split(' ')).Aggregate(dbQuery, (current, searchWord) =>
+                dbQuery = (lowerQ.Split(' ')).Aggregate(dbQuery, (current, searchWord) =>
                     current.Where(f =>
                         f.Name.ToLower().Contains(searchWord.ToLower()) ||
-                        f.Surname.ToString().ToLower().Contains(searchWord.ToLower()) ||
-                        f.Patronymic.ToString().ToLower().Contains(searchWord.ToLower()) ||
-                        f.Phone.ToString().ToLower().Contains(searchWord.ToLower())
+                        f.Surname.ToLower().Contains(searchWord.ToLower()) ||
+                        f.Patronymic.ToLower().Contains(searchWord.ToLower()) ||
+                        f.Phone.ToLower().Contains(searchWord.ToLower()) ||
+                        f.Club.Name.ToLower().Contains(searchWord.ToLower())
                     ));
             }
 

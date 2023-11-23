@@ -38,6 +38,8 @@
                             <a class="btn btn btn-info compItem " asp-controller="Fighter" asp-route-id="@Model" asp-action="AddIndex">Добавить игрока <i class="bi bi-plus-circle"></i> </a>
                             <input id="file-upload" type="file" name="formFile"/>
                             <button class="btn btn-success " id="generateBtn" type="button">Добавить заявку </button>
+                            <button class="btn btn-danger compDlt"  type="button">Удалить всех участников</button>
+
                         </form>
                     </div>
                 </div>
@@ -74,6 +76,24 @@
     </div>
 </div>
 
+<div class="modal fade" id="deleteFighters" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Удалить всех игроков</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            <div class="modal-body">
+                Вы уверены, что хотите удалить всех игроков?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                <button id="deleteAllBtn" type="button" class="btn btn-danger" data-bs-dismiss="modal">Подтвердить</button>
+            </div>
+        </div>
+    </div>
+</div>
 @section Scripts
 {
 
@@ -84,7 +104,12 @@
             $('#alertMessage').hide('fade');
             $("#alertText").empty();
         });
-
+     
+      $(".compDlt").click(function (e) {
+                                 e.preventDefault();
+                                 $('#deleteFighters').modal('show');
+                             });
+      
         $(document).ready(function () {
             $('#generateBtn').click(function () {
                 // Создаем input элемент типа file
@@ -113,7 +138,7 @@
 
                     // Отправляем файл на asp.net core controller с помощью $.ajax
                     $.ajax({
-                        url: `/ExcelParser/Read?tournamentId=` + '@Model', // Замените '/your_controller_path' на путь к вашему контроллеру
+                        url: `/ExcelParser/Read?tournamentId=` + '@Model', 
                         type: 'POST',
                         data: formData,
                         contentType: false,
@@ -124,6 +149,7 @@
                         },
                         error: function (data) {
                             console.log('Ошибка загрузки файла');
+                             console.log(data);
                             loader.hide();
                              $("#alertText").empty();
                              console.log(data.responseJSON.errors.ValidationException[0]);
@@ -134,8 +160,26 @@
                     });
                 });
             });
-
-           
+            
+            $('#deleteAllBtn').click(function () {
+                            $('#alertMessage').hide();
+                      
+                                $.ajax({
+                                    url: `/Fighter/DeleteAll/` + '@Model', 
+                                    type: 'DELETE',
+                                    contentType: false,
+                                    processData: false,
+                                    success: function (response) {
+                                       document.location.reload();
+                                    },
+                                    error: function (data) {
+                                         $("#alertText").empty();
+                                         $("#alertText").append(`<div>${data.responseJSON.errors.ValidationException[0]}</div>`);
+                                         $('#alertMessage').show('fade');
+                                        
+                                    }
+                                });
+                            });           
 
             const fighterDatatable = GetFighterDatatable('@Model');
             fighterDatatable.init();

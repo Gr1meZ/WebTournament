@@ -36,10 +36,10 @@ namespace WebTournament.Models
         public string TournamentName { get; init; } = string.Empty;
         public string WeightCategorieName { get; init; } = string.Empty;
         public int WeightNumber { get; set; } 
-        public string BeltShortName { get; set; } 
+        public string? BeltShortName { get; set; } 
         public int BeltNumber { get; set; }
-        public string TrainerName { get; set; } 
-        public string ClubName { get; set; } 
+        public string? TrainerName { get; set; } 
+        public string? ClubName { get; set; } 
         
     }
 }

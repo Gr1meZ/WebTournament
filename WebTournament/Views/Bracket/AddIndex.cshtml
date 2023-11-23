@@ -3,7 +3,38 @@
 @{
     Layout = null;
 }
+<style>
 
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+  display: inline-flex !important;
+}
+
+.select2-container--default.select2-container--focus .select2-selection--multiple {
+  color: #495057 !important;
+  background-color: #fff !important;
+  border-color: #80bdff !important;
+  outline: 0 !important;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25) !important;
+}
+
+.select2-container--default .select2-selection--multiple {
+  border: 1px solid #ced4da !important;
+  border-radius: .25rem !important;
+  padding: .375rem .75rem !important;
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  line-height: 1.5 !important;
+}
+
+.select2-container .select2-search--inline .select2-search__field {
+  margin: 0 !important;
+  height: 22px !important;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+  margin: 0 5px 5px 0 !important;
+}
+</style>
 @using (Html.BeginForm("AddModel", "Bracket", FormMethod.Post, new { enctype = "multipart/form-data", id = "sbmForm" }))
 {
     <div class="modal-content">
@@ -12,9 +43,9 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
             </button>
         </div>
-        <div id="alertMessage" class="alert alert-danger collapse">
-            <div id="alertText"></div>
-            <div class="text-center"><btn class="btn" id="linkClose">Закрыть</btn></div>
+        <div id="alertMsg" class="alert alert-danger collapse">
+            <div id="alertTxt"></div>
+            <div class="text-center"><btn class="btn" id="linkCls">Закрыть</btn></div>
         </div>
         <div class="modal-body">
             <div class="form-group">
@@ -36,16 +67,16 @@
 }
 
 <script>
-    $('#linkClose').click(function () {
-        $('#alertMessage').hide('fade');
-        $("#alertText").empty();
+    $('#linkCls').click(function () {
+        $('#alertMsg').hide('fade');
+        $("#alertTxt").empty();
     });
 
     initAjaxAutoCompleteMultiplySelect({
         selector: 'select[name="Division"]',
         url: '/Belt/Select2Belts',
-        dropdownParent: $("#myModal")
-
+        dropdownParent: $("#myModal"),
+        width: '100%'
     });
 
     initAjaxAutoCompleteSelect({
@@ -80,12 +111,19 @@
                 document.location.reload();
             },
             error: function (data) {
-                console.log(data);
-                $("#alertText").empty();
-                data.responseJSON.forEach(x => {
-                    $("#alertText").append(`<div>${x}</div>`);
-                    $('#alertMessage').show('fade');
-                });
+                try {
+                                  $("#alertTxt").empty();
+                                  data.responseJSON.forEach(x => {
+                                  $("#alertTxt").append(`<div>${x}</div>`);
+                                  $('#alertMsg').show('fade');
+                                  });
+                               }
+                               catch (e){}
+                               try {
+                                  $("#alertTxt").append(`<div>${data.responseJSON.errors.ValidationException[0]}</div>`);
+                                  $('#alertMsg').show('fade');
+                               }
+                              catch (e) {}
             }
         });
     });

@@ -67,6 +67,13 @@ namespace WebTournament.WebApp.Controllers
             await _fighterService.DeleteFighter(id);
             return Ok();
         }
+        
+        [HttpDelete("[controller]/[action]/{tournamentId}")]
+        public async Task<IActionResult> DeleteAll(Guid tournamentId)
+        {
+            await _fighterService.DeleteAllFighters(tournamentId);
+            return Ok();
+        }
     }
 }
 

@@ -23,7 +23,13 @@ namespace WebTournament.Business.Services
         {
             if (fighterViewModel == null)
                 throw new ValidationException("Fighter model is null");
+            
+            var fighterExists = await _appDbContext.Fighters.FirstOrDefaultAsync(x =>
+                x.Surname == fighterViewModel.Surname && x.Name == fighterViewModel.Name && x.City == fighterViewModel.City && x.TournamentId == fighterViewModel.TournamentId);
 
+            if (fighterExists != null) 
+                throw new DataAccess.Common.Exceptions.ValidationException("ValidationException",$"Игрок {fighterExists.Surname} {fighterExists.Name} уже существует");
+            
             var fighter = new Fighter()
             {
                 Age = AgeCalculator.CalculateAge(fighterViewModel.BirthDate),
@@ -48,6 +54,18 @@ namespace WebTournament.Business.Services
             var fighter = await _appDbContext.Fighters.FindAsync(id) ?? throw new ValidationException("Fighter not found");
             _appDbContext.Fighters.Remove(fighter);
 
+            await _appDbContext.SaveChangesAsync();
+        }
+
+        public async Task DeleteAllFighters(Guid id)
+        {
+            var fighters =  _appDbContext.Fighters.Where(x => x.TournamentId == id);
+            var bracketWinners = _appDbContext.BracketWinners.Include(x => x.Bracket)
+                .Where(x => x.Bracket.TournamentId == id);
+            
+            _appDbContext.Fighters.RemoveRange(fighters);
+            _appDbContext.BracketWinners.RemoveRange(bracketWinners);
+            
             await _appDbContext.SaveChangesAsync();
         }
 
@@ -94,11 +112,12 @@ namespace WebTournament.Business.Services
                         f.BirthDate.ToString().ToLower().Contains(searchWord.ToLower()) ||
                         f.City.ToLower().Contains(searchWord.ToLower()) ||
                         f.Surname.ToLower().Contains(searchWord.ToLower()) ||
-                        f.Name.ToLower().Contains(searchWord.ToLower()) ||
                         f.Country.ToLower().Contains(searchWord.ToLower()) ||
                         f.Belt.ShortName.ToLower().Contains(searchWord.ToLower()) ||
+                        f.Belt.BeltNumber.ToString().ToLower().Contains(searchWord.ToLower()) ||
                         f.Trainer.Surname.ToLower().Contains(searchWord.ToLower()) ||
                         f.WeightCategorie.WeightName.ToLower().Contains(searchWord.ToLower()) ||
+                        f.WeightCategorie.AgeGroup.Name.ToLower().Contains(searchWord.ToLower()) ||
                         f.Trainer.Club.Name.ToLower().Contains(searchWord.ToLower())
                     ));
             }

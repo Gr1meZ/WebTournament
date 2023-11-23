@@ -25,7 +25,12 @@ namespace WebTournament.Business.Services
 
         public async Task GenerateFromExcelAsync(IFormFile excelFile, Guid tournamentId, CancellationToken cancellationToken)
         {
+            if (excelFile is not { Length: > 0 })
+                throw new ValidationException("ValidationException", "Файл пустой");
 
+            if (!Path.GetExtension(excelFile.FileName).Equals(".xlsx", StringComparison.OrdinalIgnoreCase))
+                throw new ValidationException("ValidationException", "Не поддерживаемый формат файла");
+            
             using var stream = new MemoryStream();
 
             await excelFile.CopyToAsync(stream, cancellationToken);
@@ -33,6 +38,9 @@ namespace WebTournament.Business.Services
             using var package = new ExcelPackage(stream);
 
             var worksheet = package.Workbook.Worksheets[0];
+            if (worksheet.Name != "Заявка")
+                throw new ValidationException("ValidationException", "Данный excel файл не содержит заявку на участников. Пожалуйста, добавьте правильную заявку!");
+            
             RemoveEmptyRows(worksheet);
             
             var rowCount = worksheet.Dimension.Rows;
@@ -56,13 +64,16 @@ namespace WebTournament.Business.Services
                             fighterViewModel.Name = cellValue.ToString() ?? string.Empty;
                             break;
                         case "Дата рождения":
-                            if (DateTime.TryParse(cellValue.ToString(), out var value))
-                                fighterViewModel.BirthDate = value;
+                            if (DateTime.TryParse(cellValue.ToString(), out var birthDate))
+                                fighterViewModel.BirthDate = birthDate;
                             else
                                 throw new ValidationException("ValidationException", $"Неизвестный формат даты {cellValue}");
                             break;
                         case "Номер пояса":
-                            fighterViewModel.BeltNumber = Convert.ToInt32(cellValue);
+                            if (int.TryParse(cellValue.ToString(), out var beltNumber))
+                                fighterViewModel.BeltNumber = Convert.ToInt32(beltNumber);
+                            else
+                                throw new ValidationException("ValidationException", $"Неизвестный формат номера пояса {cellValue}");
                             break;
                         case "Ступень":
                             fighterViewModel.BeltShortName = cellValue.ToString() ?? string.Empty;
@@ -77,7 +88,10 @@ namespace WebTournament.Business.Services
                             fighterViewModel.Gender = cellValue.ToString() ?? string.Empty;
                             break;
                         case "Вес":
-                            fighterViewModel.WeightNumber = Convert.ToInt32(cellValue);
+                            if (int.TryParse(cellValue.ToString(), out var weightNumber))
+                                fighterViewModel.WeightNumber = Convert.ToInt32(cellValue);
+                            else
+                                throw new ValidationException("ValidationException", $"Неизвестный формат веса {cellValue}");
                             break;
                         case "Тренер":
                             fighterViewModel.TrainerName = cellValue.ToString() ?? string.Empty;
@@ -144,7 +158,10 @@ namespace WebTournament.Business.Services
             if (ageGroup == null)
                 throw new ValidationException("ValidationException",$"Возрастная категория для возраста '{age}' не найдена. Создайте в базе данных категорию для данного возраста!");
             
-            var weightCategorie = await _appDbContext.WeightCategories.FirstOrDefaultAsync(x => x.MaxWeight > weight && x.AgeGroupId == ageGroup.Id && x.Gender == GenderExtension.ParseEnum(gender));
+            var weightCategorie = await _appDbContext.WeightCategories
+                .Where(x => weight <= x.MaxWeight && x.AgeGroupId == ageGroup.Id && x.Gender == GenderExtension.ParseEnum(gender)) // Фильтруем по условию
+                .OrderBy(x => x.MaxWeight) 
+                .FirstOrDefaultAsync();
           
             if (weightCategorie == null)
                 throw new ValidationException("ValidationException",$"Весовая категория для возрастной категории {ageGroup.Name} с весом игрока {weight} кг не найдена! Добавьте весовую категорию в базу данных!");

@@ -1,4 +1,8 @@
 @model BracketState
+@{
+    ViewData["Title"] = @Model.CategorieName;
+}
+
 <style>
 
 .select2-container--default .select2-selection--multiple .select2-selection__choice {
@@ -66,7 +70,8 @@ else
   initAjaxAutoCompleteMultiplySelect({
          selector: 'select[name="winners"]',
          url: '/Bracket/Select2BracketFighters/' + "@Model.Id",
-         maxItems : 3
+         maxItems : 3,
+         width: '50%'
      });
     var customData = @Html.Raw(Model.State);
     console.log(customData)
