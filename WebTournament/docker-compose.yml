@@ -1,0 +1,35 @@
+﻿version: "3.9"
+networks:
+  webtournament-dev:
+    driver: bridge
+    
+services:
+  webtournament.webapp:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    container_name: webtournament
+    build:
+      context: .
+      dockerfile: WebTournament/Dockerfile
+    ports:
+      - "80:80"
+    networks: 
+      - webtournament-dev
+    depends_on: 
+      - postgres_db
+  postgres_db:
+    container_name: postgres
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123server123
+      POSTGRESDB: webtournamentdb
+    ports:
+      - "5432:5432"
+    networks: 
+      - webtournament-dev
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+volumes:
+  postgres-data:    
+      
