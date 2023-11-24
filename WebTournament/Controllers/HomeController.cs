@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
-using WebTournament.Models;
+﻿using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using WebTournament.WebApp.Models;
 
-namespace WebTournament.Controllers
+namespace WebTournament.WebApp.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;

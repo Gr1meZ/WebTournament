@@ -1,0 +1,85 @@
+﻿@model BeltViewModel
+
+@{
+    Layout = null;
+}
+
+@using (Html.BeginForm("EditModel", "Belt", FormMethod.Post, new { enctype = "multipart/form-data", id = "sbmForm" }))
+{
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Изменить пояс</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+            </button>
+        </div>
+        <div id="alertMessage" class="alert alert-danger collapse">
+            <div id="alertText"></div>
+            <div class="text-center"><btn class="btn" id="linkClose">Закрыть</btn></div>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label asp-for="BeltNumber">Номер</label>
+                <input type="number" class="form-control" placeholder="Введите номер" asp-for="BeltNumber">
+            </div>
+            <div class="form-group">
+
+                <label asp-for="ShortName">Сокращенное название</label>
+                <input type="text" class="form-control" placeholder="Введите сокращенное название" asp-for="ShortName">
+            </div>
+            <div class="form-group">
+                <label asp-for="FullName">Полное название</label>
+                <input type="text" class="form-control" placeholder="Введите полное название" asp-for="FullName">
+            </div>
+
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+            <button type="button" class="btn btn-primary" id="btnSubmit">Сохранить</button>
+        </div>
+    </div>
+    @Html.HiddenFor(x => x.Id);
+}
+
+<script type="text/javascript">
+    $('#linkClose').click(function () {
+        $('#alertMessage').hide('fade');
+        $("#alertText").empty();
+
+    });
+
+    $('#btnSubmit').click(function (ev) {
+
+        let $btn = $(ev.currentTarget);
+        let $form = $('#sbmForm');
+        $.ajax({
+            url: '/Belt/EditModel',
+            method: 'POST',
+            data: $form.serialize(),
+            cache: false,
+            xhr: function () {
+                let xhr = new XMLHttpRequest();
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 2) {
+                        if (xhr.status === 200) {
+                            xhr.responseType = "text";
+                        }
+                    }
+                };
+                return xhr;
+            },
+            success: function (data) {
+                $("#myModal").modal('hide');
+                document.location.reload();
+            },
+            error: function (data) {
+                console.log(data);
+                $("#alertText").empty();
+                data.responseJSON.forEach(x => {
+                    $("#alertText").append(`<div>${x}</div>`);
+                    $('#alertMessage').show('fade');
+                });
+            }
+        });
+    });
+</script>

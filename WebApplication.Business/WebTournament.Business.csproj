@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\WebTournament.Business.Abstract\WebTournament.Business.Abstract.csproj" />
+    <ProjectReference Include="..\WebTournament.DataAccess.Abstract\DataAccess.Abstract.csproj" />
+    <ProjectReference Include="..\WebTournament.Models\WebTournament.Models.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="11.8.0" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.24.0" />
+  </ItemGroup>
+
+</Project>
