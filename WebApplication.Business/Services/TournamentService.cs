@@ -37,7 +37,18 @@ namespace WebTournament.Business.Services
 
         public async Task DeleteTournament(Guid id)
         {
-            var tournament = await _appDbContext.Tournaments.FindAsync(id) ?? throw new ValidationException("Tournament not found");
+            var tournament = await _appDbContext.Tournaments.
+                 Include( xx => xx.Fighters)
+                .Include(x => x.Brackets)
+                .FirstOrDefaultAsync()?? throw new ValidationException("Tournament not found");
+
+            var bracketWinners =  _appDbContext.BracketWinners.Include(x => x.Bracket)
+                .Where(x => x.Bracket.TournamentId == id);
+            
+            _appDbContext.BracketWinners.RemoveRange(bracketWinners);
+            _appDbContext.Fighters.RemoveRange(tournament.Fighters);
+            _appDbContext.Brackets.RemoveRange(tournament.Brackets);
+            
             _appDbContext.Tournaments.Remove(tournament);
 
             await _appDbContext.SaveChangesAsync();
