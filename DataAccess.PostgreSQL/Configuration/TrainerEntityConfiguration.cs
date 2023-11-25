@@ -1,12 +1,15 @@
 ﻿using DataAccess.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json;
 
 
 namespace DataAccess.PostgreSQL.Configuration
 {
     public class TrainerEntityConfiguration : IEntityTypeConfiguration<Trainer>
     {
+
         public void Configure(EntityTypeBuilder<Trainer> builder)
         {
             builder.HasKey(x => x.Id);
@@ -15,6 +18,7 @@ namespace DataAccess.PostgreSQL.Configuration
                 .WithMany(x => x.Trainers)
                 .HasForeignKey(x => x.ClubId)
                 .IsRequired();
+
         }
     }
 }
