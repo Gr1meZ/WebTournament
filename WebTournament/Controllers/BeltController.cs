@@ -29,20 +29,20 @@ namespace WebTournament.WebApp.Controllers
         [HttpGet("[controller]/{id}/[action]")]
         public async Task<IActionResult> EditIndex(Guid id)
         {
-            return View(await _beltService.GetBelt(id));
+            return View(await _beltService.GetBeltAsync(id));
         }
 
         [HttpPost]
         public async Task<IActionResult> List([FromBody] DtQuery query)
         {
-            return Json(await _beltService.BeltList(query));
+            return Json(await _beltService.BeltListAsync(query));
         }
 
         [HttpPost]
         public async Task<IActionResult> AddModel(BeltViewModel beltViewModel)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState.Values.SelectMany(v => v.Errors).Select(x => x.ErrorMessage).ToList());
-            await _beltService.AddBelt(beltViewModel);
+            await _beltService.AddBeltAsync(beltViewModel);
             return Ok();
         }
 
@@ -51,20 +51,20 @@ namespace WebTournament.WebApp.Controllers
         {
             if (!ModelState.IsValid) return BadRequest(ModelState.Values.SelectMany(v => v.Errors).Select(x => x.ErrorMessage).ToList());
 
-            await _beltService.EditBelt(beltViewModel);
+            await _beltService.EditBeltAsync(beltViewModel);
             return Ok();
         }
 
         [HttpDelete("[controller]/{id}")]
         public async Task<IActionResult> DeleteModel(Guid id)
         {
-            await _beltService.DeleteBelt(id);
+            await _beltService.DeleteBeltAsync(id);
             return Ok();
         }
 
         public async Task<IActionResult> Select2Belts([FromForm] Select2Request request)
         {
-            return Ok(await _beltService.GetAutoCompleteBelts(request));
+            return Ok(await _beltService.GetSelect2BeltsAsync(request));
         }
     }
 }

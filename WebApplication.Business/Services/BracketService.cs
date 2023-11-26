@@ -7,7 +7,6 @@ using WebTournament.Business.Abstract;
 using WebTournament.Models;
 using WebTournament.Models.Helpers;
 using static System.String;
-using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace WebTournament.Business.Services;
 
@@ -20,7 +19,7 @@ public class BracketService : IBracketService
         _appDbContext = appDbContext;
     }
     
-    public async Task<Select2Response> GetAutoCompleteBracketFighters(Select2Request request, Guid bracketId)
+    public async Task<Select2Response> GetSelect2BracketFightersAsync(Select2Request request, Guid bracketId)
     {
         var fighters = _appDbContext.Fighters
             .Where(x => x.BracketId == bracketId)
@@ -52,7 +51,7 @@ public class BracketService : IBracketService
         };
     }
     
-    public async Task SaveState(BracketState bracketState)
+    public async Task SaveStateAsync(BracketState bracketState)
     {
         var bracket = await _appDbContext.Brackets.FindAsync(bracketState.Id);
         if (bracket != null)
@@ -77,17 +76,9 @@ public class BracketService : IBracketService
             ThirdPlaceId = bracketState.Winners.ElementAtOrDefault(2) == Guid.Empty ? null : bracketState.Winners[2]
         });
         
-        /*_appDbContext.BracketWinners.Update(new BracketWinner
-    {
-        Id = bracket.Id,
-        FirstPlaceId = winners[0].HasValue ? Guid.Parse(winners[0].ToString() ?? Empty) : null,
-        SecondPlaceId = winners[1].HasValue ? Guid.Parse(winners[1].ToString() ?? Empty) : null,
-        ThirdPlaceId = winners[2].HasValue ? Guid.Parse(winners[2].ToString() ?? Empty) : null
-    });
-    */
     }
     
-    public async Task<BracketState> GetBracket(Guid bracketId)
+    public async Task<BracketState> GetBracketAsync(Guid bracketId)
     {
         var bracket = await _appDbContext.Brackets
             .Include(x => x.WeightCategorie.AgeGroup)
@@ -107,8 +98,9 @@ public class BracketService : IBracketService
         };
         return bracketViewModel;
     }
-    public async Task GenerateBrackets(BracketViewModel bracketViewModel)
+    public async Task GenerateBracketsAsync(BracketViewModel bracketViewModel)
     {
+        
         if (bracketViewModel?.AgeGroupId == Guid.Empty)
         {
             throw new ValidationException("ValidationException", "Не выбрана возрастная группа!");
@@ -116,13 +108,13 @@ public class BracketService : IBracketService
         
         var weightCategoriesId =  await _appDbContext.AgeGroups
             .SelectMany(x => x.WeightCategories)
-            .Where(x => x.AgeGroupId == bracketViewModel.AgeGroupId)
+            .Where(x => x.AgeGroupId == bracketViewModel!.AgeGroupId)
             .Select(x => x.Id)
             .ToListAsync();
         
         foreach (var categorieId in weightCategoriesId)
         {
-            await CheckBrackets(bracketViewModel.TournamentId, categorieId, bracketViewModel.Division);
+            await CheckBrackets(bracketViewModel!.TournamentId, categorieId, bracketViewModel.Division);
             await _appDbContext.Brackets.AddAsync(new Bracket()
             {
                 Division = bracketViewModel.Division,
@@ -147,7 +139,7 @@ public class BracketService : IBracketService
             await _appDbContext.BracketWinners.AddRangeAsync(bracketWinners);
         }
     }
-    public async Task DistributeAllPlayers(Guid tournamentId)
+    public async Task DistributeAllPlayersAsync(Guid tournamentId)
     {
         var fighters = await _appDbContext.Tournaments.SelectMany(x => x.Fighters)
             .Include(x => x.WeightCategorie.AgeGroup)
@@ -165,7 +157,7 @@ public class BracketService : IBracketService
                 .Select(x => x.Id).FirstOrDefaultAsync();
 
             if (bracketId == Guid.Empty)
-                throw new ValidationException("ValidationException", $"Не найдена подходящая сетка для игрока {fighter.Surname} {fighter.Name}. Создайте все необходимые сетки перед жеребьевкой!");
+                throw new ValidationException("ValidationException", $"Не найдена подходящая сетка для спортсмена {fighter.Surname} {fighter.Name}. Создайте все необходимые сетки перед жеребьевкой!");
 
             fighter.BracketId = bracketId;
         }
@@ -175,7 +167,7 @@ public class BracketService : IBracketService
         await _appDbContext.SaveChangesAsync();
     }
     
-    public async Task<PagedResponse<BracketViewModel[]>> BracketsList(PagedRequest request, Guid tournamentId)
+    public async Task<PagedResponse<BracketViewModel[]>> BracketsListAsync(PagedRequest request, Guid tournamentId)
         {
             var dbQuery = _appDbContext.Brackets
                 .Include(x => x.Tournament)
@@ -184,7 +176,6 @@ public class BracketService : IBracketService
                .AsQueryable()
                .AsNoTracking();
 
-            // searching
             var lowerQ = request.Search.ToLower();
             if (!IsNullOrWhiteSpace(lowerQ))
             {
@@ -197,7 +188,6 @@ public class BracketService : IBracketService
                     ));
             }
 
-            // sorting
             if (!IsNullOrWhiteSpace(request.OrderColumn) && !IsNullOrWhiteSpace(request.OrderDir))
             {
                 dbQuery = request.OrderColumn switch
@@ -217,10 +207,8 @@ public class BracketService : IBracketService
                 };
             }
 
-            // total count
             var totalItemCount = dbQuery.Count();
 
-            // paging
             dbQuery = dbQuery.Skip((request.PageNumber - 1) * request.PageSize).Take(request.PageSize);
             var dbItems = await dbQuery.Select(x => new BracketViewModel()
             {
@@ -234,7 +222,7 @@ public class BracketService : IBracketService
             return new PagedResponse<BracketViewModel[]>(dbItems, totalItemCount, request.PageNumber, request.PageSize);
         }
 
-    public async Task DeleteBracket(Guid id)
+    public async Task DeleteBracketAsync(Guid id)
     {
         var bracket = await _appDbContext.Brackets.FindAsync(id) ?? throw new ValidationException("ValidationException", "Bracket not found");
         _appDbContext.Brackets.Remove(bracket);
@@ -242,7 +230,7 @@ public class BracketService : IBracketService
         await _appDbContext.SaveChangesAsync();
     }
 
-    public async Task DeleteAllBrackets(Guid tournamentId)
+    public async Task DeleteAllBracketsAsync(Guid tournamentId)
     {
         var brackets = _appDbContext.Brackets
             .Include(x => x.Fighters)
@@ -293,8 +281,8 @@ public class BracketService : IBracketService
                 
                 bracketData.teams.Add(new List<Team>()
                 {
-                    new() {name = firstPlayer!.Surname, id = firstPlayer.Id.ToString()},
-                    (secondPlayer == null ? null : new Team {name = secondPlayer.Surname, id = secondPlayer.Id.ToString()})! 
+                    new() {name = $"{firstPlayer!.Surname} {firstPlayer!.Name} - {firstPlayer.Trainer.Club.Name}, {firstPlayer.City}", id = firstPlayer.Id.ToString()},
+                    (secondPlayer == null ? null : new Team {name = $"{secondPlayer!.Surname} {secondPlayer!.Name} - {secondPlayer.Trainer.Club.Name}, {secondPlayer.City}", id = secondPlayer.Id.ToString()})! 
                 });
                 
                 bracketFighters.Remove(firstPlayer);
@@ -304,7 +292,7 @@ public class BracketService : IBracketService
             ValidateBracketData(bracketData);
             bracket.State = JsonConvert.SerializeObject(bracketData);
         }
-   }
+    }
 
     private void ValidateBracketData(BracketData bracketData)
     {

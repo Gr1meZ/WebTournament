@@ -29,20 +29,20 @@ namespace WebTournament.WebApp.Controllers
         [HttpGet("[controller]/{id}/[action]")]
         public async Task<IActionResult> EditIndex(Guid id)
         {
-            return View(await _trainerService.GetTrainer(id));
+            return View(await _trainerService.GetTrainerAsync(id));
         }
 
         [HttpPost]
         public async Task<IActionResult> List([FromBody] DtQuery query)
         {
-            return Json(await _trainerService.TrainersList(query));
+            return Json(await _trainerService.TrainersListAsync(query));
         }
 
         [HttpPost]
         public async Task<IActionResult> AddModel(TrainerViewModel trainerViewModel)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState.Values.SelectMany(v => v.Errors).Select(x => x.ErrorMessage).ToList());
-            await _trainerService.AddTrainer(trainerViewModel);
+            await _trainerService.AddTrainerAsync(trainerViewModel);
             return Ok();
         }
 
@@ -51,20 +51,20 @@ namespace WebTournament.WebApp.Controllers
         {
             if (!ModelState.IsValid) return BadRequest(ModelState.Values.SelectMany(v => v.Errors).Select(x => x.ErrorMessage).ToList());
 
-            await _trainerService.EditTrainer(trainerViewModel);
+            await _trainerService.EditTrainerAsync(trainerViewModel);
             return Ok();
         }
 
         [HttpDelete("[controller]/{id}")]
         public async Task<IActionResult> DeleteModel(Guid id)
         {
-            await _trainerService.DeleteTrainer(id);
+            await _trainerService.DeleteTrainerAsync(id);
             return Ok();
         }
 
         public async Task<IActionResult> Select2Trainers([FromForm] Select2Request request)
         {
-            return Ok(await _trainerService.GetAutoCompleteTrainers(request));
+            return Ok(await _trainerService.GetAutoCompleteTrainersAsync(request));
         }
     }
 }

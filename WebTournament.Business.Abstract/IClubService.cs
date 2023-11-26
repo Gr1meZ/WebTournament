@@ -5,13 +5,12 @@ namespace WebTournament.Business.Abstract
 {
     public interface IClubService
     {
-        Task AddClub(ClubViewModel clubViewModel);
-        Task EditClub(ClubViewModel clubViewModel);
-        Task DeleteClub(Guid id);
-        Task<PagedResponse<ClubViewModel[]>> ClubList(PagedRequest request);
-        Task<ClubViewModel> GetClub(Guid id);
-        Task<List<ClubViewModel>> GetClubs();
-        Task<Select2Response> GetAutoCompleteClubs(Select2Request request);
+        Task AddClubAsync(ClubViewModel clubViewModel);
+        Task EditClubAsync(ClubViewModel clubViewModel);
+        Task DeleteClubAsync(Guid id);
+        Task<PagedResponse<ClubViewModel[]>> ClubListAsync(PagedRequest request);
+        Task<ClubViewModel> GetClubAsync(Guid id);
+        Task<Select2Response> GetSelect2ClubsAsync(Select2Request request);
 
     }
 }

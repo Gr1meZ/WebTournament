@@ -15,10 +15,10 @@ namespace WebTournament.Business.Services
 
         public BeltService(IApplicationDbContext appDbContext)
         {
-            this._appDbContext = appDbContext;
+            _appDbContext = appDbContext;
         }
 
-        public async Task AddBelt(BeltViewModel beltViewModel)
+        public async Task AddBeltAsync(BeltViewModel beltViewModel)
         {
             if (beltViewModel == null)
                 throw new ValidationException("Belt model is null");
@@ -34,13 +34,12 @@ namespace WebTournament.Business.Services
             await _appDbContext.SaveChangesAsync();
         }
 
-        public async Task<PagedResponse<BeltViewModel[]>> BeltList(PagedRequest request)
+        public async Task<PagedResponse<BeltViewModel[]>> BeltListAsync(PagedRequest request)
         {
             var dbQuery = _appDbContext.Belts
                .AsQueryable()
                .AsNoTracking();
 
-            // searching
             var lowerQ = request.Search.ToLower();
             if (!string.IsNullOrWhiteSpace(lowerQ))
             {
@@ -52,7 +51,6 @@ namespace WebTournament.Business.Services
                     ));
             }
 
-            // sorting
             if (!string.IsNullOrWhiteSpace(request.OrderColumn) && !string.IsNullOrWhiteSpace(request.OrderDir))
             {
                 dbQuery = request.OrderColumn switch
@@ -72,10 +70,8 @@ namespace WebTournament.Business.Services
                 };
             }
 
-            // total count
             var totalItemCount = dbQuery.Count();
 
-            // paging
             dbQuery = dbQuery.Skip((request.PageNumber - 1) * request.PageSize).Take(request.PageSize);
 
             var dbItems = await dbQuery.Select(x => new BeltViewModel()
@@ -89,7 +85,7 @@ namespace WebTournament.Business.Services
             return new PagedResponse<BeltViewModel[]>(dbItems, totalItemCount, request.PageNumber, request.PageSize);
         }
 
-        public async Task DeleteBelt(Guid id)
+        public async Task DeleteBeltAsync(Guid id)
         {
             var belt = await _appDbContext.Belts.FindAsync(id) ?? throw new ValidationException("Belt not found");
             _appDbContext.Belts.Remove(belt);
@@ -97,7 +93,7 @@ namespace WebTournament.Business.Services
             await _appDbContext.SaveChangesAsync();
         }
 
-        public async Task EditBelt(BeltViewModel beltViewModel)
+        public async Task EditBeltAsync(BeltViewModel beltViewModel)
         {
             if (beltViewModel == null)
                 throw new ValidationException("Age group model is null");
@@ -112,7 +108,7 @@ namespace WebTournament.Business.Services
             await _appDbContext.SaveChangesAsync();
         }
 
-        public async Task<BeltViewModel> GetBelt(Guid id)
+        public async Task<BeltViewModel> GetBeltAsync(Guid id)
         {
             var belt = await _appDbContext.Belts.FindAsync(id);
 
@@ -130,20 +126,7 @@ namespace WebTournament.Business.Services
             return viewModel;
         }
 
-        public async Task<List<BeltViewModel>> GetBelts()
-        {
-            var belts = _appDbContext.Belts.AsNoTracking();
-
-            return await belts.Select(x => new BeltViewModel()
-            {
-                Id = x.Id,
-                BeltNumber = x.BeltNumber,
-                FullName = x.FullName,
-                ShortName = x.ShortName
-            }).ToListAsync();
-        }
-
-        public async Task<Select2Response> GetAutoCompleteBelts(Select2Request request)
+        public async Task<Select2Response> GetSelect2BeltsAsync(Select2Request request)
         {
             var belts = _appDbContext.Belts
                .AsNoTracking()

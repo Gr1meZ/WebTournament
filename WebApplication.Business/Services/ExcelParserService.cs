@@ -103,21 +103,22 @@ namespace WebTournament.Business.Services
                     
                 }
                 fighterViewModel.TournamentId = tournamentId;
-                await CheckIfFighterExists(fighterViewModel);
+                await CheckIfFighterExistsAsync(fighterViewModel);
                 
                 fighterViewModel.Age = AgeCalculator.CalculateAge(fighterViewModel.BirthDate);
-                fighterViewModel.WeightCategorieId = await GetWeightCategorieId(fighterViewModel.WeightNumber,
+                fighterViewModel.WeightCategorieId = await GetWeightCategorieIdAsync(fighterViewModel.WeightNumber,
                     fighterViewModel.Gender, fighterViewModel.BirthDate);
-                fighterViewModel.TrainerId =
-                    await GetTrainerId(fighterViewModel.TrainerName, fighterViewModel.ClubName);
-                fighterViewModel.BeltId = await FindBeltId(fighterViewModel.BeltNumber, fighterViewModel.BeltShortName);
+                
+                fighterViewModel.TrainerId = await GetTrainerIdAsync(fighterViewModel.TrainerName!, fighterViewModel.ClubName!);
+                
+                fighterViewModel.BeltId = await FindBeltIdAsync(fighterViewModel.BeltNumber, fighterViewModel.BeltShortName!);
                 
                 fightersList.Add(fighterViewModel);
                 
             }
 
             foreach (var fighter in fightersList)
-                await _fighterService.AddFighter(fighter);
+                await _fighterService.AddFighterAsync(fighter);
         }
         
         public void RemoveEmptyRows(ExcelWorksheet worksheet)
@@ -135,22 +136,21 @@ namespace WebTournament.Business.Services
 
                 if (allEmpty)
                 {
-                    // Удалить строку
                     worksheet.DeleteRow(row);
                 }
             }
         }
         
-        private async Task CheckIfFighterExists(FighterViewModel fighterViewModel)
+        private async Task CheckIfFighterExistsAsync(FighterViewModel fighterViewModel)
         {
             var fighter = await _appDbContext.Fighters.FirstOrDefaultAsync(x =>
                 x.Surname == fighterViewModel.Surname && x.Name == fighterViewModel.Name && x.BirthDate == fighterViewModel.BirthDate && x.TournamentId == fighterViewModel.TournamentId);
             
             if (fighter != null)
-                throw new ValidationException("ValidationException",$"Игрок {fighter.Surname} {fighter.Name} уже существует");
+                throw new ValidationException("ValidationException",$"Спортсмен {fighter.Surname} {fighter.Name} уже существует");
         }
         
-        private async Task<Guid> GetWeightCategorieId(int weight, string gender, DateTime birthDate)
+        private async Task<Guid> GetWeightCategorieIdAsync(int weight, string gender, DateTime birthDate)
         {
             var age = AgeCalculator.CalculateAge(birthDate);
             var ageGroup = await _appDbContext.AgeGroups.FirstOrDefaultAsync(x => age >= x.MinAge && age <= x.MaxAge);
@@ -164,10 +164,11 @@ namespace WebTournament.Business.Services
                 .FirstOrDefaultAsync();
           
             if (weightCategorie == null)
-                throw new ValidationException("ValidationException",$"Весовая категория для возрастной категории {ageGroup.Name} с весом игрока {weight} кг не найдена! Добавьте весовую категорию в базу данных!");
+                throw new ValidationException("ValidationException",$"Весовая категория для возрастной категории {ageGroup.Name} с весом спортсмена {weight} кг не найдена! Добавьте весовую категорию в базу данных!");
             return weightCategorie.Id;
         }
-        private async Task<Guid> FindBeltId(int beltNumber, string beltShortName)
+        
+        private async Task<Guid> FindBeltIdAsync(int beltNumber, string beltShortName)
         {
             var belt = await _appDbContext.Belts
                 .FirstOrDefaultAsync(x => x.BeltNumber == beltNumber && x.ShortName == beltShortName);
@@ -178,7 +179,7 @@ namespace WebTournament.Business.Services
             return belt.Id;
         }
 
-        private async Task<Guid> GetTrainerId(string trainerFullName, string clubName)
+        private async Task<Guid> GetTrainerIdAsync(string trainerFullName, string clubName)
         {
             var fullNameArray = trainerFullName.Split(" ");
             var trainersSurname = fullNameArray[0];

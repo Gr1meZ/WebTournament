@@ -29,20 +29,20 @@ namespace WebTournament.WebApp.Controllers
         [HttpGet("[controller]/{id}/[action]")]
         public async Task<IActionResult> EditIndex(Guid id)
         {
-            return View(await _weightCategorieService.GetWeightCategorie(id));
+            return View(await _weightCategorieService.GetWeightCategorieAsync(id));
         }
 
         [HttpPost]
         public async Task<IActionResult> List([FromBody] DtQuery query)
         {
-            return Json(await _weightCategorieService.WeightCategoriesList(query));
+            return Json(await _weightCategorieService.WeightCategoriesListAsync(query));
         }
 
         [HttpPost]
         public async Task<IActionResult> AddModel(WeightCategorieViewModel weightCategorie)
         {
             if (!ModelState.IsValid || !weightCategorie.AgeGroupId.HasValue) return BadRequest(ModelState.Values.SelectMany(v => v.Errors).Select(x => x.ErrorMessage).ToList());
-            await _weightCategorieService.AddWeightCategorie(weightCategorie);
+            await _weightCategorieService.AddWeightCategorieAsync(weightCategorie);
             return Ok();
         }
 
@@ -51,20 +51,20 @@ namespace WebTournament.WebApp.Controllers
         {
             if (!ModelState.IsValid) return BadRequest(ModelState.Values.SelectMany(v => v.Errors).Select(x => x.ErrorMessage).ToList());
 
-            await _weightCategorieService.EditWeightCategorie(weightCategorie);
+            await _weightCategorieService.EditWeightCategorieAsync(weightCategorie);
             return Ok();
         }
 
         [HttpDelete("[controller]/{id}")]
         public async Task<IActionResult> DeleteModel(Guid id)
         {
-            await _weightCategorieService.DeleteWeightCategorie(id);
+            await _weightCategorieService.DeleteWeightCategorieAsync(id);
             return Ok();
         }
 
         public async Task<IActionResult> Select2WeightCategories([FromForm] Select2Request request)
         {
-            return Ok(await _weightCategorieService.GetAutoCompleteWeightCategories(request));
+            return Ok(await _weightCategorieService.GetSelect2WeightCategoriesAsync(request));
         }
     }
 }

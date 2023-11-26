@@ -7,7 +7,7 @@ namespace DependencyInjection
 {
     public static class RoleInitializer
     {
-        public static async Task CreateRoles(this IServiceProvider serviceProvider)
+        public static async Task CreateRolesAsync(this IServiceProvider serviceProvider)
         {
             using var scope = serviceProvider.CreateScope();
 

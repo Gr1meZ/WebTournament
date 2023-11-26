@@ -5,13 +5,12 @@ namespace WebTournament.Business.Abstract
 {
     public interface ITrainerService
     {
-        Task AddTrainer(TrainerViewModel trainerViewModel);
-        Task EditTrainer(TrainerViewModel trainerViewModel);
-        Task DeleteTrainer(Guid id);
-        Task<PagedResponse<TrainerViewModel[]>> TrainersList(PagedRequest request);
-        Task<TrainerViewModel> GetTrainer(Guid id);
-        Task<List<TrainerViewModel>> GetTrainers();
-        Task<Select2Response> GetAutoCompleteTrainers(Select2Request request);
+        Task AddTrainerAsync(TrainerViewModel trainerViewModel);
+        Task EditTrainerAsync(TrainerViewModel trainerViewModel);
+        Task DeleteTrainerAsync(Guid id);
+        Task<PagedResponse<TrainerViewModel[]>> TrainersListAsync(PagedRequest request);
+        Task<TrainerViewModel> GetTrainerAsync(Guid id);
+        Task<Select2Response> GetAutoCompleteTrainersAsync(Select2Request request);
 
 
     }

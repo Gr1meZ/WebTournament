@@ -5,7 +5,6 @@ using DataAccess.Domain.Models;
 using DataAccess.PostgreSQL.Configuration;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DataAccess.PostgreSQL

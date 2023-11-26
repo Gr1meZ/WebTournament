@@ -5,13 +5,12 @@ namespace WebTournament.Business.Abstract
 {
     public interface IAgeGroupService
     {
-        Task AddAgeGroup(AgeGroupViewModel ageGroupViewModel);
-        Task EditAgeGroup(AgeGroupViewModel ageGroupViewModel);
-        Task DeleteAgeGroup(Guid id);
-        Task<PagedResponse<AgeGroupViewModel[]>> AgeGroupList(PagedRequest request);
-        Task<AgeGroupViewModel> GetAgeGroup(Guid id);
-        Task<List<AgeGroupViewModel>> GetAgeGroups();
-        Task<Select2Response> GetAutoCompleteAgeGroups(Select2Request request);
+        Task AddAgeGroupAsync(AgeGroupViewModel ageGroupViewModel);
+        Task EditAgeGroupAsync(AgeGroupViewModel ageGroupViewModel);
+        Task DeleteAgeGroupAsync(Guid id);
+        Task<PagedResponse<AgeGroupViewModel[]>> AgeGroupListAsync(PagedRequest request);
+        Task<AgeGroupViewModel> GetAgeGroupAsync(Guid id);
+        Task<Select2Response> GetSelect2AgeGroupsAsync(Select2Request request);
 
     }
 }

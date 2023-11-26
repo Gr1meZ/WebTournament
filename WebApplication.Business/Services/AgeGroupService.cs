@@ -14,10 +14,10 @@ namespace WebTournament.Business.Services
 
         public AgeGroupService(IApplicationDbContext appDbContext)
         {
-            this._appDbContext = appDbContext; 
+            _appDbContext = appDbContext; 
         }
 
-        public async Task AddAgeGroup(AgeGroupViewModel ageGroupViewModel)
+        public async Task AddAgeGroupAsync(AgeGroupViewModel ageGroupViewModel)
         {
             if (ageGroupViewModel == null)
                 throw new ValidationException("Age group model is null");
@@ -33,7 +33,7 @@ namespace WebTournament.Business.Services
             await _appDbContext.SaveChangesAsync();
         }
 
-        public async Task<PagedResponse<AgeGroupViewModel[]>> AgeGroupList(PagedRequest request)
+        public async Task<PagedResponse<AgeGroupViewModel[]>> AgeGroupListAsync(PagedRequest request)
         {
             var dbQuery = _appDbContext.AgeGroups
                .AsQueryable()
@@ -51,7 +51,6 @@ namespace WebTournament.Business.Services
                     ));
             }
 
-            // sorting
             if (!string.IsNullOrWhiteSpace(request.OrderColumn) && !string.IsNullOrWhiteSpace(request.OrderDir))
             {
                 dbQuery = request.OrderColumn switch
@@ -71,10 +70,8 @@ namespace WebTournament.Business.Services
                 };
             }
 
-            // total count
             var totalItemCount = dbQuery.Count();
 
-            // paging
             dbQuery = dbQuery.Skip((request.PageNumber - 1) * request.PageSize).Take(request.PageSize);
 
             var dbItems = await dbQuery.Select(x => new AgeGroupViewModel()
@@ -88,7 +85,7 @@ namespace WebTournament.Business.Services
             return new PagedResponse<AgeGroupViewModel[]>(dbItems, totalItemCount, request.PageNumber, request.PageSize);
         }
 
-        public async Task DeleteAgeGroup(Guid id)
+        public async Task DeleteAgeGroupAsync(Guid id)
         {
             var ageGroup = await _appDbContext.AgeGroups.FindAsync(id) ?? throw new ValidationException("Age group not found");
             _appDbContext.AgeGroups.Remove(ageGroup);
@@ -96,7 +93,7 @@ namespace WebTournament.Business.Services
             await _appDbContext.SaveChangesAsync();
         }
 
-        public async Task EditAgeGroup(AgeGroupViewModel ageGroupViewModel)
+        public async Task EditAgeGroupAsync(AgeGroupViewModel ageGroupViewModel)
         {
 
             if (ageGroupViewModel == null)
@@ -112,7 +109,7 @@ namespace WebTournament.Business.Services
             await _appDbContext.SaveChangesAsync();
         }
 
-        public async Task<AgeGroupViewModel> GetAgeGroup(Guid id)
+        public async Task<AgeGroupViewModel> GetAgeGroupAsync(Guid id)
         {
             var ageGroup = await _appDbContext.AgeGroups.FindAsync(id);
             
@@ -131,20 +128,7 @@ namespace WebTournament.Business.Services
             return viewModel;
         }
 
-        public async Task<List<AgeGroupViewModel>> GetAgeGroups()
-        {
-            var ageGroups = _appDbContext.AgeGroups.AsNoTracking();
-
-            return await ageGroups.Select(x => new AgeGroupViewModel()
-            {
-                Id = x.Id,
-                Name = x.Name,
-                MaxAge = x.MaxAge,
-                MinAge = x.MinAge,
-            }).ToListAsync();
-        }
-
-        public async Task<Select2Response> GetAutoCompleteAgeGroups(Select2Request request)
+        public async Task<Select2Response> GetSelect2AgeGroupsAsync(Select2Request request)
         {
             var ageGroups = _appDbContext.AgeGroups
               .AsNoTracking()
