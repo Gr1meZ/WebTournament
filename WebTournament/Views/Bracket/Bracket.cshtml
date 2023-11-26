@@ -54,8 +54,9 @@ else
     </div>
   </nav>
   <div class="container-fluid pt-lg-5">
+    <div class="text-center" id="matchCallback"></div>
     <div class="demo align-content-center">
-      </div>
+    </div>
   </div>
   
 }
@@ -91,7 +92,9 @@ else
         }
       })
     }
+    
   
+    
     function render_fn(container, data, score, state) {
       switch(state) {
         case "empty-bye":
@@ -140,20 +143,24 @@ else
                             });
                   });
      $(function() {
+       
        $('.demo').bracket({
         init: customData,
-        skipConsolationRound: true,
         save: function(){}, /* without save() labels are disabled */
         decorator: {edit: edit_fn,
           render: render_fn},
         disableToolbar: true,
         disableTeamEdit: true,
-        teamWidth: 93,
+        teamWidth: 99,
         scoreWidth: 31,
-        matchMargin: 87,
-        roundMargin: 84
+        matchMargin: 99,
+        roundMargin: 99
       });
-  
+       
+    $(".label").on("mouseover", function (data) {
+          console.log(data);
+          $("#matchCallback").text(data.target.innerText);
+      });
       
   });
   

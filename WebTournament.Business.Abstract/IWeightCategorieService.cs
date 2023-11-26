@@ -5,13 +5,12 @@ namespace WebTournament.Business.Abstract
 {
     public interface IWeightCategorieService
     {
-        Task AddWeightCategorie(WeightCategorieViewModel weightCategorieViewModel);
-        Task EditWeightCategorie(WeightCategorieViewModel weightCategorieViewModel);
-        Task DeleteWeightCategorie(Guid id);
-        Task<PagedResponse<WeightCategorieViewModel[]>> WeightCategoriesList(PagedRequest request);
-        Task<WeightCategorieViewModel> GetWeightCategorie(Guid id);
-        Task<List<WeightCategorieViewModel>> GetWeightCategories();
-        Task<Select2Response> GetAutoCompleteWeightCategories(Select2Request request);
+        Task AddWeightCategorieAsync(WeightCategorieViewModel weightCategorieViewModel);
+        Task EditWeightCategorieAsync(WeightCategorieViewModel weightCategorieViewModel);
+        Task DeleteWeightCategorieAsync(Guid id);
+        Task<PagedResponse<WeightCategorieViewModel[]>> WeightCategoriesListAsync(PagedRequest request);
+        Task<WeightCategorieViewModel> GetWeightCategorieAsync(Guid id);
+        Task<Select2Response> GetSelect2WeightCategoriesAsync(Select2Request request);
 
     }
 }

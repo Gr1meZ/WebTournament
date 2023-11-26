@@ -29,26 +29,26 @@ namespace WebTournament.WebApp.Controllers
         [HttpGet("[controller]/{id}/[action]")]
         public async Task<IActionResult> EditIndex(Guid id)
         {
-            return View(await _tournamentService.GetTournament(id));
+            return View(await _tournamentService.GetTournamentAsync(id));
         }
         
         [HttpGet("[controller]/{id}/[action]")]
         public async Task<IActionResult> Winners(Guid id)
         {
-            return View(await _tournamentService.GetTournamentResults(id));
+            return View(await _tournamentService.GetTournamentResultsAsync(id));
         }
         
         [HttpPost]
         public async Task<IActionResult> List([FromBody] DtQuery query)
         {
-            return Json(await _tournamentService.TournamentsList(query));
+            return Json(await _tournamentService.TournamentsListAsync(query));
         }
 
         [HttpPost]
         public async Task<IActionResult> AddModel(TournamentViewModel tournamentViewModel)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState.Values.SelectMany(v => v.Errors).Select(x => x.ErrorMessage).ToList());
-            await _tournamentService.AddTournament(tournamentViewModel);
+            await _tournamentService.AddTournamentAsync(tournamentViewModel);
             return Ok();
         }
 
@@ -57,20 +57,20 @@ namespace WebTournament.WebApp.Controllers
         {
             if (!ModelState.IsValid) return BadRequest(ModelState.Values.SelectMany(v => v.Errors).Select(x => x.ErrorMessage).ToList());
 
-            await _tournamentService.EditTournament(tournamentViewModel);
+            await _tournamentService.EditTournamentAsync(tournamentViewModel);
             return Ok();
         }
 
         [HttpDelete("[controller]/{id}")]
         public async Task<IActionResult> DeleteModel(Guid id)
         {
-            await _tournamentService.DeleteTournament(id);
+            await _tournamentService.DeleteTournamentAsync(id);
             return Ok();
         }
 
         public async Task<IActionResult> Select2Tournaments([FromForm] Select2Request request)
         {
-            return Ok(await _tournamentService.GetAutoCompleteTournaments(request));
+            return Ok(await _tournamentService.GetSelect2TournamentsAsync(request));
         }
     }
 }

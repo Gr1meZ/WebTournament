@@ -1,7 +1,6 @@
 ﻿using DataAccess.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
-using System.Globalization;
 using DataAccess.Abstract;
 using WebTournament.Business.Abstract;
 using WebTournament.Models;
@@ -19,7 +18,7 @@ namespace WebTournament.Business.Services
             _appDbContext = appDbContext;
         }
 
-        public async Task AddTournament(TournamentViewModel tournamentViewModel)
+        public async Task AddTournamentAsync(TournamentViewModel tournamentViewModel)
         {
             if (tournamentViewModel == null)
                 throw new ValidationException("Tournament model is null");
@@ -35,15 +34,26 @@ namespace WebTournament.Business.Services
             await _appDbContext.SaveChangesAsync();
         }
 
-        public async Task DeleteTournament(Guid id)
+        public async Task DeleteTournamentAsync(Guid id)
         {
-            var tournament = await _appDbContext.Tournaments.FindAsync(id) ?? throw new ValidationException("Tournament not found");
+            var tournament = await _appDbContext.Tournaments.
+                 Include( xx => xx.Fighters)
+                .Include(x => x.Brackets)
+                .FirstOrDefaultAsync()?? throw new ValidationException("Tournament not found");
+
+            var bracketWinners =  _appDbContext.BracketWinners.Include(x => x.Bracket)
+                .Where(x => x.Bracket.TournamentId == id);
+            
+            _appDbContext.BracketWinners.RemoveRange(bracketWinners);
+            _appDbContext.Fighters.RemoveRange(tournament.Fighters);
+            _appDbContext.Brackets.RemoveRange(tournament.Brackets);
+            
             _appDbContext.Tournaments.Remove(tournament);
 
             await _appDbContext.SaveChangesAsync();
         }
 
-        public async Task EditTournament(TournamentViewModel tournamentViewModel)
+        public async Task EditTournamentAsync(TournamentViewModel tournamentViewModel)
         {
             if (tournamentViewModel == null)
                 throw new ValidationException("Tournament model is null");
@@ -58,7 +68,7 @@ namespace WebTournament.Business.Services
             await _appDbContext.SaveChangesAsync();
         }
 
-        public async Task<TournamentViewModel> GetTournament(Guid id)
+        public async Task<TournamentViewModel> GetTournamentAsync(Guid id)
         {
             var tournament = await _appDbContext.Tournaments.FindAsync(id);
             
@@ -89,7 +99,7 @@ namespace WebTournament.Business.Services
             }).ToListAsync();
         }
 
-        public async Task<PagedResponse<TournamentViewModel[]>> TournamentsList(PagedRequest request)
+        public async Task<PagedResponse<TournamentViewModel[]>> TournamentsListAsync(PagedRequest request)
         {
             var dbQuery = _appDbContext.Tournaments
               .AsQueryable()
@@ -144,7 +154,7 @@ namespace WebTournament.Business.Services
             return new PagedResponse<TournamentViewModel[]>(dbItems, totalItemCount, request.PageNumber, request.PageSize);
         }
 
-        public async Task<Select2Response> GetAutoCompleteTournaments(Select2Request request)
+        public async Task<Select2Response> GetSelect2TournamentsAsync(Select2Request request)
         {
             var tournaments = _appDbContext.Tournaments
               .AsNoTracking()
@@ -175,7 +185,7 @@ namespace WebTournament.Business.Services
             };
         }
 
-        public async Task<List<BracketWinnerViewModel>> GetTournamentResults(Guid tournamentId)
+        public async Task<List<BracketWinnerViewModel>> GetTournamentResultsAsync(Guid tournamentId)
         {
             var bracketResults = await _appDbContext.BracketWinners.Where(x => x.Bracket.TournamentId == tournamentId && (x.FirstPlaceId != null || x.SecondPlaceId != null || x.ThirdPlaceId != null))
                 .Include(x => x.Bracket.WeightCategorie.AgeGroup)

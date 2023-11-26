@@ -17,7 +17,7 @@ namespace WebTournament.Business.Services
             _appDbContext = appDbContext;
         }
 
-        public async Task AddTrainer(TrainerViewModel trainerViewModel)
+        public async Task AddTrainerAsync(TrainerViewModel trainerViewModel)
         {
             if (trainerViewModel == null)
                 throw new ValidationException("Trainer model is null");
@@ -35,7 +35,7 @@ namespace WebTournament.Business.Services
             await _appDbContext.SaveChangesAsync();
         }
 
-        public async Task DeleteTrainer(Guid id)
+        public async Task DeleteTrainerAsync(Guid id)
         {
             var trainer = await _appDbContext.Trainers.FindAsync(id) ?? throw new ValidationException("Trainer not found");
             _appDbContext.Trainers.Remove(trainer);
@@ -43,7 +43,7 @@ namespace WebTournament.Business.Services
             await _appDbContext.SaveChangesAsync();
         }
 
-        public async Task EditTrainer(TrainerViewModel trainerViewModel)
+        public async Task EditTrainerAsync(TrainerViewModel trainerViewModel)
         {
             if (trainerViewModel == null)
                 throw new ValidationException("Trainer model is null");
@@ -60,7 +60,7 @@ namespace WebTournament.Business.Services
             await _appDbContext.SaveChangesAsync();
         }
 
-        public async Task<TrainerViewModel> GetTrainer(Guid id)
+        public async Task<TrainerViewModel> GetTrainerAsync(Guid id)
         {
             var trainer = await _appDbContext.Trainers.Include(x => x.Club).FirstOrDefaultAsync(y => y.Id == id);
             
@@ -81,29 +81,13 @@ namespace WebTournament.Business.Services
             return viewModel;
         }
 
-        public async Task<List<TrainerViewModel>> GetTrainers()
-        {
-            var trainer = _appDbContext.Trainers.AsNoTracking();
-
-            return await trainer.Select(trainer => new TrainerViewModel()
-            {
-                Id = trainer.Id,
-                ClubId = trainer.ClubId,
-                Phone = trainer.Phone,
-                Patronymic = trainer.Patronymic,
-                Surname = trainer.Surname,
-                Name = trainer.Name
-            }).ToListAsync();
-        }
-
-        public async Task<PagedResponse<TrainerViewModel[]>> TrainersList(PagedRequest request)
+        public async Task<PagedResponse<TrainerViewModel[]>> TrainersListAsync(PagedRequest request)
         {
             var dbQuery = _appDbContext.Trainers
                 .Include( x => x.Club)
                .AsQueryable()
                .AsNoTracking();
 
-            // searching
             var lowerQ = request.Search?.ToLower();
             if (!string.IsNullOrWhiteSpace(lowerQ))
             {
@@ -117,7 +101,6 @@ namespace WebTournament.Business.Services
                     ));
             }
 
-            // sorting
             if (!string.IsNullOrWhiteSpace(request.OrderColumn) && !string.IsNullOrWhiteSpace(request.OrderDir))
             {
                 dbQuery = request.OrderColumn switch
@@ -140,10 +123,8 @@ namespace WebTournament.Business.Services
                 };
             }
 
-            // total count
             var totalItemCount = dbQuery.Count();
 
-            // paging
             dbQuery = dbQuery.Skip((request.PageNumber - 1) * request.PageSize).Take(request.PageSize);
 
             var dbItems = await dbQuery.Select(x => new TrainerViewModel()
@@ -160,7 +141,7 @@ namespace WebTournament.Business.Services
             return new PagedResponse<TrainerViewModel[]>(dbItems, totalItemCount, request.PageNumber, request.PageSize);
         }
 
-        public async Task<Select2Response> GetAutoCompleteTrainers(Select2Request request)
+        public async Task<Select2Response> GetAutoCompleteTrainersAsync(Select2Request request)
         {
             var ageGroups = _appDbContext.Trainers
               .AsNoTracking()

@@ -34,4 +34,18 @@
     <ProjectReference Include="..\WebTournament.DependencyInjection\DependencyInjection.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="wwwroot\csv\ageGroups.csv" />
+    <_ContentIncludedByDefault Remove="wwwroot\csv\belts.csv" />
+    <_ContentIncludedByDefault Remove="wwwroot\csv\clubs.csv" />
+    <_ContentIncludedByDefault Remove="wwwroot\csv\trainers.csv" />
+    <_ContentIncludedByDefault Remove="wwwroot\csv\weightCategories.csv" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\.dockerignore">
+      <Link>.dockerignore</Link>
+    </Content>
+  </ItemGroup>
+
 </Project>

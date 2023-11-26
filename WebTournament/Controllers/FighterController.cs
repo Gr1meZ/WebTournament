@@ -21,7 +21,7 @@ namespace WebTournament.WebApp.Controllers
         [HttpGet("[controller]/{tournamentId}")]
         public async Task<IActionResult> Index(Guid tournamentId)
         {
-            var tournament = await _tournamentService.GetTournament(tournamentId);
+            var tournament = await _tournamentService.GetTournamentAsync(tournamentId);
             ViewData["Tournament"] = tournament.Name;
             return View(tournamentId);
         }
@@ -35,20 +35,20 @@ namespace WebTournament.WebApp.Controllers
         [HttpGet("[controller]/{id}/[action]")]
         public async Task<IActionResult> EditIndex(Guid id)
         {
-            return View(await _fighterService.GetFighter(id));
+            return View(await _fighterService.GetFighterAsync(id));
         }
 
         [HttpPost]
         public async Task<IActionResult> List([FromBody] DtQuery query, Guid tournamentId)
         {
-            return Json(await _fighterService.FightersList(query, tournamentId));
+            return Json(await _fighterService.FightersListAsync(query, tournamentId));
         }
 
         [HttpPost]
         public async Task<IActionResult> AddModel(FighterViewModel fighterViewModel)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState.Values.SelectMany(v => v.Errors).Select(x => x.ErrorMessage).ToList());
-            await _fighterService.AddFighter(fighterViewModel);
+            await _fighterService.AddFighterAsync(fighterViewModel);
             return Ok();
         }
 
@@ -57,21 +57,21 @@ namespace WebTournament.WebApp.Controllers
         {
             if (!ModelState.IsValid) return BadRequest(ModelState.Values.SelectMany(v => v.Errors).Select(x => x.ErrorMessage).ToList());
 
-            await _fighterService.EditFighter(fighterViewModel);
+            await _fighterService.EditFighterAsync(fighterViewModel);
             return Ok();
         }
 
         [HttpDelete("[controller]/{id}")]
         public async Task<IActionResult> DeleteModel(Guid id)
         {
-            await _fighterService.DeleteFighter(id);
+            await _fighterService.DeleteFighterAsync(id);
             return Ok();
         }
         
         [HttpDelete("[controller]/[action]/{tournamentId}")]
         public async Task<IActionResult> DeleteAll(Guid tournamentId)
         {
-            await _fighterService.DeleteAllFighters(tournamentId);
+            await _fighterService.DeleteAllFightersAsync(tournamentId);
             return Ok();
         }
     }

@@ -16,10 +16,10 @@ namespace WebTournament.Business.Services
 
         public FighterService(IApplicationDbContext appDbContext)
         {
-            this._appDbContext = appDbContext;
+            _appDbContext = appDbContext;
         }
 
-        public async Task AddFighter(FighterViewModel fighterViewModel)
+        public async Task AddFighterAsync(FighterViewModel fighterViewModel)
         {
             if (fighterViewModel == null)
                 throw new ValidationException("Fighter model is null");
@@ -28,7 +28,7 @@ namespace WebTournament.Business.Services
                 x.Surname == fighterViewModel.Surname && x.Name == fighterViewModel.Name && x.City == fighterViewModel.City && x.TournamentId == fighterViewModel.TournamentId);
 
             if (fighterExists != null) 
-                throw new DataAccess.Common.Exceptions.ValidationException("ValidationException",$"Игрок {fighterExists.Surname} {fighterExists.Name} уже существует");
+                throw new DataAccess.Common.Exceptions.ValidationException("ValidationException",$"Спортсмен {fighterExists.Surname} {fighterExists.Name} уже существует");
             
             var fighter = new Fighter()
             {
@@ -49,7 +49,7 @@ namespace WebTournament.Business.Services
             await _appDbContext.SaveChangesAsync();
         }
 
-        public async Task DeleteFighter(Guid id)
+        public async Task DeleteFighterAsync(Guid id)
         {
             var fighter = await _appDbContext.Fighters.FindAsync(id) ?? throw new ValidationException("Fighter not found");
             _appDbContext.Fighters.Remove(fighter);
@@ -57,7 +57,7 @@ namespace WebTournament.Business.Services
             await _appDbContext.SaveChangesAsync();
         }
 
-        public async Task DeleteAllFighters(Guid id)
+        public async Task DeleteAllFightersAsync(Guid id)
         {
             var fighters =  _appDbContext.Fighters.Where(x => x.TournamentId == id);
             var bracketWinners = _appDbContext.BracketWinners.Include(x => x.Bracket)
@@ -69,7 +69,7 @@ namespace WebTournament.Business.Services
             await _appDbContext.SaveChangesAsync();
         }
 
-        public async Task EditFighter(FighterViewModel fighterViewModel)
+        public async Task EditFighterAsync(FighterViewModel fighterViewModel)
         {
             if (fighterViewModel == null)
                 throw new ValidationException("Fighter model is null");
@@ -92,7 +92,7 @@ namespace WebTournament.Business.Services
             await _appDbContext.SaveChangesAsync();
         }
 
-        public async Task<PagedResponse<FighterViewModel[]>> FightersList(PagedRequest request, Guid tournamentId)
+        public async Task<PagedResponse<FighterViewModel[]>> FightersListAsync(PagedRequest request, Guid tournamentId)
         {
             var dbQuery = _appDbContext.Tournaments
               .SelectMany(x => x.Fighters)
@@ -101,7 +101,6 @@ namespace WebTournament.Business.Services
               .AsQueryable()
               .AsNoTracking();
 
-            // searching
             var lowerQ = request.Search.ToLower();
             if (!string.IsNullOrWhiteSpace(lowerQ))
             {
@@ -122,7 +121,6 @@ namespace WebTournament.Business.Services
                     ));
             }
 
-            // sorting
             if (!string.IsNullOrWhiteSpace(request.OrderColumn) && !string.IsNullOrWhiteSpace(request.OrderDir))
             {
                 dbQuery = request.OrderColumn switch
@@ -166,10 +164,8 @@ namespace WebTournament.Business.Services
                 };
             }
 
-            // total count
-            var totalItemCount = await dbQuery.CountAsync();
+            var totalItemCount =  dbQuery.Count();
 
-            // paging
             dbQuery = dbQuery.Skip((request.PageNumber - 1) * request.PageSize).Take(request.PageSize);
 
             var dbItems = await dbQuery.Select(x => new FighterViewModel()
@@ -195,7 +191,7 @@ namespace WebTournament.Business.Services
             return new PagedResponse<FighterViewModel[]>(dbItems, totalItemCount, request.PageNumber, request.PageSize);
         }
 
-        public async Task<FighterViewModel> GetFighter(Guid id)
+        public async Task<FighterViewModel> GetFighterAsync(Guid id)
         {
             var fighter = await _appDbContext.Fighters
                 .Include(x => x.Tournament)
@@ -229,31 +225,6 @@ namespace WebTournament.Business.Services
             };
 
             return viewModel;
-        }
-
-        public async Task<List<FighterViewModel>> GetFighters()
-        {
-            var fighters = _appDbContext.Fighters.AsNoTracking();
-
-            return await fighters.Select(fighter => new FighterViewModel()
-            {
-                Id = fighter.Id,
-                Age = fighter.Age,
-                BirthDate = fighter.BirthDate,
-                Gender = fighter.Gender.MapToString(),
-                WeightCategorieId = fighter.WeightCategorieId,
-                Name = fighter.Name,
-                TrainerId = fighter.TrainerId,
-                TournamentId = fighter.TournamentId,
-                Surname = fighter.Surname,
-                BeltId = fighter.BeltId,
-                BeltShortName = fighter.Belt.ShortName,
-                City = fighter.City,
-                Country = fighter.Country,
-                TournamentName = fighter.Tournament.Name,
-                TrainerName = $"{fighter.Trainer.Surname} {fighter.Trainer.Name[0]}.{fighter.Trainer.Patronymic}",
-                WeightCategorieName = fighter.WeightCategorie.WeightName
-            }).ToListAsync();
         }
     }
 }

@@ -10,7 +10,6 @@ namespace WebTournament.Models
         public string Name { get; set; }
 
         [Required(ErrorMessage = "Поле не заполнено")]
-
         public DateTime StartDate { get; set; }
         [Required(ErrorMessage = "Адрес не заполнен")]
 

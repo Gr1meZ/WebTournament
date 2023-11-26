@@ -6,7 +6,7 @@ namespace DependencyInjection
 {
     public static class AutoMigration
     {
-        public static async Task AutoMigrateDatabase (this IServiceProvider serviceProvider)
+        public static async Task AutoMigrateDatabaseAsync (this IServiceProvider serviceProvider)
         {
             using var scope = serviceProvider.CreateScope();
 

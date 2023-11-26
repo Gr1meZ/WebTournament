@@ -29,20 +29,20 @@ namespace WebTournament.WebApp.Controllers
         [HttpGet("[controller]/{id}/[action]")]
         public async Task<IActionResult> EditIndex(Guid id)
         {
-            return View(await _ageGroupService.GetAgeGroup(id));
+            return View(await _ageGroupService.GetAgeGroupAsync(id));
         }
 
         [HttpPost]
         public async Task<IActionResult> List([FromBody] DtQuery query)
         {
-            return Json(await _ageGroupService.AgeGroupList(query));
+            return Json(await _ageGroupService.AgeGroupListAsync(query));
         }
 
         [HttpPost]
         public async Task<IActionResult> AddModel(AgeGroupViewModel ageGroupViewModel)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState.Values.SelectMany(v => v.Errors).Select(x => x.ErrorMessage).ToList());
-            await _ageGroupService.AddAgeGroup(ageGroupViewModel);
+            await _ageGroupService.AddAgeGroupAsync(ageGroupViewModel);
             return Ok();
         }
 
@@ -51,20 +51,20 @@ namespace WebTournament.WebApp.Controllers
         {
             if (!ModelState.IsValid) return BadRequest(ModelState.Values.SelectMany(v => v.Errors).Select(x => x.ErrorMessage).ToList());
 
-            await _ageGroupService.EditAgeGroup(ageGroupViewModel);
+            await _ageGroupService.EditAgeGroupAsync(ageGroupViewModel);
             return Ok();
         }
 
         [HttpDelete("[controller]/{id}")]
         public async Task<IActionResult> DeleteModel(Guid id)
         {
-            await _ageGroupService.DeleteAgeGroup(id);
+            await _ageGroupService.DeleteAgeGroupAsync(id);
             return Ok();
         }
 
         public async Task<IActionResult> Select2AgeGroups([FromForm] Select2Request request)
         {
-            return Ok(await _ageGroupService.GetAutoCompleteAgeGroups(request));
+            return Ok(await _ageGroupService.GetSelect2AgeGroupsAsync(request));
         }
     }
 }

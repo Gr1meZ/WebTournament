@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "Игроки";
+    ViewData["Title"] = "Спортсмены";
 }
 
 <style>
@@ -35,10 +35,10 @@
                 <div class="second">
                     <div class="col-md-12">
                         <form>
-                            <a class="btn btn btn-info compItem " asp-controller="Fighter" asp-route-id="@Model" asp-action="AddIndex">Добавить игрока <i class="bi bi-plus-circle"></i> </a>
+                            <a class="btn btn btn-info compItem " asp-controller="Fighter" asp-route-id="@Model" asp-action="AddIndex">Добавить <i class="bi bi-plus-circle"></i> </a>
                             <input id="file-upload" type="file" name="formFile"/>
                             <button class="btn btn-success " id="generateBtn" type="button">Добавить заявку </button>
-                            <button class="btn btn-danger compDlt"  type="button">Удалить всех участников</button>
+                            <button class="btn btn-danger compDlt"  type="button">Удалить всех спортсменов </button>
 
                         </form>
                     </div>

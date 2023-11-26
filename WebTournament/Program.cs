@@ -21,8 +21,8 @@ AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 var loggerFactory = LoggerFactory.Create(loggingBuilder => loggingBuilder.AddConsole());
 loggerFactory.CreateLogger<Program>();
 
-await app.Services.AutoMigrateDatabase();
-await app.Services.CreateRoles();
+await app.Services.AutoMigrateDatabaseAsync();
+await app.Services.CreateRolesAsync();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

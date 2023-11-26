@@ -17,7 +17,7 @@ namespace WebTournament.Business.Services
             this._appDbContext = appDbContext;
         }
 
-        public async Task AddClub(ClubViewModel clubViewModel)
+        public async Task AddClubAsync(ClubViewModel clubViewModel)
         {
             if (clubViewModel == null)
                 throw new ValidationException("Club model is null");
@@ -31,13 +31,12 @@ namespace WebTournament.Business.Services
             await _appDbContext.SaveChangesAsync();
         }
 
-        public async Task<PagedResponse<ClubViewModel[]>> ClubList(PagedRequest request)
+        public async Task<PagedResponse<ClubViewModel[]>> ClubListAsync(PagedRequest request)
         {
             var dbQuery = _appDbContext.Clubs
               .AsQueryable()
               .AsNoTracking();
 
-            // searching
             var lowerQ = request.Search.ToLower();
             if (!string.IsNullOrWhiteSpace(lowerQ))
             {
@@ -45,7 +44,6 @@ namespace WebTournament.Business.Services
                     current.Where(f => f.Name.ToLower().Contains(searchWord.ToLower())));
             }
 
-            // sorting
             if (!string.IsNullOrWhiteSpace(request.OrderColumn) && !string.IsNullOrWhiteSpace(request.OrderDir))
             {
                 dbQuery = request.OrderColumn switch
@@ -59,10 +57,8 @@ namespace WebTournament.Business.Services
                 };
             }
 
-            // total count
             var totalItemCount = dbQuery.Count();
 
-            // paging
             dbQuery = dbQuery.Skip((request.PageNumber - 1) * request.PageSize).Take(request.PageSize);
 
             var dbItems = await dbQuery.Select(x => new ClubViewModel()
@@ -74,7 +70,7 @@ namespace WebTournament.Business.Services
             return new PagedResponse<ClubViewModel[]>(dbItems, totalItemCount, request.PageNumber, request.PageSize);
         }
 
-        public async Task DeleteClub(Guid id)
+        public async Task DeleteClubAsync(Guid id)
         {
             var club = await _appDbContext.Clubs.FindAsync(id);
 
@@ -85,7 +81,7 @@ namespace WebTournament.Business.Services
             await _appDbContext.SaveChangesAsync();
         }
 
-        public async Task EditClub(ClubViewModel clubViewModel)
+        public async Task EditClubAsync(ClubViewModel clubViewModel)
         {
             if (clubViewModel == null)
                 throw new ValidationException("Club model is null");
@@ -97,7 +93,7 @@ namespace WebTournament.Business.Services
             await _appDbContext.SaveChangesAsync();
         }
 
-        public async Task<ClubViewModel> GetClub(Guid id)
+        public async Task<ClubViewModel> GetClubAsync(Guid id)
         {
             var club = await _appDbContext.Clubs.FindAsync(id);
             
@@ -124,7 +120,7 @@ namespace WebTournament.Business.Services
             }).ToListAsync();
         }
 
-        public async Task<Select2Response> GetAutoCompleteClubs(Select2Request request)
+        public async Task<Select2Response> GetSelect2ClubsAsync(Select2Request request)
         {
             var clubs = _appDbContext.Clubs
               .AsNoTracking()

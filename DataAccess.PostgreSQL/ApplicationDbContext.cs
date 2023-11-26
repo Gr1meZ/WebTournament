@@ -14,7 +14,6 @@ namespace DataAccess.PostgreSQL
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
-            
         }
 
         public DbSet<Belt> Belts { get; set; }
@@ -34,6 +33,7 @@ namespace DataAccess.PostgreSQL
             modelBuilder.Entity<Fighter>().Property(d => d.Gender).HasConversion(new EnumToStringConverter<Gender>());
 
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(FighterEntityConfiguration).Assembly);
+            
         }
         protected override void ConfigureConventions(ModelConfigurationBuilder builder)
         {

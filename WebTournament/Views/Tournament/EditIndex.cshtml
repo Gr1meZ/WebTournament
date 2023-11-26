@@ -24,7 +24,7 @@
             <div class="form-group">
                 <label asp-for="StartDate">Дата</label>
                 <div class="input-group date" id="datetimepicker">
-                    <input type="text" class="form-control" asp-for="StartDate" value="@Model.StartDate.ToString("dd.MM.yyyy")" readonly>
+                    <input type="text" class="form-control" asp-for="StartDate" value="@Model.StartDate.ToString("yyyy.MM.dd")" readonly>
                     <div class="input-group-addon">
                         <span class="glyphicon glyphicon-th"></span>
                     </div>
@@ -48,7 +48,7 @@
 <script type="text/javascript">
 
         $("#datetimepicker").datepicker({
-            format: 'dd.mm.yyyy',
+            format: 'yyyy.mm.dd',
             language: 'ru'
         });
 

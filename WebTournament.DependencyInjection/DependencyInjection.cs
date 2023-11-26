@@ -38,7 +38,6 @@ namespace DependencyInjection
             services.AddScoped<IExcelParserService, ExcelParserService>();
             services.AddScoped<IBracketService, BracketService>();
 
-
             return services;
         }
     }
