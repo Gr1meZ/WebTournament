@@ -14,7 +14,7 @@ namespace WebTournament.Models
         public int? MinAge { get; set;}
 
         [Range(1, 100, ErrorMessage = "Поле максимального возраста не заполнено и должно быть от 1 до 100")]
-        [GreaterThan("MinAge", ErrorMessage = "Максимальный возраст должен быть больше минимального"), Required(ErrorMessage = "Минимальеный возраст должен быть заполнен")]
+        [GreaterThan("MinAge", ErrorMessage = "Максимальный возраст должен быть больше минимального"), Required(ErrorMessage = "Максимальный возраст должен быть заполнен")]
         public int? MaxAge { get; set; }
     }
 }

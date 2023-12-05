@@ -48,14 +48,16 @@ else
   </div>
   <nav class="navbar bg-light navbar-expand-lg bg-body-tertiary">
         <select asp-for="Winners" name="winners" data-placeholder="Выберите победителей..." class="form-control" id="winners"></select>
-          <button class="btn btn-success " id="saveButton">Сохранить</button>
+    <button class="btn btn-success " id="saveButton">Сохранить</button>
     <div class="container-fluid">
+      <button class="btn btn-warning" id="pdfBtn">PDF</button>
+
       <button class="btn btn-primary" onclick="history.back()">Назад</button>
     </div>
   </nav>
   <div class="container-fluid pt-lg-5">
     <div class="text-center" id="matchCallback"></div>
-    <div class="demo align-content-center">
+    <div class="demo align-content-center" id="bracketTournament">
     </div>
   </div>
   
@@ -163,7 +165,26 @@ else
       });
       
   });
-  
+   window.jsPDF = window.jspdf.jsPDF;
+   window.html2canvas = html2canvas;
+ 
+     $('#pdfBtn').click(function () {
+       
+       var element = document.getElementById("bracketTournament");
+       var opt = {
+         margin: 1,
+         filename:  'bracket.pdf',
+         image: { type: 'jpeg', quality: 0.98 },
+         html2canvas: { scale: 2 },
+         jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+       };
+       
+       opt.jsPDF.font = "Times New Roman";
+       
+       html2pdf().from(element).set(opt).save();
+        
+     });
+     
 </script>
 }
 
