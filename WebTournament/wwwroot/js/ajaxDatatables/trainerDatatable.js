@@ -55,7 +55,7 @@
             let itemId = $row.attr('id');
             let itemName = $("#" + itemId).find("td:eq(0)").text();
             $deleteItemModal.data('itemId', itemId)
-            $deleteItemModal.find('.modal-body').text(`Вы действительно хотите удалить категорию '${itemName}'?`)
+            $deleteItemModal.find('.modal-body').text(`Вы действительно хотите удалить тренера '${itemName}'?`)
             $deleteItemModal.modal('show')
         })
 
