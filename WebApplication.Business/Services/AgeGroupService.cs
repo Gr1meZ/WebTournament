@@ -38,8 +38,6 @@ namespace WebTournament.Business.Services
 
         public async Task<PagedResponse<AgeGroupViewModel[]>> AgeGroupListAsync(PagedRequest request)
         {
-            if (request == null)
-                return new PagedResponse<AgeGroupViewModel[]>(Array.Empty<AgeGroupViewModel>(), 0, 0, 0);
             
             var dbQuery = _appDbContext.AgeGroups
                .AsQueryable()
@@ -93,7 +91,8 @@ namespace WebTournament.Business.Services
 
         public async Task DeleteAgeGroupAsync(Guid id)
         {
-            var ageGroup = await _appDbContext.AgeGroups.FindAsync(id) ?? throw new ValidationException("ValidationException","Age group not found");
+            var ageGroup = await _appDbContext.AgeGroups.FindAsync(id) 
+                           ?? throw new ValidationException("ValidationException","Age group not found");
             _appDbContext.AgeGroups.Remove(ageGroup);
 
             await _appDbContext.SaveChangesAsync();
