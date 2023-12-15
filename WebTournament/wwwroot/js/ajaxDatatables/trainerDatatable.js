@@ -53,7 +53,7 @@
             let $row = $(ev.currentTarget).closest('tr');
             console.log($row)
             let itemId = $row.attr('id');
-            let itemName = $("#" + itemId).find("td:eq(0)").text();
+            let itemName = $("#" + itemId).find("td:eq(2)").text();
             $deleteItemModal.data('itemId', itemId)
             $deleteItemModal.find('.modal-body').text(`Вы действительно хотите удалить тренера '${itemName}'?`)
             $deleteItemModal.modal('show')

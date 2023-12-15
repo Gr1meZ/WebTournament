@@ -21,7 +21,15 @@ namespace WebTournament.Business.Services
         {
             if (clubViewModel == null)
                 throw new ValidationException("Club model is null");
+            
+            var beltExists = await _appDbContext.Clubs
+                .Where(x => x.Name == clubViewModel.Name )
+                .AnyAsync();
 
+            if (beltExists)
+                throw new DataAccess.Common.Exceptions.ValidationException("ValidationException",
+                    "Данный клуб уже существует!");
+            
             var club = new Club()
             {
                  Name = clubViewModel.Name

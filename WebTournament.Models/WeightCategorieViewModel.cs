@@ -7,7 +7,7 @@ namespace WebTournament.Models
     {
         public Guid Id { get; set; }
 
-        [Required(ErrorMessage = "Возрастная категория не выбрана")]
+        [Required(ErrorMessage = "Возрастная группа не выбрана")]
         public Guid? AgeGroupId { get; set; }
         public string AgeGroupName { get; init; } = string.Empty;
 

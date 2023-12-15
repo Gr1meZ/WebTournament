@@ -22,7 +22,14 @@ namespace WebTournament.Business.Services
         {
             if (weightCategorieViewModel == null)
                 throw new ValidationException("Weight categorie model is null");
+            
+            var weightCategorieExists = await _appDbContext.WeightCategories
+                .Where(x => x.MaxWeight == weightCategorieViewModel.MaxWeight  && x.AgeGroupId == weightCategorieViewModel.AgeGroupId && x.Gender == GenderExtension.ParseEnum(weightCategorieViewModel.Gender))
+                .AnyAsync();
 
+            if (weightCategorieExists)
+                throw new DataAccess.Common.Exceptions.ValidationException("ValidationException", "Данная весовая категория уже существует!");
+                    
             var weightCategorie = new WeightCategorie()
             {
                 AgeGroupId = weightCategorieViewModel.AgeGroupId ?? Guid.Empty,

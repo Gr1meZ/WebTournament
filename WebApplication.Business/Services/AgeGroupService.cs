@@ -24,6 +24,12 @@ namespace WebTournament.Business.Services
             
             if (ageGroupViewModel == null)
                 throw new ValidationException("ValidationException", "Age group model is null");
+            
+            var ageGroupExists = await _appDbContext.AgeGroups
+                .Where(x => x.MaxAge == ageGroupViewModel.MaxAge && x.MinAge == ageGroupViewModel.MinAge).AnyAsync();
+            
+            if(ageGroupExists)
+                throw new ValidationException("ValidationException", "Данная возрастная группа уже существует!");
 
             var ageGroup = new AgeGroup()
             {

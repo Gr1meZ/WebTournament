@@ -6,7 +6,7 @@ namespace WebTournament.Models
     public class AgeGroupViewModel
     {
         public Guid Id { get; set; }
-        [Required(ErrorMessage = "Поле возрастной категории не заполнено")]
+        [Required(ErrorMessage = "Поле возрастной группы не заполнено")]
         public string Name { get; set; }
 
         [Range(1, 100, ErrorMessage = "Поле минимального возраста не заполнено и должно быть от 1 до 100"), Required(ErrorMessage = "Минимальеный возраст должен быть заполнен")]
