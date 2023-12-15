@@ -52,7 +52,7 @@
             let $row = $(ev.currentTarget).closest('tr');
             console.log($row)
             let itemId = $row.attr('id');
-            let itemName = $("#" + itemId).find("td:eq(0)").text();
+            let itemName = $("#" + itemId).find("td:eq(1)").text();
             $deleteItemModal.data('itemId', itemId)
             $deleteItemModal.find('.modal-body').text(`Вы действительно хотите удалить категорию '${itemName}'?`)
             $deleteItemModal.modal('show')
