@@ -31,6 +31,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebTournament.Business.Abst
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebTournament.Models", "WebTournament.Models\WebTournament.Models.csproj", "{7AAD3998-F827-4C67-84FB-C0C52DC5D49B}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{3F5DA954-1B5F-400C-83ED-201445B6F6BF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebTournament.Business.Tests", "WebTournament.Business.Tests\WebTournament.Business.Tests.csproj", "{87760B43-2971-46AF-A488-0D284AA3F16A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -73,6 +77,10 @@ Global
 		{7AAD3998-F827-4C67-84FB-C0C52DC5D49B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7AAD3998-F827-4C67-84FB-C0C52DC5D49B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7AAD3998-F827-4C67-84FB-C0C52DC5D49B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{87760B43-2971-46AF-A488-0D284AA3F16A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87760B43-2971-46AF-A488-0D284AA3F16A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87760B43-2971-46AF-A488-0D284AA3F16A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87760B43-2971-46AF-A488-0D284AA3F16A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -85,6 +93,7 @@ Global
 		{AAF45082-F17F-4F19-8B3C-5D1AD9354EB9} = {A682C0DD-7707-432C-B19C-1EB57D1E0957}
 		{739C5524-7FB8-4965-AFF2-78A685B3450E} = {A682C0DD-7707-432C-B19C-1EB57D1E0957}
 		{7AAD3998-F827-4C67-84FB-C0C52DC5D49B} = {A682C0DD-7707-432C-B19C-1EB57D1E0957}
+		{87760B43-2971-46AF-A488-0D284AA3F16A} = {3F5DA954-1B5F-400C-83ED-201445B6F6BF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {05B708EE-B49F-413F-9817-87D840CD3AA4}

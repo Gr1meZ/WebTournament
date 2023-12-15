@@ -70,12 +70,19 @@
                 document.location.reload();
             },
             error: function (data) {
-                console.log(data);
-                $("#alertText").empty();
-                data.responseJSON.forEach(x => {
-                    $("#alertText").append(`<div>${x}</div>`);
-                    $('#alertMessage').show('fade');
-                });
+                   try {
+                                                   $("#alertText").empty();
+                                                   data.responseJSON.forEach(x => {
+                                                   $("#alertText").append(`<div>${x}</div>`);
+                                                   $('#alertMessage').show('fade');
+                                                   });
+                                                }
+                                                catch (e){}
+                                                try {
+                                                   $("#alertText").append(`<div>${data.responseJSON.errors.ValidationException[0]}</div>`);
+                                                   $('#alertMessage').show('fade');
+                                                }
+                                               catch (e) {}
             }
         });
     });

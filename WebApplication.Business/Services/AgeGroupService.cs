@@ -5,6 +5,8 @@ using DataAccess.Abstract;
 using WebTournament.Business.Abstract;
 using WebTournament.Models;
 using WebTournament.Models.Helpers;
+using DataAccess.Common.Exceptions;
+using ValidationException = DataAccess.Common.Exceptions.ValidationException;
 
 namespace WebTournament.Business.Services
 {
@@ -19,8 +21,15 @@ namespace WebTournament.Business.Services
 
         public async Task AddAgeGroupAsync(AgeGroupViewModel ageGroupViewModel)
         {
+            
             if (ageGroupViewModel == null)
-                throw new ValidationException("Age group model is null");
+                throw new ValidationException("ValidationException", "Age group model is null");
+            
+            var ageGroupExists = await _appDbContext.AgeGroups
+                .Where(x => x.MaxAge == ageGroupViewModel.MaxAge && x.MinAge == ageGroupViewModel.MinAge).AnyAsync();
+            
+            if(ageGroupExists)
+                throw new ValidationException("ValidationException", "Данная возрастная группа уже существует!");
 
             var ageGroup = new AgeGroup()
             {
@@ -28,13 +37,14 @@ namespace WebTournament.Business.Services
                 MinAge = ageGroupViewModel.MinAge ?? 0,
                 Name = ageGroupViewModel.Name
             };
-
+            
             _appDbContext.AgeGroups.Add(ageGroup);
             await _appDbContext.SaveChangesAsync();
         }
 
         public async Task<PagedResponse<AgeGroupViewModel[]>> AgeGroupListAsync(PagedRequest request)
         {
+            
             var dbQuery = _appDbContext.AgeGroups
                .AsQueryable()
                .AsNoTracking();
@@ -87,7 +97,8 @@ namespace WebTournament.Business.Services
 
         public async Task DeleteAgeGroupAsync(Guid id)
         {
-            var ageGroup = await _appDbContext.AgeGroups.FindAsync(id) ?? throw new ValidationException("Age group not found");
+            var ageGroup = await _appDbContext.AgeGroups.FindAsync(id) 
+                           ?? throw new ValidationException("ValidationException","Age group not found");
             _appDbContext.AgeGroups.Remove(ageGroup);
 
             await _appDbContext.SaveChangesAsync();
@@ -97,7 +108,7 @@ namespace WebTournament.Business.Services
         {
 
             if (ageGroupViewModel == null)
-                throw new ValidationException("Age group model is null");
+                throw new ValidationException("ValidationException", "Age group model is null");
 
             var ageGroup = await _appDbContext.AgeGroups.FindAsync(ageGroupViewModel.Id);
 
@@ -114,7 +125,7 @@ namespace WebTournament.Business.Services
             var ageGroup = await _appDbContext.AgeGroups.FindAsync(id);
             
             if (ageGroup == null)
-                throw new ValidationException("Age group is not found");
+                throw new ValidationException("ValidationException", "Age group is not found");
             
             var viewModel = new AgeGroupViewModel()
             {

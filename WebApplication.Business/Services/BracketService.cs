@@ -126,7 +126,7 @@ public class BracketService : IBracketService
         await _appDbContext.SaveChangesAsync();
     }
 
-    private async  Task CreateBracketWinners()
+    private async Task CreateBracketWinners()
     {
         var bracketIds = _appDbContext.Brackets.Select(x => x.Id).ToList();
         if (!bracketIds.Any() || _appDbContext.BracketWinners.Any(x => bracketIds.Contains(x.Id))) return;

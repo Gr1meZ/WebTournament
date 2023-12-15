@@ -23,6 +23,13 @@ namespace WebTournament.Business.Services
             if (beltViewModel == null)
                 throw new ValidationException("Belt model is null");
 
+            var beltExists = await _appDbContext.Belts
+                .Where(x => x.BeltNumber == beltViewModel.BeltNumber && x.ShortName == beltViewModel.ShortName)
+                .AnyAsync();
+            
+            if(beltExists)
+                throw new DataAccess.Common.Exceptions.ValidationException("ValidationException", "Данный пояс уже существует!");
+
             var belt = new Belt()
             {
                 BeltNumber = beltViewModel.BeltNumber ?? 0,

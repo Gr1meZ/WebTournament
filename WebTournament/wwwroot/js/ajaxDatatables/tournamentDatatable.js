@@ -78,7 +78,7 @@
             let itemId = $row.attr('id');
             let itemName = $("#" + itemId).find("td:eq(0)").text();
             $deleteItemModal.data('itemId', itemId)
-            $deleteItemModal.find('.modal-body').text(`Вы действительно хотите удалить игрока '${itemName}'?`)
+            $deleteItemModal.find('.modal-body').text(`Вы действительно хотите удалить турнир '${itemName}'?`)
             $deleteItemModal.modal('show')
         })
 

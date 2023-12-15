@@ -171,12 +171,20 @@ else
      $('#pdfBtn').click(function () {
        
        var element = document.getElementById("bracketTournament");
+       var currentHeight = $('.bracket').outerHeight();
+       var currentWidth = $('.jQBracket').outerWidth();
+
+       if (currentHeight <= 150 && currentWidth <= 250){
+          currentHeight += 200;
+          currentWidth += 200;
+         }
+       
        var opt = {
          margin: 1,
          filename:  'bracket.pdf',
-         image: { type: 'jpeg', quality: 0.98 },
-         html2canvas: { scale: 2 },
-         jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+         image: { type: 'jpeg', quality: 1 },
+         html2canvas: { dpi: 300, letterRendering: true, width: currentWidth, height: currentHeight},
+         jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
        };
        
        opt.jsPDF.font = "Times New Roman";

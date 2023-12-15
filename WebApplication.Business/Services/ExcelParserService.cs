@@ -156,7 +156,7 @@ namespace WebTournament.Business.Services
             var ageGroup = await _appDbContext.AgeGroups.FirstOrDefaultAsync(x => age >= x.MinAge && age <= x.MaxAge);
            
             if (ageGroup == null)
-                throw new ValidationException("ValidationException",$"Возрастная категория для возраста '{age}' не найдена. Создайте в базе данных категорию для данного возраста!");
+                throw new ValidationException("ValidationException",$"Возрастная группа для возраста '{age}' не найдена. Создайте в базе данных категорию для данного возраста!");
             
             var weightCategorie = await _appDbContext.WeightCategories
                 .Where(x => weight <= x.MaxWeight && x.AgeGroupId == ageGroup.Id && x.Gender == GenderExtension.ParseEnum(gender)) // Фильтруем по условию
@@ -164,7 +164,7 @@ namespace WebTournament.Business.Services
                 .FirstOrDefaultAsync();
           
             if (weightCategorie == null)
-                throw new ValidationException("ValidationException",$"Весовая категория для возрастной категории {ageGroup.Name} с весом спортсмена {weight} кг не найдена! Добавьте весовую категорию в базу данных!");
+                throw new ValidationException("ValidationException",$"Весовая категория для возрастной группы {ageGroup.Name} с весом спортсмена {weight} кг не найдена! Добавьте весовую категорию в базу данных!");
             return weightCategorie.Id;
         }
         

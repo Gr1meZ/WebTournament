@@ -24,7 +24,7 @@
             },
             columnDefs: [
                 { targets: 0, title: "ID", data: "id", visible: false },
-                { targets: 1, title: "Возрастная категория", data: "ageGroupName" },
+                { targets: 1, title: "Возрастная группа", data: "ageGroupName" },
                 { targets: 2, title: "Название весовой категории", data: "weightName" },
                 { targets: 3, title: "Предельный вес", data: "maxWeight" },
                 { targets: 4, title: "Пол", data: "gender" },

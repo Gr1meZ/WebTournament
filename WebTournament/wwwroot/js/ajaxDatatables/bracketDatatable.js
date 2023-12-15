@@ -53,7 +53,7 @@
             let itemNumber = $("#" + itemId).find("td:eq(0)").text();
             let itemShortName = $("#" + itemId).find("td:eq(1)").text();
             $deleteItemModal.data('itemId', itemId)
-            $deleteItemModal.find('.modal-body').text(`Вы действительно хотите удалить пояс '${itemNumber} ${itemShortName}'?`)
+            $deleteItemModal.find('.modal-body').text(`Вы действительно хотите удалить сетку '${itemNumber} ${itemShortName}'?`)
             $deleteItemModal.modal('show')
         })
         

@@ -21,7 +21,15 @@ namespace WebTournament.Business.Services
         {
             if (trainerViewModel == null)
                 throw new ValidationException("Trainer model is null");
+            
+            var trainerExists = await _appDbContext.Trainers
+                .Where(x => x.Name == trainerViewModel.Name  && x.Surname == trainerViewModel.Surname && x.Patronymic == trainerViewModel.Patronymic && x.Phone == trainerViewModel.Phone && x.ClubId == trainerViewModel.ClubId)
+                .AnyAsync();
 
+            if (trainerExists)
+                throw new DataAccess.Common.Exceptions.ValidationException("ValidationException",
+                    "Данный тренер уже существует!");
+            
             var ageGroup = new Trainer()
             {
                 Name = trainerViewModel.Name,
