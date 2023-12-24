@@ -57,24 +57,42 @@ public class BracketService : IBracketService
         if (bracket != null)
         {
             bracket.State = bracketState.State;
-            SyncWinners(bracketState);
+            await SyncWinners(bracketState);
             await _appDbContext.SaveChangesAsync();
         }
     }
     
-    private void SyncWinners(BracketState bracketState)
+    private async Task SyncWinners(BracketState bracketState)
     {
 
         if (bracketState.Winners?.Count == null)
             return;
+        
+        var bracketWinner = await _appDbContext.BracketWinners.FirstOrDefaultAsync(x => x.Id == bracketState.Id);
 
-        _appDbContext.BracketWinners.Update(new BracketWinner()
+        if (bracketWinner is null)
         {
-            Id = bracketState.Id,
-            FirstPlaceId = bracketState.Winners.ElementAtOrDefault(0) == Guid.Empty ? null : bracketState.Winners[0], 
-            SecondPlaceId = bracketState.Winners.ElementAtOrDefault(1) == Guid.Empty ? null : bracketState.Winners[1],
-            ThirdPlaceId = bracketState.Winners.ElementAtOrDefault(2) == Guid.Empty ? null : bracketState.Winners[2]
-        });
+            await _appDbContext.BracketWinners.AddAsync(new BracketWinner()
+            {
+                Id = bracketState.Id,
+                FirstPlaceId = bracketState.Winners.ElementAtOrDefault(0) == Guid.Empty ? null : bracketState.Winners[0], 
+                SecondPlaceId = bracketState.Winners.ElementAtOrDefault(1) == Guid.Empty ? null : bracketState.Winners[1],
+                ThirdPlaceId = bracketState.Winners.ElementAtOrDefault(2) == Guid.Empty ? null : bracketState.Winners[2]
+            });
+        }
+        else
+        {
+            bracketWinner.FirstPlaceId = bracketState.Winners.ElementAtOrDefault(0) == Guid.Empty
+                ? null
+                : bracketState.Winners[0];
+            bracketWinner.SecondPlaceId = bracketState.Winners.ElementAtOrDefault(1) == Guid.Empty
+                ? null
+                : bracketState.Winners[1];
+            bracketWinner.ThirdPlaceId = bracketState.Winners.ElementAtOrDefault(2) == Guid.Empty
+                ? null
+                : bracketState.Winners[2];
+        }
+       
         
     }
     
