@@ -1,8 +1,9 @@
 ﻿@using Microsoft.AspNetCore.Identity
-@using DataAccess.Common.IdentityModels
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using WebTournament.Infrastructure.Identity.Models
 
-@inject SignInManager<AppUser> SignInManager
-@inject UserManager<AppUser> UserManager
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 
 @if (SignInManager.IsSignedIn(User))
 {

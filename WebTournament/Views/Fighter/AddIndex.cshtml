@@ -1,155 +1,155 @@
-﻿@model FighterViewModel
-
-@{
-    Layout = null;
-}
-
-@using (Html.BeginForm("AddModel", "Fighter", FormMethod.Post, new { enctype = "multipart/form-data", id = "sbmForm" }))
-{
-    <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Добавить спортсмена</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-            </button>
-        </div>
-        <div id="alertMessage1" class="alert alert-danger collapse">
-            <div id="alertText1"></div>
-            <div class="text-center"><btn class="btn" id="linkClose1">Закрыть</btn></div>
-        </div>
-        <div class="modal-body">
-             <div class="form-group">
-                <label asp-for="Surname">Фамилия</label>
-                <input type="text" class="form-control" placeholder="Введите фамилию" asp-for="Surname">
-            </div>
-            <div class="form-group">
-                <label asp-for="Name">Имя</label>
-                <input type="text" class="form-control" placeholder="Введите имя" asp-for="Name">
-            </div>
-            <div class="form-group">
-                <label asp-for="BirthDate">Дата рождения</label>
-                <div class="input-group date" id="datetimepicker">
-                    <input type="text" class="form-control" asp-for="BirthDate" readonly>
-                    <div class="input-group-addon">
-                        <span class="glyphicon glyphicon-th"></span>
-                    </div>
-                </div>
-            </div>
-            <div class="form-group">
-                <label asp-for="Country">Страна</label>
-                <input type="text" class="form-control" placeholder="Введите страну" asp-for="Country">
-            </div>
-            <div class="form-group">
-                <label asp-for="City">Город</label>
-                <input type="text" class="form-control" placeholder="Введите город" asp-for="City">
-            </div>
-            <div class="form-group">
-                <label asp-for="Gender">Пол</label>
-                <select  class="form-control" placeholder="Выберите пол" asp-for="Gender">
-                    <option>Мужской</option>
-                    <option>Женский</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label asp-for="BeltId">Пояс</label>
-                <select asp-for="BeltId" name="BeltId" data-placeholder="Выберите пояс..." class="form-control"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="TrainerId">Выберите тренера</label>
-                <select asp-for="TrainerId" name="TrainerId" data-placeholder="Выберите тренера..." class="form-control"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="WeightCategorieId">Весовая категория</label>
-                <select asp-for="WeightCategorieId" name="WeightCategorieId" data-placeholder="Выберите весовую категорию..." class="form-control"></select>
-            </div>
-        </div>
-
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-            <button type="button" class="btn btn-primary" id="btnSubmit">Сохранить</button>
-        </div>
-    </div>
-    @Html.HiddenFor(x => x.TournamentId);
-}
-<script type="text/javascript">
-
-    $("#datetimepicker").datepicker({
-        format: 'yyyy.mm.dd',
-        language: 'ru',
-        "setDate": new Date()
-    });
-    $('#datetimepicker').datepicker('update', new Date());
-
-</script>
-<script>
-    $('#linkClose1').click(function () {
-        $('#alertMessage1').hide('fade');
-        $("#alertText1").empty();
-    });
-
-    initAjaxAutoCompleteSelect({
-        selector: 'select[name="BeltId"]',
-        url: '/Belt/Select2Belts',
-        dropdownParent: $("#myModal")
-
-    });
-
-    initAjaxAutoCompleteSelect({
-        selector: 'select[name="TrainerId"]',
-        url: '/Trainer/Select2Trainers',
-        dropdownParent: $("#myModal")
-
-    });
-
-    initAjaxAutoCompleteSelect({
-        selector: 'select[name="WeightCategorieId"]',
-        url: '/WeightCategorie/Select2WeightCategories',
-        dropdownParent: $("#myModal")
-
-    });
-    $('#btnSubmit').click(function (ev) {
-
-        let $btn = $(ev.currentTarget);
-
-        let $form = $('#sbmForm');
-        $.ajax({
-            url: '/Fighter/AddModel',
-            method: 'POST',
-            data: $form.serialize(),
-            cache: false,
-            xhr: function () {
-                let xhr = new XMLHttpRequest();
-                xhr.onreadystatechange = function () {
-                    if (xhr.readyState === 2) {
-                        if (xhr.status === 200) {
-                            xhr.responseType = "text";
-                        }
-                    }
-                };
-                return xhr;
-            },
-            success: function (data) {
-                $("#myModal").modal('hide');
-                document.location.reload();
-            },
-            error: function (data) {
-                console.log(data);
-                try {
-                   $("#alertText1").empty();
-                   data.responseJSON.forEach(x => {
-                   $("#alertText1").append(`<div>${x}</div>`);
-                   $('#alertMessage1').show('fade');
-                   });
-                }
-                catch (e){}
-                try {
-                   $("#alertText1").append(`<div>${data.responseJSON.errors.ValidationException[0]}</div>`);
-                   $('#alertMessage1').show('fade');
-                }
-               catch (e) {}
-                
-            }
-        });
-    });
-
-</script>
-
+﻿@* @model FighterDto *@
+@* *@
+@* @{ *@
+@*     Layout = null; *@
+@* } *@
+@* *@
+@* @using (Html.BeginForm("AddModel", "Fighter", FormMethod.Post, new { enctype = "multipart/form-data", id = "sbmForm" })) *@
+@* { *@
+@*     <div class="modal-content"> *@
+@*         <div class="modal-header"> *@
+@*             <h5 class="modal-title" id="exampleModalLabel">Добавить спортсмена</h5> *@
+@*             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"> *@
+@*             </button> *@
+@*         </div> *@
+@*         <div id="alertMessage1" class="alert alert-danger collapse"> *@
+@*             <div id="alertText1"></div> *@
+@*             <div class="text-center"><btn class="btn" id="linkClose1">Закрыть</btn></div> *@
+@*         </div> *@
+@*         <div class="modal-body"> *@
+@*              <div class="form-group"> *@
+@*                 <label asp-for="Surname">Фамилия</label> *@
+@*                 <input type="text" class="form-control" placeholder="Введите фамилию" asp-for="Surname"> *@
+@*             </div> *@
+@*             <div class="form-group"> *@
+@*                 <label asp-for="Name">Имя</label> *@
+@*                 <input type="text" class="form-control" placeholder="Введите имя" asp-for="Name"> *@
+@*             </div> *@
+@*             <div class="form-group"> *@
+@*                 <label asp-for="BirthDate">Дата рождения</label> *@
+@*                 <div class="input-group date" id="datetimepicker"> *@
+@*                     <input type="text" class="form-control" asp-for="BirthDate" readonly> *@
+@*                     <div class="input-group-addon"> *@
+@*                         <span class="glyphicon glyphicon-th"></span> *@
+@*                     </div> *@
+@*                 </div> *@
+@*             </div> *@
+@*             <div class="form-group"> *@
+@*                 <label asp-for="Country">Страна</label> *@
+@*                 <input type="text" class="form-control" placeholder="Введите страну" asp-for="Country"> *@
+@*             </div> *@
+@*             <div class="form-group"> *@
+@*                 <label asp-for="City">Город</label> *@
+@*                 <input type="text" class="form-control" placeholder="Введите город" asp-for="City"> *@
+@*             </div> *@
+@*             <div class="form-group"> *@
+@*                 <label asp-for="Gender">Пол</label> *@
+@*                 <select  class="form-control" placeholder="Выберите пол" asp-for="Gender"> *@
+@*                     <option>Мужской</option> *@
+@*                     <option>Женский</option> *@
+@*                 </select> *@
+@*             </div> *@
+@*             <div class="form-group"> *@
+@*                 <label asp-for="BeltId">Пояс</label> *@
+@*                 <select asp-for="BeltId" name="BeltId" data-placeholder="Выберите пояс..." class="form-control"></select> *@
+@*             </div> *@
+@*             <div class="form-group"> *@
+@*                 <label asp-for="TrainerId">Выберите тренера</label> *@
+@*                 <select asp-for="TrainerId" name="TrainerId" data-placeholder="Выберите тренера..." class="form-control"></select> *@
+@*             </div> *@
+@*             <div class="form-group"> *@
+@*                 <label asp-for="WeightCategorieId">Весовая категория</label> *@
+@*                 <select asp-for="WeightCategorieId" name="WeightCategorieId" data-placeholder="Выберите весовую категорию..." class="form-control"></select> *@
+@*             </div> *@
+@*         </div> *@
+@* *@
+@*         <div class="modal-footer"> *@
+@*             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button> *@
+@*             <button type="button" class="btn btn-primary" id="btnSubmit">Сохранить</button> *@
+@*         </div> *@
+@*     </div> *@
+@*     @Html.HiddenFor(x => x.TournamentId); *@
+@* } *@
+@* <script type="text/javascript"> *@
+@* *@
+@*     $("#datetimepicker").datepicker({ *@
+@*         format: 'yyyy.mm.dd', *@
+@*         language: 'ru', *@
+@*         "setDate": new Date() *@
+@*     }); *@
+@*     $('#datetimepicker').datepicker('update', new Date()); *@
+@* *@
+@* </script> *@
+@* <script> *@
+@*     $('#linkClose1').click(function () { *@
+@*         $('#alertMessage1').hide('fade'); *@
+@*         $("#alertText1").empty(); *@
+@*     }); *@
+@* *@
+@*     initAjaxAutoCompleteSelect({ *@
+@*         selector: 'select[name="BeltId"]', *@
+@*         url: '/Belt/Select2Belts', *@
+@*         dropdownParent: $("#myModal") *@
+@* *@
+@*     }); *@
+@* *@
+@*     initAjaxAutoCompleteSelect({ *@
+@*         selector: 'select[name="TrainerId"]', *@
+@*         url: '/Trainer/Select2Trainers', *@
+@*         dropdownParent: $("#myModal") *@
+@* *@
+@*     }); *@
+@* *@
+@*     initAjaxAutoCompleteSelect({ *@
+@*         selector: 'select[name="WeightCategorieId"]', *@
+@*         url: '/WeightCategorie/Select2WeightCategories', *@
+@*         dropdownParent: $("#myModal") *@
+@* *@
+@*     }); *@
+@*     $('#btnSubmit').click(function (ev) { *@
+@* *@
+@*         let $btn = $(ev.currentTarget); *@
+@* *@
+@*         let $form = $('#sbmForm'); *@
+@*         $.ajax({ *@
+@*             url: '/Fighter/AddModel', *@
+@*             method: 'POST', *@
+@*             data: $form.serialize(), *@
+@*             cache: false, *@
+@*             xhr: function () { *@
+@*                 let xhr = new XMLHttpRequest(); *@
+@*                 xhr.onreadystatechange = function () { *@
+@*                     if (xhr.readyState === 2) { *@
+@*                         if (xhr.status === 200) { *@
+@*                             xhr.responseType = "text"; *@
+@*                         } *@
+@*                     } *@
+@*                 }; *@
+@*                 return xhr; *@
+@*             }, *@
+@*             success: function (data) { *@
+@*                 $("#myModal").modal('hide'); *@
+@*                 document.location.reload(); *@
+@*             }, *@
+@*             error: function (data) { *@
+@*                 console.log(data); *@
+@*                 try { *@
+@*                    $("#alertText1").empty(); *@
+@*                    data.responseJSON.forEach(x => { *@
+@*                    $("#alertText1").append(`<div>${x}</div>`); *@
+@*                    $('#alertMessage1').show('fade'); *@
+@*                    }); *@
+@*                 } *@
+@*                 catch (e){} *@
+@*                 try { *@
+@*                    $("#alertText1").append(`<div>${data.responseJSON.errors.ValidationException[0]}</div>`); *@
+@*                    $('#alertMessage1').show('fade'); *@
+@*                 } *@
+@*                catch (e) {} *@
+@*                  *@
+@*             } *@
+@*         }); *@
+@*     }); *@
+@* *@
+@* </script> *@
+@* *@

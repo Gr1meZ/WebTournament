@@ -18,6 +18,6 @@ namespace WebTournament.Domain.Models
         public  int MinAge { get; private set; }
         public  int MaxAge { get; private set;}
 
-        public IReadOnlyCollection<WeightCategorie> WeightCategories { get; protected set; }
+         public IReadOnlyCollection<WeightCategorie> WeightCategories { get; protected set; }
     }
 }

@@ -1,11 +1,8 @@
-﻿using DataAccess.Domain.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.Extensions.Hosting;
-using Newtonsoft.Json;
+using WebTournament.Domain.Models;
 
-
-namespace DataAccess.PostgreSQL.Configuration
+namespace WebTournament.Infrastructure.Data.Configuration
 {
     public class WeightCategorieEntityConfiguration : IEntityTypeConfiguration<WeightCategorie>
     {

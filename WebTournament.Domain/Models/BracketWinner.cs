@@ -10,7 +10,6 @@ public class BracketWinner : Entity
         FirstPlaceId = firstPlaceId;
         SecondPlaceId = secondPlaceId;
         ThirdPlaceId = thirdPlaceId;
-        Bracket = bracket;
     }
     protected BracketWinner() {}
     
@@ -20,6 +19,6 @@ public class BracketWinner : Entity
     
     public Bracket Bracket { get; protected set; }
     public Fighter FirstPlacePlayer { get; protected set; }
-    public Fighter SecondPlacePlayer{ get; protected set; }
+    public Fighter SecondPlacePlayer{ get; protected set; } 
     public Fighter ThirdPlacePlayer { get; protected set; }
 }

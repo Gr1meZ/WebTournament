@@ -1,5 +1,6 @@
-﻿@using DataAccess.Common.IdentityModels
-@inject SignInManager<AppUser> SignInManager
+﻿@using WebTournament.Infrastructure.Identity.Models
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@inject SignInManager<ApplicationUser> SignInManager
 @{
     var hasExternalLogins = (await SignInManager.GetExternalAuthenticationSchemesAsync()).Any();
 }

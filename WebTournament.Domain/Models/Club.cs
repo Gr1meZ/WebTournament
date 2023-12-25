@@ -10,6 +10,6 @@ namespace WebTournament.Domain.Models
         }
         protected Club() {}
         public  string Name { get; private set; }
-        public ICollection<Trainer> Trainers { get; protected set; }
+        public IReadOnlyCollection<Trainer> Trainers { get;  protected set; }
     }
 }

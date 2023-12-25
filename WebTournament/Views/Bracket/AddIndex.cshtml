@@ -1,132 +1,132 @@
-@model BracketViewModel
-
-@{
-    Layout = null;
-}
-<style>
-
-.select2-container--default .select2-selection--multiple .select2-selection__choice {
-  display: inline-flex !important;
-}
-
-.select2-container--default.select2-container--focus .select2-selection--multiple {
-  color: #495057 !important;
-  background-color: #fff !important;
-  border-color: #80bdff !important;
-  outline: 0 !important;
-  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25) !important;
-}
-
-.select2-container--default .select2-selection--multiple {
-  border: 1px solid #ced4da !important;
-  border-radius: .25rem !important;
-  padding: .375rem .75rem !important;
-  font-size: 1rem !important;
-  font-weight: 600 !important;
-  line-height: 1.5 !important;
-}
-
-.select2-container .select2-search--inline .select2-search__field {
-  margin: 0 !important;
-  height: 22px !important;
-}
-
-.select2-container--default .select2-selection--multiple .select2-selection__choice {
-  margin: 0 5px 5px 0 !important;
-}
-</style>
-@using (Html.BeginForm("AddModel", "Bracket", FormMethod.Post, new { enctype = "multipart/form-data", id = "sbmForm" }))
-{
-    <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Добавить сетки</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-            </button>
-        </div>
-        <div id="alertMsg" class="alert alert-danger collapse">
-            <div id="alertTxt"></div>
-            <div class="text-center"><btn class="btn" id="linkCls">Закрыть</btn></div>
-        </div>
-        <div class="modal-body">
-            <div class="form-group">
-                <label asp-for="Division">Пояса</label>
-                <select asp-for="Division" name="Division" data-placeholder="Выберите пояса..." class="form-control"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="AgeGroupId">Выберите возрастную группу</label>
-                <select asp-for="AgeGroupId" name="AgeGroupId" data-placeholder="Выберите возрастную категорию..." class="form-control"></select>
-            </div>
-        </div>
-
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-            <button type="button" class="btn btn-primary" id="btnSubmit">Сохранить</button>
-        </div>
-    </div>
-    @Html.HiddenFor(x => x.TournamentId);
-}
-
-<script>
-    $('#linkCls').click(function () {
-        $('#alertMsg').hide('fade');
-        $("#alertTxt").empty();
-    });
-
-    initAjaxAutoCompleteMultiplySelect({
-        selector: 'select[name="Division"]',
-        url: '/Belt/Select2Belts',
-        dropdownParent: $("#myModal"),
-        width: '100%'
-    });
-
-    initAjaxAutoCompleteSelect({
-        selector: 'select[name="AgeGroupId"]',
-        url: '/AgeGroup/Select2AgeGroups',
-        dropdownParent: $("#myModal")
-    });
-
-    $('#btnSubmit').click(function (ev) {
-
-        let $btn = $(ev.currentTarget);
-
-        let $form = $('#sbmForm');
-        $.ajax({
-            url: '/Bracket/AddModel',
-            method: 'POST',
-            data: $form.serialize(),
-            cache: false,
-            xhr: function () {
-                let xhr = new XMLHttpRequest();
-                xhr.onreadystatechange = function () {
-                    if (xhr.readyState === 2) {
-                        if (xhr.status === 200) {
-                            xhr.responseType = "text";
-                        }
-                    }
-                };
-                return xhr;
-            },
-            success: function (data) {
-                $("#myModal").modal('hide');
-                document.location.reload();
-            },
-            error: function (data) {
-                try {
-                                  $("#alertTxt").empty();
-                                  data.responseJSON.forEach(x => {
-                                  $("#alertTxt").append(`<div>${x}</div>`);
-                                  $('#alertMsg').show('fade');
-                                  });
-                               }
-                               catch (e){}
-                               try {
-                                  $("#alertTxt").append(`<div>${data.responseJSON.errors.ValidationException[0]}</div>`);
-                                  $('#alertMsg').show('fade');
-                               }
-                              catch (e) {}
-            }
-        });
-    });
-
-</script>
-
+@* @model BracketDto *@
+@* *@
+@* @{ *@
+@*     Layout = null; *@
+@* } *@
+@* <style> *@
+@* *@
+@* .select2-container--default .select2-selection--multiple .select2-selection__choice { *@
+@*   display: inline-flex !important; *@
+@* } *@
+@* *@
+@* .select2-container--default.select2-container--focus .select2-selection--multiple { *@
+@*   color: #495057 !important; *@
+@*   background-color: #fff !important; *@
+@*   border-color: #80bdff !important; *@
+@*   outline: 0 !important; *@
+@*   box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25) !important; *@
+@* } *@
+@* *@
+@* .select2-container--default .select2-selection--multiple { *@
+@*   border: 1px solid #ced4da !important; *@
+@*   border-radius: .25rem !important; *@
+@*   padding: .375rem .75rem !important; *@
+@*   font-size: 1rem !important; *@
+@*   font-weight: 600 !important; *@
+@*   line-height: 1.5 !important; *@
+@* } *@
+@* *@
+@* .select2-container .select2-search--inline .select2-search__field { *@
+@*   margin: 0 !important; *@
+@*   height: 22px !important; *@
+@* } *@
+@* *@
+@* .select2-container--default .select2-selection--multiple .select2-selection__choice { *@
+@*   margin: 0 5px 5px 0 !important; *@
+@* } *@
+@* </style> *@
+@* @using (Html.BeginForm("AddModel", "Bracket", FormMethod.Post, new { enctype = "multipart/form-data", id = "sbmForm" })) *@
+@* { *@
+@*     <div class="modal-content"> *@
+@*         <div class="modal-header"> *@
+@*             <h5 class="modal-title" id="exampleModalLabel">Добавить сетки</h5> *@
+@*             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"> *@
+@*             </button> *@
+@*         </div> *@
+@*         <div id="alertMsg" class="alert alert-danger collapse"> *@
+@*             <div id="alertTxt"></div> *@
+@*             <div class="text-center"><btn class="btn" id="linkCls">Закрыть</btn></div> *@
+@*         </div> *@
+@*         <div class="modal-body"> *@
+@*             <div class="form-group"> *@
+@*                 <label asp-for="Division">Пояса</label> *@
+@*                 <select asp-for="Division" name="Division" data-placeholder="Выберите пояса..." class="form-control"></select> *@
+@*             </div> *@
+@*             <div class="form-group"> *@
+@*                 <label asp-for="AgeGroupId">Выберите возрастную группу</label> *@
+@*                 <select asp-for="AgeGroupId" name="AgeGroupId" data-placeholder="Выберите возрастную категорию..." class="form-control"></select> *@
+@*             </div> *@
+@*         </div> *@
+@* *@
+@*         <div class="modal-footer"> *@
+@*             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button> *@
+@*             <button type="button" class="btn btn-primary" id="btnSubmit">Сохранить</button> *@
+@*         </div> *@
+@*     </div> *@
+@*     @Html.HiddenFor(x => x.TournamentId); *@
+@* } *@
+@* *@
+@* <script> *@
+@*     $('#linkCls').click(function () { *@
+@*         $('#alertMsg').hide('fade'); *@
+@*         $("#alertTxt").empty(); *@
+@*     }); *@
+@* *@
+@*     initAjaxAutoCompleteMultiplySelect({ *@
+@*         selector: 'select[name="Division"]', *@
+@*         url: '/Belt/Select2Belts', *@
+@*         dropdownParent: $("#myModal"), *@
+@*         width: '100%' *@
+@*     }); *@
+@* *@
+@*     initAjaxAutoCompleteSelect({ *@
+@*         selector: 'select[name="AgeGroupId"]', *@
+@*         url: '/AgeGroup/Select2AgeGroups', *@
+@*         dropdownParent: $("#myModal") *@
+@*     }); *@
+@* *@
+@*     $('#btnSubmit').click(function (ev) { *@
+@* *@
+@*         let $btn = $(ev.currentTarget); *@
+@* *@
+@*         let $form = $('#sbmForm'); *@
+@*         $.ajax({ *@
+@*             url: '/Bracket/AddModel', *@
+@*             method: 'POST', *@
+@*             data: $form.serialize(), *@
+@*             cache: false, *@
+@*             xhr: function () { *@
+@*                 let xhr = new XMLHttpRequest(); *@
+@*                 xhr.onreadystatechange = function () { *@
+@*                     if (xhr.readyState === 2) { *@
+@*                         if (xhr.status === 200) { *@
+@*                             xhr.responseType = "text"; *@
+@*                         } *@
+@*                     } *@
+@*                 }; *@
+@*                 return xhr; *@
+@*             }, *@
+@*             success: function (data) { *@
+@*                 $("#myModal").modal('hide'); *@
+@*                 document.location.reload(); *@
+@*             }, *@
+@*             error: function (data) { *@
+@*                 try { *@
+@*                                   $("#alertTxt").empty(); *@
+@*                                   data.responseJSON.forEach(x => { *@
+@*                                   $("#alertTxt").append(`<div>${x}</div>`); *@
+@*                                   $('#alertMsg').show('fade'); *@
+@*                                   }); *@
+@*                                } *@
+@*                                catch (e){} *@
+@*                                try { *@
+@*                                   $("#alertTxt").append(`<div>${data.responseJSON.errors.ValidationException[0]}</div>`); *@
+@*                                   $('#alertMsg').show('fade'); *@
+@*                                } *@
+@*                               catch (e) {} *@
+@*             } *@
+@*         }); *@
+@*     }); *@
+@* *@
+@* </script> *@
+@* *@

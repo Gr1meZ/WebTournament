@@ -1,44 +1,44 @@
-@model List<BracketWinnerViewModel>
-
-@{
-    Layout = null;
-}
-
-<div class="modal-content">
-    <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Результаты турнира</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-        </button>
-    </div>
-    <div id="alertMessage" class="alert alert-danger collapse">
-        <div id="alertText"></div>
-        <div class="text-center"><btn class="btn" id="linkClose">Закрыть</btn></div>
-    </div>
-    <div class="modal-body">
-        @foreach (var item in Model)
-        {
-            <div class="text-center">@item.CategorieName</div>
-            <div class="text-center">@item.Division</div>
-
-            @if (item.FirstPlayerFullName == string.Empty)
-            {
-                continue;
-            }
-            <div>1-е место: @item.FirstPlayerFullName, @item.FirstPlayerClubName </div>
-            @if (item.SecondPlayerFullName == " ")
-            {
-                continue;
-            }
-            <div>2-е место: @item.SecondPlayerFullName, @item.SecondPlayerClubName </div>
-            @if (item.ThirdPlayerFullName == " ")
-            {
-                continue;
-            }
-            <div>3-е место: @item.ThirdPlayerFullName, @item.ThirdPlayerClubName </div>
-        }
-    </div>
-           
-    <div class="modal-footer">
-        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Закрыть</button>
-    </div>
-</div>
+@* @model List<BracketWinnerDto> *@
+@* *@
+@* @{ *@
+@*     Layout = null; *@
+@* } *@
+@* *@
+@* <div class="modal-content"> *@
+@*     <div class="modal-header"> *@
+@*         <h5 class="modal-title" id="exampleModalLabel">Результаты турнира</h5> *@
+@*         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"> *@
+@*         </button> *@
+@*     </div> *@
+@*     <div id="alertMessage" class="alert alert-danger collapse"> *@
+@*         <div id="alertText"></div> *@
+@*         <div class="text-center"><btn class="btn" id="linkClose">Закрыть</btn></div> *@
+@*     </div> *@
+@*     <div class="modal-body"> *@
+@*         @foreach (var item in Model) *@
+@*         { *@
+@*             <div class="text-center">@item.CategorieName</div> *@
+@*             <div class="text-center">@item.Division</div> *@
+@* *@
+@*             @if (item.FirstPlayerFullName == string.Empty) *@
+@*             { *@
+@*                 continue; *@
+@*             } *@
+@*             <div>1-е место: @item.FirstPlayerFullName, @item.FirstPlayerClubName </div> *@
+@*             @if (item.SecondPlayerFullName == " ") *@
+@*             { *@
+@*                 continue; *@
+@*             } *@
+@*             <div>2-е место: @item.SecondPlayerFullName, @item.SecondPlayerClubName </div> *@
+@*             @if (item.ThirdPlayerFullName == " ") *@
+@*             { *@
+@*                 continue; *@
+@*             } *@
+@*             <div>3-е место: @item.ThirdPlayerFullName, @item.ThirdPlayerClubName </div> *@
+@*         } *@
+@*     </div> *@
+@*             *@
+@*     <div class="modal-footer"> *@
+@*         <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Закрыть</button> *@
+@*     </div> *@
+@* </div> *@

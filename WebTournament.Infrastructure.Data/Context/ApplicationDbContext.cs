@@ -1,9 +1,9 @@
-using DataAccess.PostgreSQL.Configuration;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebTournament.Domain.Enums;
 using WebTournament.Domain.Models;
+using WebTournament.Infrastructure.Data.Configuration;
 using WebTournament.Infrastructure.Identity.Models;
 
 namespace WebTournament.Infrastructure.Data.Context

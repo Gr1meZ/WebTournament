@@ -1,6 +1,6 @@
-using DataAccess.Common.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using WebTournament.Application.Exceptions;
 
 namespace WebTournament.Presentation.MVC.Filters;
 

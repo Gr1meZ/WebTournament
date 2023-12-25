@@ -18,7 +18,7 @@ namespace WebTournament.Domain.Models
         public string ShortName { get; private set;}
         public string FullName { get; private set;}
         
-        public IReadOnlyCollection<Fighter> Fighters { get; protected set; }
+        public IReadOnlyCollection<Fighter> Fighters { get;  protected set; }
 
     }
 }

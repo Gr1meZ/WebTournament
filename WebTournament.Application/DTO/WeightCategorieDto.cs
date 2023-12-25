@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using DataAccess.Common.Enums;
 
 namespace WebTournament.Application.DTO
 {

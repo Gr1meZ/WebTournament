@@ -1,197 +1,197 @@
-﻿@{
-    ViewData["Title"] = "Спортсмены";
-}
-
-<style>
-    input[type="file"] {
-        display: none;
-    }
-
-    .custom-file-upload {
-        border: 1px solid #ccc;
-        display: inline-block;
-        padding: 6px 12px;
-        cursor: pointer;
-    }
-</style>
-<div>
-</div>
-<div class="row justify-content-center">
-    <div id="alertMessage" class="alert alert-danger collapse">
-        <div id="alertText"></div>
-        <div class="text-center">
-            <btn class="btn" id="linkClose">Закрыть</btn>
-        </div>
-    </div>
-    <div class="col-12">
-        <div class="my-2 p-4 bg-white rounded shadow-lg">
-            <div class="row align-content-center mb-3">
-                <div class="col-4 my-auto">
-                    <h5 class="mb-0"></h5>
-                </div>
-            </div>
-            <header class="text-center display-2" id="header">@ViewData["Tournament"]</header>
-            <table id="item-tbl" class="table">
-                <div class="second">
-                    <div class="col-md-12">
-                        <form>
-                            <a class="btn btn btn-info compItem " asp-controller="Fighter" asp-route-id="@Model" asp-action="AddIndex">Добавить <i class="bi bi-plus-circle"></i> </a>
-                            <input id="file-upload" type="file" name="formFile"/>
-                            <button class="btn btn-success " id="generateBtn" type="button">Добавить заявку </button>
-                            <button class="btn btn-danger compDlt"  type="button">Удалить всех спортсменов </button>
-
-                        </form>
-                    </div>
-                </div>
-                <div class="btn-group btn-group-sm" role="group" aria-label="Basic example">
-
-                </div>
-            </table>
-        </div>
-    </div>
-</div>
-<button class="btn btn-success" onclick="history.back()">Назад</button>
-
-<div class="modal fade" id="myModal" role="dialog" aria-labelledby="exampleModalLabel">
-    <div class="modal-dialog" role="document" id="dialogContent">
-    </div>
-</div>
-
-
-<div class="modal fade" id="deleteItemModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Удалить спортсмена</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                </button>
-            </div>
-            <div class="modal-body">
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-                <button id="deleteItemBtn" type="button" class="btn btn-danger" data-bs-dismiss="modal">Подтвердить</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="deleteFighters" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Удалить всех игроков</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                </button>
-            </div>
-            <div class="modal-body">
-                Вы уверены, что хотите удалить всех игроков?
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-                <button id="deleteAllBtn" type="button" class="btn btn-danger" data-bs-dismiss="modal">Подтвердить</button>
-            </div>
-        </div>
-    </div>
-</div>
-@section Scripts
-{
-
-    <script asp-append-version="true" src="~/js//ajaxDatatables/fighterDatatable.js"></script>
-    <script>
-    
-     $('#linkClose').click(function () {
-            $('#alertMessage').hide('fade');
-            $("#alertText").empty();
-        });
-     
-      $(".compDlt").click(function (e) {
-                                 e.preventDefault();
-                                 $('#deleteFighters').modal('show');
-                             });
-      
-        $(document).ready(function () {
-            $('#generateBtn').click(function () {
-                // Создаем input элемент типа file
-                var fileInput = $('<input type="file">');
-                $('#alertMessage').hide();
-                $('#alertSuccessMessage').hide();
-
-                // Устанавливаем свойства и стили для input
-                fileInput.attr('accept', '.xlsx'); // Принять только файлы с расширением .xlsx
-                fileInput.hide(); // Скрываем input
-
-                // Добавляем input в документ
-                $('body').append(fileInput);
-
-                // Эмулируем клик для открытия проводника
-                fileInput.click();
-
-                // Обрабатываем выбранный файл после его выбора
-                fileInput.change(function () {
-                    var selectedFile = fileInput[0].files[0];
-
-                    // Создаем объект FormData для отправки файла на сервер
-                    var formData = new FormData();
-                    formData.append('file', selectedFile);
-                    loader.show();
-
-                    // Отправляем файл на asp.net core controller с помощью $.ajax
-                    $.ajax({
-                        url: `/ExcelParser/Read?tournamentId=` + '@Model', 
-                        type: 'POST',
-                        data: formData,
-                        contentType: false,
-                        processData: false,
-                        success: function (response) {
-                           loader.hide();
-                           document.location.reload();
-                        },
-                        error: function (data) {
-                            console.log('Ошибка загрузки файла');
-                             console.log(data);
-                            loader.hide();
-                             $("#alertText").empty();
-                             console.log(data.responseJSON.errors.ValidationException[0]);
-                             $("#alertText").append(`<div>${data.responseJSON.errors.ValidationException[0]}</div>`);
-                             $('#alertMessage').show('fade');
-                            
-                        }
-                    });
-                });
-            });
-            
-            $('#deleteAllBtn').click(function () {
-                            $('#alertMessage').hide();
-                      
-                                $.ajax({
-                                    url: `/Fighter/DeleteAll/` + '@Model', 
-                                    type: 'DELETE',
-                                    contentType: false,
-                                    processData: false,
-                                    success: function (response) {
-                                       document.location.reload();
-                                    },
-                                    error: function (data) {
-                                         $("#alertText").empty();
-                                         $("#alertText").append(`<div>${data.responseJSON.errors.ValidationException[0]}</div>`);
-                                         $('#alertMessage').show('fade');
-                                        
-                                    }
-                                });
-                            });           
-
-            const fighterDatatable = GetFighterDatatable('@Model');
-            fighterDatatable.init();
-
-            $(".compItem").click(function (e) {
-                console.log(e);
-                e.preventDefault();
-                $.get(this.href, function (data) {
-                    $('#dialogContent').html(data);
-                    $('#myModal').modal('show');
-                });
-            });
-        });
-    </script>
-}
+﻿@* @{ *@
+@*     ViewData["Title"] = "Спортсмены"; *@
+@* } *@
+@* *@
+@* <style> *@
+@*     input[type="file"] { *@
+@*         display: none; *@
+@*     } *@
+@* *@
+@*     .custom-file-upload { *@
+@*         border: 1px solid #ccc; *@
+@*         display: inline-block; *@
+@*         padding: 6px 12px; *@
+@*         cursor: pointer; *@
+@*     } *@
+@* </style> *@
+@* <div> *@
+@* </div> *@
+@* <div class="row justify-content-center"> *@
+@*     <div id="alertMessage" class="alert alert-danger collapse"> *@
+@*         <div id="alertText"></div> *@
+@*         <div class="text-center"> *@
+@*             <btn class="btn" id="linkClose">Закрыть</btn> *@
+@*         </div> *@
+@*     </div> *@
+@*     <div class="col-12"> *@
+@*         <div class="my-2 p-4 bg-white rounded shadow-lg"> *@
+@*             <div class="row align-content-center mb-3"> *@
+@*                 <div class="col-4 my-auto"> *@
+@*                     <h5 class="mb-0"></h5> *@
+@*                 </div> *@
+@*             </div> *@
+@*             <header class="text-center display-2" id="header">@ViewData["Tournament"]</header> *@
+@*             <table id="item-tbl" class="table"> *@
+@*                 <div class="second"> *@
+@*                     <div class="col-md-12"> *@
+@*                         <form> *@
+@*                             <a class="btn btn btn-info compItem " asp-controller="Fighter" asp-route-id="@Model" asp-action="AddIndex">Добавить <i class="bi bi-plus-circle"></i> </a> *@
+@*                             <input id="file-upload" type="file" name="formFile"/> *@
+@*                             <button class="btn btn-success " id="generateBtn" type="button">Добавить заявку </button> *@
+@*                             <button class="btn btn-danger compDlt"  type="button">Удалить всех спортсменов </button> *@
+@* *@
+@*                         </form> *@
+@*                     </div> *@
+@*                 </div> *@
+@*                 <div class="btn-group btn-group-sm" role="group" aria-label="Basic example"> *@
+@* *@
+@*                 </div> *@
+@*             </table> *@
+@*         </div> *@
+@*     </div> *@
+@* </div> *@
+@* <button class="btn btn-success" onclick="history.back()">Назад</button> *@
+@* *@
+@* <div class="modal fade" id="myModal" role="dialog" aria-labelledby="exampleModalLabel"> *@
+@*     <div class="modal-dialog" role="document" id="dialogContent"> *@
+@*     </div> *@
+@* </div> *@
+@* *@
+@* *@
+@* <div class="modal fade" id="deleteItemModal" tabindex="-1"> *@
+@*     <div class="modal-dialog modal-dialog-centered"> *@
+@*         <div class="modal-content"> *@
+@*             <div class="modal-header"> *@
+@*                 <h5 class="modal-title">Удалить спортсмена</h5> *@
+@*                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"> *@
+@*                 </button> *@
+@*             </div> *@
+@*             <div class="modal-body"> *@
+@*             </div> *@
+@*             <div class="modal-footer"> *@
+@*                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button> *@
+@*                 <button id="deleteItemBtn" type="button" class="btn btn-danger" data-bs-dismiss="modal">Подтвердить</button> *@
+@*             </div> *@
+@*         </div> *@
+@*     </div> *@
+@* </div> *@
+@* *@
+@* <div class="modal fade" id="deleteFighters" tabindex="-1"> *@
+@*     <div class="modal-dialog modal-dialog-centered"> *@
+@*         <div class="modal-content"> *@
+@*             <div class="modal-header"> *@
+@*                 <h5 class="modal-title">Удалить всех игроков</h5> *@
+@*                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"> *@
+@*                 </button> *@
+@*             </div> *@
+@*             <div class="modal-body"> *@
+@*                 Вы уверены, что хотите удалить всех игроков? *@
+@*             </div> *@
+@*             <div class="modal-footer"> *@
+@*                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button> *@
+@*                 <button id="deleteAllBtn" type="button" class="btn btn-danger" data-bs-dismiss="modal">Подтвердить</button> *@
+@*             </div> *@
+@*         </div> *@
+@*     </div> *@
+@* </div> *@
+@* @section Scripts *@
+@* { *@
+@* *@
+@*     <script asp-append-version="true" src="~/js//ajaxDatatables/fighterDatatable.js"></script> *@
+@*     <script> *@
+@*      *@
+@*      $('#linkClose').click(function () { *@
+@*             $('#alertMessage').hide('fade'); *@
+@*             $("#alertText").empty(); *@
+@*         }); *@
+@*       *@
+@*       $(".compDlt").click(function (e) { *@
+@*                                  e.preventDefault(); *@
+@*                                  $('#deleteFighters').modal('show'); *@
+@*                              }); *@
+@*        *@
+@*         $(document).ready(function () { *@
+@*             $('#generateBtn').click(function () { *@
+@*                 // Создаем input элемент типа file *@
+@*                 var fileInput = $('<input type="file">'); *@
+@*                 $('#alertMessage').hide(); *@
+@*                 $('#alertSuccessMessage').hide(); *@
+@* *@
+@*                 // Устанавливаем свойства и стили для input *@
+@*                 fileInput.attr('accept', '.xlsx'); // Принять только файлы с расширением .xlsx *@
+@*                 fileInput.hide(); // Скрываем input *@
+@* *@
+@*                 // Добавляем input в документ *@
+@*                 $('body').append(fileInput); *@
+@* *@
+@*                 // Эмулируем клик для открытия проводника *@
+@*                 fileInput.click(); *@
+@* *@
+@*                 // Обрабатываем выбранный файл после его выбора *@
+@*                 fileInput.change(function () { *@
+@*                     var selectedFile = fileInput[0].files[0]; *@
+@* *@
+@*                     // Создаем объект FormData для отправки файла на сервер *@
+@*                     var formData = new FormData(); *@
+@*                     formData.append('file', selectedFile); *@
+@*                     loader.show(); *@
+@* *@
+@*                     // Отправляем файл на asp.net core controller с помощью $.ajax *@
+@*                     $.ajax({ *@
+@*                         url: `/ExcelParser/Read?tournamentId=` + '@Model',  *@
+@*                         type: 'POST', *@
+@*                         data: formData, *@
+@*                         contentType: false, *@
+@*                         processData: false, *@
+@*                         success: function (response) { *@
+@*                            loader.hide(); *@
+@*                            document.location.reload(); *@
+@*                         }, *@
+@*                         error: function (data) { *@
+@*                             console.log('Ошибка загрузки файла'); *@
+@*                              console.log(data); *@
+@*                             loader.hide(); *@
+@*                              $("#alertText").empty(); *@
+@*                              console.log(data.responseJSON.errors.ValidationException[0]); *@
+@*                              $("#alertText").append(`<div>${data.responseJSON.errors.ValidationException[0]}</div>`); *@
+@*                              $('#alertMessage').show('fade'); *@
+@*                              *@
+@*                         } *@
+@*                     }); *@
+@*                 }); *@
+@*             }); *@
+@*              *@
+@*             $('#deleteAllBtn').click(function () { *@
+@*                             $('#alertMessage').hide(); *@
+@*                        *@
+@*                                 $.ajax({ *@
+@*                                     url: `/Fighter/DeleteAll/` + '@Model',  *@
+@*                                     type: 'DELETE', *@
+@*                                     contentType: false, *@
+@*                                     processData: false, *@
+@*                                     success: function (response) { *@
+@*                                        document.location.reload(); *@
+@*                                     }, *@
+@*                                     error: function (data) { *@
+@*                                          $("#alertText").empty(); *@
+@*                                          $("#alertText").append(`<div>${data.responseJSON.errors.ValidationException[0]}</div>`); *@
+@*                                          $('#alertMessage').show('fade'); *@
+@*                                          *@
+@*                                     } *@
+@*                                 }); *@
+@*                             });            *@
+@* *@
+@*             const fighterDatatable = GetFighterDatatable('@Model'); *@
+@*             fighterDatatable.init(); *@
+@* *@
+@*             $(".compItem").click(function (e) { *@
+@*                 console.log(e); *@
+@*                 e.preventDefault(); *@
+@*                 $.get(this.href, function (data) { *@
+@*                     $('#dialogContent').html(data); *@
+@*                     $('#myModal').modal('show'); *@
+@*                 }); *@
+@*             }); *@
+@*         }); *@
+@*     </script> *@
+@* } *@

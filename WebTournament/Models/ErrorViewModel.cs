@@ -1,6 +1,6 @@
 namespace WebTournament.Presentation.MVC.Models
 {
-    public class ErrorViewModel
+    public class ErrorDto
     {
         public string? RequestId { get; set; }
 
