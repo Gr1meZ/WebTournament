@@ -10,8 +10,4 @@
     <PackageReference Include="FoolProof.Core" Version="1.2.1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\DataAccess.Common\DataAccess.Common.csproj" />
-  </ItemGroup>
-
 </Project>

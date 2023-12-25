@@ -1,9 +1,9 @@
 ﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using WebTournament.WebApp.Models;
+using WebTournament.Presentation.MVC.Models;
 
-namespace WebTournament.WebApp.Controllers
+namespace WebTournament.Presentation.MVC.Controllers
 {
     [Authorize(Roles = "Admin")]
     public class HomeController : Controller

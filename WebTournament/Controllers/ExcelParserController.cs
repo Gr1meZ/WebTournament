@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using WebTournament.Business.Abstract;
 
-namespace WebTournament.WebApp.Controllers
+namespace WebTournament.Presentation.MVC.Controllers
 {
     [Authorize(Roles = "Admin")]
     public class ExcelParserController : Controller

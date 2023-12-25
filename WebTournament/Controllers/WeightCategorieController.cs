@@ -4,7 +4,7 @@ using WebTournament.Business.Abstract;
 using WebTournament.Models;
 using WebTournament.Models.Helpers;
 
-namespace WebTournament.WebApp.Controllers
+namespace WebTournament.Presentation.MVC.Controllers
 {
 
     [Authorize(Roles = "Admin")]

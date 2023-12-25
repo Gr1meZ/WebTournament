@@ -1,4 +1,4 @@
-namespace WebTournament.WebApp.Models
+namespace WebTournament.Presentation.MVC.Models
 {
     public class ErrorViewModel
     {

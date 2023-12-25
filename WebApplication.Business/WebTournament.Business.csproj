@@ -7,8 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\WebTournament.Business.Abstract\WebTournament.Business.Abstract.csproj" />
-    <ProjectReference Include="..\WebTournament.DataAccess.Abstract\DataAccess.Abstract.csproj" />
     <ProjectReference Include="..\WebTournament.Models\WebTournament.Models.csproj" />
   </ItemGroup>
 

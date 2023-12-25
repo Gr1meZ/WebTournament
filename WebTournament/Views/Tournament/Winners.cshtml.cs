@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace WebTournament.WebApp.Views.Tournament;
+namespace WebTournament.Presentation.MVC.Views.Tournament;
 
 public class Winners : PageModel
 {

@@ -1,27 +1,29 @@
-using DataAccess.Common.Fitlers;
-using DependencyInjection;
-
+using System.Reflection;
+using WebTournament.Application.AutoMapper;
+using WebTournament.Infrastructure.IoC;
+using WebTournament.Presentation.MVC.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddMvc(options =>
-{
-    options.Filters.Add<ApiExceptionFilterAttribute>();
-});
+builder.Services.AddMvc(options => options.Filters.Add<ExceptionFilter>());
 
-builder.Services.AddServices(builder.Configuration);
+// ----- Database -----
+builder.Services.AddDatabase(builder.Configuration);
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
+builder.Services.AddCustomServices(builder.Configuration);
+
+builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
+
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddRazorPages();
 
 var app = builder.Build();
-AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
-var loggerFactory = LoggerFactory.Create(loggingBuilder => loggingBuilder.AddConsole());
-loggerFactory.CreateLogger<Program>();
-
-await app.Services.AutoMigrateDatabaseAsync();
+// ----- Role initializer -----
 await app.Services.CreateRolesAsync();
 
 // Configure the HTTP request pipeline.
@@ -32,12 +34,8 @@ if (app.Environment.IsDevelopment())
 else
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-
-
-
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
@@ -52,3 +50,5 @@ app.MapControllerRoute(
 app.MapRazorPages();
 
 app.Run();
+
+

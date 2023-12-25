@@ -1,4 +1,3 @@
-using DataAccess.Abstract;
 using DataAccess.Common.Exceptions;
 using DataAccess.Domain.Models;
 using Microsoft.EntityFrameworkCore;

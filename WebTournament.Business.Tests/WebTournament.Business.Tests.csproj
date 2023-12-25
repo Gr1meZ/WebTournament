@@ -25,7 +25,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\WebApplication.Business\WebTournament.Business.csproj" />
-      <ProjectReference Include="..\WebTournament.DataAccess.Abstract\DataAccess.Abstract.csproj" />
     </ItemGroup>
 
 </Project>

@@ -4,7 +4,7 @@ using WebTournament.Models.Helpers;
 using WebTournament.Models;
 using Microsoft.AspNetCore.Authorization;
 
-namespace WebTournament.WebApp.Controllers
+namespace WebTournament.Presentation.MVC.Controllers
 {
     [Authorize(Roles = "Admin")]
     public class BeltController : Controller
