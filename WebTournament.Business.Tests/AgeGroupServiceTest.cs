@@ -45,7 +45,101 @@ public class AgeGroupServiceTest
         await _mockAgeGroupService.Object.AddAgeGroupAsync(ageGroupViewModel);
 
         // Assert
-        _mockAgeGroupService.Verify(m => m.AddAgeGroupAsync(It.IsAny<AgeGroupViewModel>()), Times.Once);
+        _mockAgeGroupService.Verify(m => m.AddAgeGroupAsync(ageGroupViewModel), Times.Once);
+    }
+    
+    [Fact]
+    public async Task DeleteAgeGroupAsync_DeleteIfFound()
+    {
+        // Arrange
+        var ageGroupId = new Guid();
+        
+        _mockAgeGroupService.Setup(service => service.DeleteAgeGroupAsync(It.IsAny<Guid>()))
+            .Returns(Task.CompletedTask)
+            .Verifiable();
+
+        // Act
+        await _mockAgeGroupService.Object.DeleteAgeGroupAsync(ageGroupId);
+
+        // Assert
+        _mockAgeGroupService.Verify(m => m.DeleteAgeGroupAsync(ageGroupId), Times.Once);
+    }
+    
+    [Fact]
+    public async Task DeleteAgeGroupAsync_IfAgeGroupNotFound()
+    {
+        // Arrange
+        _mockAgeGroupService.Setup(service => service.DeleteAgeGroupAsync(Guid.Empty))
+            .Throws(new ValidationException("ValidationException","Age group not found"));
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ValidationException>(() => _mockAgeGroupService.Object.DeleteAgeGroupAsync(Guid.Empty));
+    }
+    
+    [Fact]
+    public async Task EditAgeGroupAsync_IfNullModel()
+    {
+        // Arrange
+        _mockAgeGroupService.Setup(service => service.EditAgeGroupAsync(null))
+            .Throws(new ValidationException("ValidationException","Age group not found"));
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ValidationException>(() => _mockAgeGroupService.Object.EditAgeGroupAsync(null));
+    }
+    
+    [Fact]
+    public async Task EditAgeGroupAsync_IfModelValid()
+    {
+        // Arrange
+        var ageGroupViewModel = new AgeGroupViewModel
+        {
+            Id = new Guid(),
+            MaxAge = 20,
+            MinAge = 10,
+            Name = "Youth"
+        };
+        
+        _mockAgeGroupService.Setup(service => service.EditAgeGroupAsync(It.IsAny<AgeGroupViewModel>()))
+            .Returns(Task.CompletedTask)
+            .Verifiable();
+
+        // Act
+        await _mockAgeGroupService.Object.EditAgeGroupAsync(ageGroupViewModel);
+
+        // Assert
+        _mockAgeGroupService.Verify(m => m.EditAgeGroupAsync(ageGroupViewModel), Times.Once);
+    }
+    
+    [Fact]
+    public async Task GetAgeGroupAsync_IfAgeGroupNotFound()
+    {
+        // Arrange
+        _mockAgeGroupService.Setup(service => service.GetAgeGroupAsync(Guid.Empty))
+            .Throws(new ValidationException("ValidationException","Age group not found"));
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ValidationException>(() => _mockAgeGroupService.Object.GetAgeGroupAsync(Guid.Empty));
+    }
+    
+    [Fact]
+    public async Task GetAgeGroupAsync_IfAgeGroupIsFounded()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        var ageGroupViewModel = new AgeGroupViewModel()
+        {
+            Id = id,
+            Name = "Youth",
+            MinAge = 15,
+            MaxAge = 20
+        };
+        
+        _mockAgeGroupService.Setup(service => service.GetAgeGroupAsync(It.Is<Guid>(x => x != Guid.Empty)))
+            .ReturnsAsync(() => ageGroupViewModel);
+        
+        var result = await _mockAgeGroupService.Object.GetAgeGroupAsync(id);
+        // Act & Assert
+        Assert.Equal(result.Id, id);
     }
     
     [Fact]
@@ -60,10 +154,10 @@ public class AgeGroupServiceTest
             OrderColumn = "test",
             OrderDir = "asc"
         };
-        
+        var ageGroups = AgeGroupList();
         var expectedResponse = new PagedResponse<AgeGroupViewModel[]>
         (
-            AgeGroupList() ,
+            ageGroups,
             6, // Общее количество элементов
             request.PageNumber,
             request.PageSize
@@ -74,21 +168,49 @@ public class AgeGroupServiceTest
             .Verifiable("Сервис не вызван.");
 
         // Act
-         await _mockAgeGroupService.Object.AgeGroupListAsync(request);
+         var response = await _mockAgeGroupService.Object.AgeGroupListAsync(request);
 
         // Assert
-        _mockAgeGroupService.Verify(m => m.AgeGroupListAsync(It.IsAny<PagedRequest>()), Times.Once);
+        _mockAgeGroupService.Verify(m => m.AgeGroupListAsync(request), Times.Once);
+        Assert.Equal(ageGroups.Length, response.Metadata.TotalItemCount);
+
     }
     
     [Fact]
-    public async Task AgeGroupListAsync_ThrowsValidationException()
+    public async Task GetSelect2AgeGroupsAsync_ReturnsSelect2Response()
     {
         // Arrange
-        _mockAgeGroupService.Setup(service => service.AgeGroupListAsync(null))
-            .Throws(new ValidationException("ValidationException", "Request is null"));
+        var request = new Select2Request()
+        {
+            PageSize = 10,
+            Search = "",
+            Skip = 0
+        };
+        
+        var data = AgeGroupList().Select(x => new Select2Data()
+            {
+                Id = x.Id,
+                Name = x.Name
+            })
+            .ToArray();
 
-        // Act & Assert
-        await Assert.ThrowsAsync<ValidationException>(() => _mockAgeGroupService.Object.AgeGroupListAsync(null));
+        var expectedResponse = new Select2Response()
+        {
+            Data = data,
+            Total = data.Length
+        };
+
+        _mockAgeGroupService.Setup(service => service.GetSelect2AgeGroupsAsync(request))
+            .ReturnsAsync(expectedResponse)
+            .Verifiable("Сервис не вызван.");
+
+        // Act
+        var response = await _mockAgeGroupService.Object.GetSelect2AgeGroupsAsync(request);
+
+        // Assert
+        _mockAgeGroupService.Verify(m => m.GetSelect2AgeGroupsAsync(request), Times.Once);
+        Assert.Equal(expectedResponse, response);
+
     }
     
     private AgeGroupViewModel[] AgeGroupList()

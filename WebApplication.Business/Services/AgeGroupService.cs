@@ -1,11 +1,9 @@
 ﻿using DataAccess.Domain.Models;
 using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
 using DataAccess.Abstract;
 using WebTournament.Business.Abstract;
 using WebTournament.Models;
 using WebTournament.Models.Helpers;
-using DataAccess.Common.Exceptions;
 using ValidationException = DataAccess.Common.Exceptions.ValidationException;
 
 namespace WebTournament.Business.Services
