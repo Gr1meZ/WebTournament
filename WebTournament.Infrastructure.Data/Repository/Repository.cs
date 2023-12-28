@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using WebTournament.Domain.Abstract;
-using WebTournament.Domain.Core.Models;
+using WebTournament.Domain.Exceptions;
+using WebTournament.Domain.SeedWork;
 using WebTournament.Infrastructure.Data.Context;
 
 namespace WebTournament.Infrastructure.Data.Repository;
@@ -23,12 +23,17 @@ public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity :
 
     public virtual async Task<TEntity> GetByIdAsync(Guid id)
     {
-        return await _dbSet.FindAsync(id);
+        var domain = await _dbSet.FindAsync(id);
+        
+        if (domain is null)
+            throw new ValidationException("ValidationException", $"{nameof(TEntity)} is not found");
+        
+        return domain;
     }
 
     public virtual IQueryable<TEntity> GetAll()
     {
-        return _dbSet;
+        return _dbSet.AsQueryable().AsNoTracking();
     }
     
     public virtual void Update(TEntity obj)
@@ -40,10 +45,13 @@ public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity :
     {
         _dbSet.Remove(obj);
     }
-    
+
+
     public void Dispose()
     {
         _applicationDbContext.Dispose();
         GC.SuppressFinalize(this);
     }
+    
+    
 }

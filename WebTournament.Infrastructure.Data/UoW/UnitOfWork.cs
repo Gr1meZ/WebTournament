@@ -1,5 +1,4 @@
-using WebTournament.Domain.Abstract;
-using WebTournament.Domain.Core.Models;
+using WebTournament.Domain.SeedWork;
 using WebTournament.Infrastructure.Data.Context;
 
 namespace WebTournament.Infrastructure.Data.UoW;
@@ -13,13 +12,8 @@ public class UnitOfWork : IUnitOfWork
         _context = context;
     }
 
-    public Task Commit()
+    public async Task<int> CommitAsync(CancellationToken cancellationToken = default(CancellationToken))
     {
-        return _context.SaveChangesAsync();
-    }
-    
-    public void Dispose()
-    {
-        _context.Dispose();
+        return await _context.SaveChangesAsync(cancellationToken);
     }
 }

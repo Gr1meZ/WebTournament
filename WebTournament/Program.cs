@@ -1,4 +1,5 @@
 using System.Reflection;
+using WebTournament.Application;
 using WebTournament.Application.AutoMapper;
 using WebTournament.Infrastructure.IoC;
 using WebTournament.Presentation.MVC.Filters;
@@ -14,9 +15,7 @@ AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 builder.Services.AddCustomServices(builder.Configuration);
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
-
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
-
+builder.Services.AddMediatR(cfg => { cfg.RegisterServicesFromAssemblies([typeof(Program).Assembly, typeof(ApplicationAssembleReference).Assembly]); });
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddRazorPages();

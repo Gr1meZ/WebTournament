@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using WebTournament.Domain.Models;
+using WebTournament.Domain.Objects.Trainer;
 
 namespace WebTournament.Infrastructure.Data.Configuration
 {

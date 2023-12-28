@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using WebTournament.Application.Exceptions;
+using WebTournament.Domain.Exceptions;
 
 namespace WebTournament.Presentation.MVC.Filters;
 

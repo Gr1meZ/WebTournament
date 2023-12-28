@@ -10,4 +10,8 @@
     <PackageReference Include="FoolProof.Core" Version="1.2.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Helpers\" />
+  </ItemGroup>
+
 </Project>
