@@ -3,7 +3,7 @@ using WebTournament.Application.Configuration.Queries;
 
 namespace WebTournament.Application.Select2.Queries;
 
-public class Select2AgeGroupsQuery : Select2Request,  IQuery<Select2Response>
+public class Select2WeightCategorieQuery : Select2Request, IQuery<Select2Response>
 {
     
 }

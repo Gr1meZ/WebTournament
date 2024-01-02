@@ -11,6 +11,9 @@ using WebTournament.Application.Tournament.CreateTournament;
 using WebTournament.Application.Tournament.UpdateTournament;
 using WebTournament.Application.Trainer.CreateTrainer;
 using WebTournament.Application.Trainer.UpdateTrainer;
+using WebTournament.Application.WeightCategorie.CreateWeightCategorie;
+using WebTournament.Application.WeightCategorie.UpdateWeightCategorie;
+using WebTournament.Domain.Extensions;
 
 namespace WebTournament.Application.AutoMapper;
 
@@ -39,5 +42,15 @@ public class AutoMapperProfile : Profile
         CreateMap<Domain.Objects.Trainer.Trainer, TrainerDto>()
             .ForMember(x => x.ClubName, opt
                 => opt.MapFrom(src => src.Club.Name));
+        
+        CreateMap<WeightCategorieDto, CreateWeightCategorieCommand>();
+        CreateMap<WeightCategorieDto, UpdateWeightCategorieCommand>();
+        CreateMap<Domain.Objects.WeightCategorie.WeightCategorie, WeightCategorieDto>()
+            .ForMember(x => x.Gender, opt
+                => opt.MapFrom(src => src.Gender.MapToString()))
+            .ForMember(x => x.AgeGroupName, opt
+                => opt.MapFrom(src => src.AgeGroup.Name))
+            ;
+
     }
 }

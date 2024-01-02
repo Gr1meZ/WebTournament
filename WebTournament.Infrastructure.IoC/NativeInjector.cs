@@ -9,6 +9,7 @@ using WebTournament.Domain.Objects.Belt;
 using WebTournament.Domain.Objects.Club;
 using WebTournament.Domain.Objects.Tournament;
 using WebTournament.Domain.Objects.Trainer;
+using WebTournament.Domain.Objects.WeightCategorie;
 using WebTournament.Domain.SeedWork;
 using WebTournament.Infrastructure.Data.Repository;
 using WebTournament.Infrastructure.Data.UoW;
@@ -27,6 +28,7 @@ namespace WebTournament.Infrastructure.IoC
             services.AddScoped<IClubRepository, ClubRepository>();
             services.AddScoped<ITournamentRepository, TournamentRepository>();
             services.AddScoped<ITrainerRepository, TrainerRepository>();
+            services.AddScoped<IWeightCategorieRepository, WeightCategorieRepository>();
 
             return services;
         }
