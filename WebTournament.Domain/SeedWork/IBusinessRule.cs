@@ -2,7 +2,7 @@ namespace WebTournament.Domain.SeedWork;
 
 public interface IBusinessRule
 {
-    bool IsBroken();
+    Task<bool> IsBrokenAsync();
 
     string Message { get; }
 }

@@ -54,9 +54,9 @@ namespace WebTournament.Domain.SeedWork
             return GetType().Name + " [Id=" + Id + "]";
         }
         
-        protected static void CheckRule(IBusinessRule rule)
+        protected static async Task CheckRuleAsync(IBusinessRule rule)
         {
-            if (rule.IsBroken())
+            if (await rule.IsBrokenAsync())
             {
                 throw new ValidationException("ValidationException", rule.Message);
             }

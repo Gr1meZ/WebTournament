@@ -6,5 +6,4 @@ namespace WebTournament.Application.AgeGroup.CreateAgeGroup;
 
 public class CreateAgeGroupCommand : AgeGroupDto, ICommand
 {
-    
 }

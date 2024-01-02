@@ -4,14 +4,18 @@ namespace WebTournament.Domain.Objects.AgeGroup.Rules;
 
 public class AgeGroupMustBeUniqueRule : IBusinessRule
 {
+    private readonly IAgeGroupRepository _ageGroupRepository;
+    private readonly int? _minAge;
+    private readonly int? _maxAge;
 
-    private readonly bool _isUnique;
-    public AgeGroupMustBeUniqueRule(bool isUnique)
+    public AgeGroupMustBeUniqueRule(IAgeGroupRepository ageGroupRepository, int? minAge, int? maxAge)
     {
-        this._isUnique = isUnique;
+        _ageGroupRepository = ageGroupRepository;
+        _minAge = minAge;
+        _maxAge = maxAge;
     }
 
-    public bool IsBroken() => _isUnique;
+    public async Task<bool> IsBrokenAsync() => await _ageGroupRepository.IsUniqueAsync(_minAge, _maxAge);
 
 
     public string Message => "Данная возрастная группа уже существует!";

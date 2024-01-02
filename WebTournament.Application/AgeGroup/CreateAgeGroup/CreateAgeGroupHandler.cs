@@ -19,8 +19,7 @@ public class CreateAgeGroupHandler : ICommandHandler<CreateAgeGroupCommand>
 
     public async Task Handle(CreateAgeGroupCommand request, CancellationToken cancellationToken)
     {
-        var isUnique = await _ageGroupRepository.IsUnique(request.MinAge, request.MaxAge);
-        var ageGroup = Create(Guid.NewGuid(), request.Name, request.MinAge, request.MaxAge, isUnique);
+        var ageGroup = await CreateAsync(Guid.NewGuid(), request.Name, request.MinAge, request.MaxAge, _ageGroupRepository);
         await _ageGroupRepository.AddAsync(ageGroup);
         await _unitOfWork.CommitAsync(cancellationToken);
     }

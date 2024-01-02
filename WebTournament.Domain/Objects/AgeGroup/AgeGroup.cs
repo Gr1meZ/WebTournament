@@ -21,9 +21,9 @@ namespace WebTournament.Domain.Objects.AgeGroup
 
          public IReadOnlyCollection<WeightCategorie.WeightCategorie> WeightCategories { get; protected set; }
 
-         public static AgeGroup Create(Guid id, string name, int? minAge, int? maxAge, bool isUnique)
+         public static async Task<AgeGroup> CreateAsync(Guid id, string name, int? minAge, int? maxAge, IAgeGroupRepository ageGroupRepository)
          {
-             CheckRule(new AgeGroupMustBeUniqueRule(isUnique));
+             await CheckRuleAsync(new AgeGroupMustBeUniqueRule(ageGroupRepository, minAge, maxAge));
              return new AgeGroup() { Id = Guid.NewGuid(), MaxAge = maxAge.Value, MinAge = minAge.Value, Name = name };
          }
          

@@ -1,12 +1,12 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using WebTournament.Application.AgeGroup.CreateAgeGroup;
 using WebTournament.Application.AgeGroup.GetAgeGroup;
 using WebTournament.Application.AgeGroup.GetAgeGroupList;
 using WebTournament.Application.AgeGroup.RemoveAgeGroup;
 using WebTournament.Application.AgeGroup.UpdateAgeGroup;
-using WebTournament.Application.Common;
+using WebTournament.Application.DTO;
 using WebTournament.Application.Select2.Queries;
 
 namespace WebTournament.Presentation.MVC.Controllers
@@ -14,10 +14,11 @@ namespace WebTournament.Presentation.MVC.Controllers
     public class AgeGroupController : Controller
     {
         private readonly IMediator _mediator;
-
-        public AgeGroupController(IMediator mediator)
+        private readonly IMapper _mapper;
+        public AgeGroupController(IMediator mediator, IMapper mapper)
         {
             _mediator = mediator;
+            _mapper = mapper;
         }
 
         public IActionResult Index()
@@ -43,18 +44,18 @@ namespace WebTournament.Presentation.MVC.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddModel(CreateAgeGroupCommand command)
+        public async Task<IActionResult> AddModel(AgeGroupDto ageGroupDto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState.Values.SelectMany(v => v.Errors).Select(x => x.ErrorMessage).ToList());
-            await _mediator.Send(command);
+            await _mediator.Send(_mapper.Map<CreateAgeGroupCommand>(ageGroupDto));
             return Ok();
         }
 
         [HttpPost]
-        public async Task<IActionResult> EditModel(UpdateAgeGroupCommand command)
+        public async Task<IActionResult> EditModel(AgeGroupDto ageGroupDto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState.Values.SelectMany(v => v.Errors).Select(x => x.ErrorMessage).ToList());
-            await _mediator.Send(command);
+            await _mediator.Send(_mapper.Map<UpdateAgeGroupCommand>(ageGroupDto));
             return Ok();
         }
 
@@ -65,7 +66,7 @@ namespace WebTournament.Presentation.MVC.Controllers
             return Ok();
         }
 
-        public async Task<IActionResult> Select2AgeGroups([FromForm] Select2AgeGroupsQuery request)
+        public async Task<IActionResult> Select2AgeGroups([FromForm]Select2AgeGroupsQuery request)
         {
             return Ok(await _mediator.Send(request));
         }

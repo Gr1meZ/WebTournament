@@ -6,4 +6,10 @@ namespace WebTournament.Application.AgeGroup.UpdateAgeGroup;
 
 public class UpdateAgeGroupCommand :  AgeGroupDto, ICommand
 {
+    public UpdateAgeGroupCommand(Guid id)
+    {
+        Id = id;
+    }
+
+    public Guid Id { get; }
 }

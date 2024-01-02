@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using WebTournament.Application.Common;
 using WebTournament.Application.Configuration.Queries;
@@ -9,10 +10,11 @@ namespace WebTournament.Application.AgeGroup.GetAgeGroupList;
 public class GetAgeGroupListHandler : IQueryHandler<GetAgeGroupListQuery, PagedResponse<AgeGroupDto[]>>
 {
     private readonly IAgeGroupRepository _ageGroupRepository;
-
-    public GetAgeGroupListHandler(IAgeGroupRepository ageGroupRepository)
+    private readonly IMapper _mapper;
+    public GetAgeGroupListHandler(IAgeGroupRepository ageGroupRepository, IMapper mapper)
     {
         _ageGroupRepository = ageGroupRepository;
+        _mapper = mapper;
     }
 
     public async Task<PagedResponse<AgeGroupDto[]>> Handle(GetAgeGroupListQuery request, CancellationToken cancellationToken)
@@ -54,13 +56,9 @@ public class GetAgeGroupListHandler : IQueryHandler<GetAgeGroupListQuery, PagedR
 
             dbQuery = dbQuery.Skip((request.PageNumber - 1) * request.PageSize).Take(request.PageSize);
 
-            var dbItems =  await dbQuery.Select(x => new AgeGroupDto()
-            {
-                Id = x.Id,
-                MaxAge = x.MaxAge,
-                MinAge = x.MinAge,
-                Name = x.Name
-            }).ToArrayAsync(cancellationToken: cancellationToken);
+            var dbItems =  await dbQuery
+                .Select(x => _mapper.Map<AgeGroupDto>(x))
+                .ToArrayAsync(cancellationToken: cancellationToken);
 
             return new PagedResponse<AgeGroupDto[]>(dbItems, totalItemCount, request.PageNumber, request.PageSize);
     }
