@@ -9,6 +9,8 @@ using WebTournament.Application.Club.UpdateClub;
 using WebTournament.Application.DTO;
 using WebTournament.Application.Tournament.CreateTournament;
 using WebTournament.Application.Tournament.UpdateTournament;
+using WebTournament.Application.Trainer.CreateTrainer;
+using WebTournament.Application.Trainer.UpdateTrainer;
 
 namespace WebTournament.Application.AutoMapper;
 
@@ -31,5 +33,11 @@ public class AutoMapperProfile : Profile
         CreateMap<TournamentDto, CreateTournamentCommand>();
         CreateMap<TournamentDto, UpdateTournamentCommand>();
         CreateMap<Domain.Objects.Tournament.Tournament, TournamentDto>();
+        
+        CreateMap<TrainerDto, CreateTrainerCommand>();
+        CreateMap<TrainerDto, UpdateTrainerCommand>();
+        CreateMap<Domain.Objects.Trainer.Trainer, TrainerDto>()
+            .ForMember(x => x.ClubName, opt
+                => opt.MapFrom(src => src.Club.Name));
     }
 }

@@ -5,21 +5,25 @@ using WebTournament.Application.Select2.Queries;
 using WebTournament.Domain.Objects.AgeGroup;
 using WebTournament.Domain.Objects.Belt;
 using WebTournament.Domain.Objects.Club;
+using WebTournament.Domain.Objects.Trainer;
 
 namespace WebTournament.Application.Select2;
 
 public class Select2Handler : IQueryHandler<Select2AgeGroupsQuery, Select2Response>,
     IQueryHandler<Select2BeltQuery, Select2Response>,
-    IQueryHandler<Select2ClubsQuery, Select2Response>
+    IQueryHandler<Select2ClubsQuery, Select2Response>,
+    IQueryHandler<Select2TrainersQuery, Select2Response>
 {
     private readonly IAgeGroupRepository _ageGroupRepository;
     private readonly IBeltRepository _beltRepository;
     private readonly IClubRepository _clubRepository;
-    public Select2Handler(IAgeGroupRepository ageGroupRepository, IBeltRepository beltRepository, IClubRepository clubRepository)
+    private readonly ITrainerRepository _trainerRepository;
+    public Select2Handler(IAgeGroupRepository ageGroupRepository, IBeltRepository beltRepository, IClubRepository clubRepository, ITrainerRepository trainerRepository)
     {
         _ageGroupRepository = ageGroupRepository;
         _beltRepository = beltRepository;
         _clubRepository = clubRepository;
+        _trainerRepository = trainerRepository;
     }
 
     public async Task<Select2Response> Handle(Select2AgeGroupsQuery request, CancellationToken cancellationToken)
@@ -99,6 +103,37 @@ public class Select2Handler : IQueryHandler<Select2AgeGroupsQuery, Select2Respon
             {
                 Id = x.Id,
                 Name = x.Name
+            })
+            .ToArray();
+
+        return new Select2Response()
+        {
+            Data = data,
+            Total = total
+        };
+    }
+
+    public async Task<Select2Response> Handle(Select2TrainersQuery request, CancellationToken cancellationToken)
+    {
+        var ageGroups = _trainerRepository.GetAll();
+
+        var dbQuery = ageGroups;
+        var total = await ageGroups.CountAsync(cancellationToken: cancellationToken);
+
+        if (!string.IsNullOrWhiteSpace(request.Search))
+        {
+            dbQuery = dbQuery.Where(x => x.Name.ToLower().Contains(request.Search.ToLower()) ||
+                                         x.Surname.ToLower().Contains(request.Search.ToLower()) ||
+                                         x.Patronymic.ToLower().Contains(request.Search.ToLower()));
+        }
+
+        if (request.PageSize != -1)
+            dbQuery = dbQuery.Skip(request.Skip).Take(request.PageSize);
+
+        var data = dbQuery.Select(x => new Select2Data()
+            {
+                Id = x.Id,
+                Name = $"{x.Surname} {x.Name[0]}.{x.Patronymic}"
             })
             .ToArray();
 

@@ -1,13 +1,11 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
 using WebTournament.Application.Club.CreateClub;
 using WebTournament.Application.Club.GetClub;
 using WebTournament.Application.Club.GetClubList;
 using WebTournament.Application.Club.RemoveClub;
 using WebTournament.Application.Club.UpdateClub;
-using WebTournament.Application.Common;
 using WebTournament.Application.DTO;
 using WebTournament.Application.Select2.Queries;
 

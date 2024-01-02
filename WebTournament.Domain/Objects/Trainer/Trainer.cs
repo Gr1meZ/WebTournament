@@ -1,14 +1,14 @@
-﻿using WebTournament.Domain.SeedWork;
+﻿using WebTournament.Domain.Objects.Trainer.Rules;
+using WebTournament.Domain.SeedWork;
 
 namespace WebTournament.Domain.Objects.Trainer
 {
     public class Trainer : Entity
     {
-        public Trainer(Guid id, Guid clubId, Club.Club club, string name, string surname, string patronymic, string phone)
+        private Trainer(Guid id, Guid clubId, string name, string surname, string patronymic, string phone)
         {
             Id = id;
             ClubId = clubId;
-            Club = club;
             Name = name;
             Surname = surname;
             Patronymic = patronymic;
@@ -25,5 +25,21 @@ namespace WebTournament.Domain.Objects.Trainer
         
         public IReadOnlyCollection<Fighter.Fighter> Fighters { get; protected set; }
 
+        public static async Task<Trainer> CreateAsync(string name, string surname, string patronymic, string phone,
+            Guid clubId, ITrainerRepository trainerRepository)
+        {
+            await CheckRuleAsync(new TrainerMustBeUniqueRule(name, surname, patronymic, phone, clubId, trainerRepository));
+            return new Trainer(Guid.NewGuid(), clubId, name, surname, patronymic, phone);
+        }
+        
+        public void Change(string name, string surname, string patronymic, string phone,
+            Guid clubId)
+        {
+            ClubId = clubId;
+            Name = name;
+            Surname = surname;
+            Patronymic = patronymic;
+            Phone = phone;
+        }
     }
 }
