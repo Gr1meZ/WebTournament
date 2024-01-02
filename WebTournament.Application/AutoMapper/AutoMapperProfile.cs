@@ -7,6 +7,8 @@ using WebTournament.Application.Belt.UpdateBelt;
 using WebTournament.Application.Club.CreateClub;
 using WebTournament.Application.Club.UpdateClub;
 using WebTournament.Application.DTO;
+using WebTournament.Application.Tournament.CreateTournament;
+using WebTournament.Application.Tournament.UpdateTournament;
 
 namespace WebTournament.Application.AutoMapper;
 
@@ -25,5 +27,9 @@ public class AutoMapperProfile : Profile
         CreateMap<ClubDto, CreateClubCommand>();
         CreateMap<ClubDto, UpdateClubCommand>();
         CreateMap<Domain.Objects.Club.Club, ClubDto>();
+        
+        CreateMap<TournamentDto, CreateTournamentCommand>();
+        CreateMap<TournamentDto, UpdateTournamentCommand>();
+        CreateMap<Domain.Objects.Tournament.Tournament, TournamentDto>();
     }
 }

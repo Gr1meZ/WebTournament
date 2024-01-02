@@ -13,5 +13,10 @@ public class BeltRepository : Repository<Belt>, IBeltRepository
     public async Task<bool> IsUniqueAsync(int beltNumber, string shortName) => await _applicationDbContext.Belts
         .Where(x => x.BeltNumber == beltNumber && x.ShortName == shortName)
         .AnyAsync();
-    
+
+    public IQueryable<string> GetMatchedBeltsByDivision(Guid[] divison)
+    {
+        return _applicationDbContext.Belts.OrderBy(belt => belt.BeltNumber)
+            .Where(belt => divison.Contains(belt.Id)).Select(y => $"{y.BeltNumber} {y.ShortName}");
+    }
 }
