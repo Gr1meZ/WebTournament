@@ -1,0 +1,9 @@
+using WebTournament.Domain.SeedWork;
+
+namespace WebTournament.Domain.Objects.Club;
+
+public interface IClubRepository : IRepository<Club>
+{
+    Task<bool> IsUniqueAsync(string name);
+
+}

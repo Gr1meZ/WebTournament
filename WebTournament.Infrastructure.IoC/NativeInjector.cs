@@ -6,6 +6,7 @@ using WebTournament.Infrastructure.Identity.Models;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using WebTournament.Domain.Objects.AgeGroup;
 using WebTournament.Domain.Objects.Belt;
+using WebTournament.Domain.Objects.Club;
 using WebTournament.Domain.SeedWork;
 using WebTournament.Infrastructure.Data.Repository;
 using WebTournament.Infrastructure.Data.UoW;
@@ -18,8 +19,10 @@ namespace WebTournament.Infrastructure.IoC
             IConfiguration configuration)
         {
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            
             services.AddScoped<IAgeGroupRepository, AgeGroupRepository>();
             services.AddScoped<IBeltRepository, BeltRepository>();
+            services.AddScoped<IClubRepository, ClubRepository>();
 
             return services;
         }

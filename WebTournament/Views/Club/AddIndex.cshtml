@@ -1,89 +1,90 @@
-﻿@* @model ClubDto *@
-@* *@
-@* @{ *@
-@*     Layout = null; *@
-@* } *@
-@* *@
-@* @using (Html.BeginForm("AddModel", "Club", FormMethod.Post, new { enctype = "multipart/form-data", id = "sbmForm" })) *@
-@* { *@
-@*         <div class="modal-content"> *@
-@*             <div class="modal-header"> *@
-@*                 <h5 class="modal-title" id="exampleModalLabel">Добавить клуб</h5> *@
-@*             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"> *@
-@*             </button> *@
-@*             </div> *@
-@*         <div id="alertMessage" class="alert alert-danger collapse"> *@
-@*             <div id="alertText"></div> *@
-@*             <div class="text-center"><btn class="btn" id="linkClose">Закрыть</btn></div> *@
-@*         </div> *@
-@*             <div class="modal-body"> *@
-@*                 <div class="form-group"> *@
-@*                     <label asp-for="Name">Название</label> *@
-@*                     <input type="text" id="name" class="form-control" placeholder="Введите название" asp-for="Name"> *@
-@*                 </div> *@
-@*                  *@
-@*                 </div> *@
-@*             *@
-@*             <div class="modal-footer"> *@
-@*             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button> *@
-@*             <button type="button" class="btn btn-primary" id="btnSubmit">Сохранить</button> *@
-@*             </div> *@
-@*     </div> *@
-@* } *@
-@* *@
-@* <script type="text/javascript"> *@
-@*     $('#linkClose').click(function () { *@
-@*         $('#alertMessage').hide('fade'); *@
-@*         $("#alertText").empty(); *@
-@* *@
-@*     }); *@
-@*     document.getElementById('name').addEventListener('keypress', function (event) { *@
-@*         if (event.keyCode == 13) { *@
-@*             event.preventDefault(); *@
-@*         } *@
-@*     }); *@
-@* *@
-@*     $('#btnSubmit').click(function (ev) { *@
-@* *@
-@*         let $btn = $(ev.currentTarget); *@
-@*         let $form = $('#sbmForm'); *@
-@* *@
-@*         $.ajax({ *@
-@*             url: '/Club/AddModel', *@
-@*             method: 'POST', *@
-@*             data: $form.serialize(), *@
-@*             cache: false, *@
-@*             xhr: function () { *@
-@*                 let xhr = new XMLHttpRequest(); *@
-@*                 xhr.onreadystatechange = function () { *@
-@*                     if (xhr.readyState === 2) { *@
-@*                         if (xhr.status === 200) { *@
-@*                             xhr.responseType = "text"; *@
-@*                         } *@
-@*                     } *@
-@*                 }; *@
-@*                 return xhr; *@
-@*             }, *@
-@*             success: function (data) { *@
-@*                 $("#myModal").modal('hide'); *@
-@*                 document.location.reload(); *@
-@*             }, *@
-@*             error: function (data) { *@
-@*                   try { *@
-@*                                                   $("#alertText").empty(); *@
-@*                                                   data.responseJSON.forEach(x => { *@
-@*                                                   $("#alertText").append(`<div>${x}</div>`); *@
-@*                                                   $('#alertMessage').show('fade'); *@
-@*                                                   }); *@
-@*                                                } *@
-@*                                                catch (e){} *@
-@*                                                try { *@
-@*                                                   $("#alertText").append(`<div>${data.responseJSON.errors.ValidationException[0]}</div>`); *@
-@*                                                   $('#alertMessage').show('fade'); *@
-@*                                                } *@
-@*                                               catch (e) {} *@
-@*             } *@
-@*         }); *@
-@*     }); *@
-@* </script> *@
-@* *@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model WebTournament.Application.DTO.ClubDto
+
+@{
+    Layout = null;
+}
+
+@using (Html.BeginForm("AddModel", "Club", FormMethod.Post, new { enctype = "multipart/form-data", id = "sbmForm" }))
+{
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Добавить клуб</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+            </button>
+            </div>
+        <div id="alertMessage" class="alert alert-danger collapse">
+            <div id="alertText"></div>
+            <div class="text-center"><btn class="btn" id="linkClose">Закрыть</btn></div>
+        </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label asp-for="Name">Название</label>
+                    <input type="text" id="name" class="form-control" placeholder="Введите название" asp-for="Name">
+                </div>
+
+                </div>
+
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+            <button type="button" class="btn btn-primary" id="btnSubmit">Сохранить</button>
+            </div>
+    </div>
+}
+
+<script type="text/javascript">
+    $('#linkClose').click(function () {
+        $('#alertMessage').hide('fade');
+        $("#alertText").empty();
+
+    });
+    document.getElementById('name').addEventListener('keypress', function (event) {
+        if (event.keyCode == 13) {
+            event.preventDefault();
+        }
+    });
+
+    $('#btnSubmit').click(function (ev) {
+
+        let $btn = $(ev.currentTarget);
+        let $form = $('#sbmForm');
+
+        $.ajax({
+            url: '/Club/AddModel',
+            method: 'POST',
+            data: $form.serialize(),
+            cache: false,
+            xhr: function () {
+                let xhr = new XMLHttpRequest();
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 2) {
+                        if (xhr.status === 200) {
+                            xhr.responseType = "text";
+                        }
+                    }
+                };
+                return xhr;
+            },
+            success: function (data) {
+                $("#myModal").modal('hide');
+                document.location.reload();
+            },
+            error: function (data) {
+                  try {
+                                                  $("#alertText").empty();
+                                                  data.responseJSON.forEach(x => {
+                                                  $("#alertText").append(`<div>${x}</div>`);
+                                                  $('#alertMessage').show('fade');
+                                                  });
+                                               }
+                                               catch (e){}
+                                               try {
+                                                  $("#alertText").append(`<div>${data.responseJSON.errors.ValidationException[0]}</div>`);
+                                                  $('#alertMessage').show('fade');
+                                               }
+                                              catch (e) {}
+            }
+        });
+    });
+</script>
+

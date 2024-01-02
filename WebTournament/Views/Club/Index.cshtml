@@ -1,74 +1,74 @@
-﻿@* @{ *@
-@*     ViewData["Title"] = "Клубы"; *@
-@* } *@
-@* *@
-@* <div> *@
-@* *@
-@* </div> *@
-@* <div class="row justify-content-center"> *@
-@*     <div class="col-12"> *@
-@*         <div class="my-2 p-4 bg-white rounded shadow-lg"> *@
-@*             <div class="row align-content-center mb-3"> *@
-@*                 <div class="col-4 my-auto"> *@
-@*                      <h5 class="mb-0"></h5>  *@
-@*                 </div> *@
-@*             </div> *@
-@* *@
-@*             <table id="item-tbl" class="table"> *@
-@*                 <a class="btn btn btn-info compItem" asp-action="AddIndex">Добавить <i class="bi bi-plus-circle"></i></a> *@
-@* *@
-@*             </table> *@
-@*         </div> *@
-@*     </div> *@
-@* </div> *@
-@* <button class="btn btn-success" onclick="history.back()">Назад</button> *@
-@* *@
-@* <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" > *@
-@*     <div class="modal-dialog" role="document" id="dialogContent"> *@
-@*     </div> *@
-@* </div> *@
-@* *@
-@* *@
-@* <div class="modal fade" id="deleteItemModal" tabindex="-1"> *@
-@*     <div class="modal-dialog modal-dialog-centered"> *@
-@*         <div class="modal-content"> *@
-@*             <div class="modal-header"> *@
-@*                 <h5 class="modal-title">Удалить клуб</h5> *@
-@*                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"> *@
-@*                 </button> *@
-@*             </div> *@
-@*             <div class="modal-body"> *@
-@*             </div> *@
-@*             <div class="modal-footer"> *@
-@*                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button> *@
-@*                 <button id="deleteItemBtn" type="button" class="btn btn-danger" data-bs-dismiss="modal">Подтвердить</button> *@
-@*             </div> *@
-@*         </div> *@
-@*     </div> *@
-@* </div> *@
-@* *@
-@* @section Scripts *@
-@*     { *@
-@* *@
-@*     <script asp-append-version="true" src="~/js//ajaxDatatables/clubDatatable.js"></script> *@
-@*     <script> *@
-@* *@
-@*         $(document).ready(function () { *@
-@*             const clubDatatable = GetClubDatatable(); *@
-@*             clubDatatable.init(); *@
-@* *@
-@*             $(".compItem").click(function (e) { *@
-@*                 console.log(e); *@
-@*                 e.preventDefault(); *@
-@*                 $.get(this.href, function (data) { *@
-@*                     $('#dialogContent').html(data); *@
-@*                     $('#myModal').modal('show'); *@
-@*                 }); *@
-@*             }); *@
-@*         }); *@
-@*     </script> *@
-@* } *@
-@*         *@
-@*          *@
-@*         *@
-@* *@
+﻿@{
+    ViewData["Title"] = "Клубы";
+}
+
+<div>
+
+</div>
+<div class="row justify-content-center">
+    <div class="col-12">
+        <div class="my-2 p-4 bg-white rounded shadow-lg">
+            <div class="row align-content-center mb-3">
+                <div class="col-4 my-auto">
+                     <h5 class="mb-0"></h5>
+                </div>
+            </div>
+
+            <table id="item-tbl" class="table">
+                <a class="btn btn btn-info compItem" asp-action="AddIndex">Добавить <i class="bi bi-plus-circle"></i></a>
+
+            </table>
+        </div>
+    </div>
+</div>
+<button class="btn btn-success" onclick="history.back()">Назад</button>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" >
+    <div class="modal-dialog" role="document" id="dialogContent">
+    </div>
+</div>
+
+
+<div class="modal fade" id="deleteItemModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Удалить клуб</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                <button id="deleteItemBtn" type="button" class="btn btn-danger" data-bs-dismiss="modal">Подтвердить</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+    {
+
+    <script asp-append-version="true" src="~/js//ajaxDatatables/clubDatatable.js"></script>
+    <script>
+
+        $(document).ready(function () {
+            const clubDatatable = GetClubDatatable();
+            clubDatatable.init();
+
+            $(".compItem").click(function (e) {
+                console.log(e);
+                e.preventDefault();
+                $.get(this.href, function (data) {
+                    $('#dialogContent').html(data);
+                    $('#myModal').modal('show');
+                });
+            });
+        });
+    </script>
+}
+
+
+
+
