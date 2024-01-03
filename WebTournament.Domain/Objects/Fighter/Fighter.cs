@@ -1,12 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using WebTournament.Domain.Enums;
+using WebTournament.Domain.Extensions;
+using WebTournament.Domain.Objects.Fighter.Rules;
 using WebTournament.Domain.SeedWork;
 
 namespace WebTournament.Domain.Objects.Fighter
 {
     public class Fighter : Entity
     {
-        public Fighter(Guid id, Guid tournamentId, Guid weightCategorieId, Guid beltId, Guid trainerId, Guid? bracketId, string name,
+        private Fighter(Guid id, Guid tournamentId, Guid weightCategorieId, Guid beltId, Guid trainerId, Guid? bracketId, string name,
             string surname, DateTime birthDate, int age, string country, string city, Gender gender)
         {
             Id = id;
@@ -45,6 +47,30 @@ namespace WebTournament.Domain.Objects.Fighter
         public  Belt.Belt Belt { get; protected set;}  
         public  Trainer.Trainer Trainer { get; protected set;}    
         public Bracket.Bracket Bracket { get; protected set; }
+
+        public static async Task<Fighter> CreateAsync(Guid tournamentId, Guid weightCategorieId, Guid beltId,
+            Guid trainerId, Guid? bracketId, string name,
+            string surname, DateTime birthDate, string country, string city, string gender, IFighterRepository fighterRepository)
+        {
+            await CheckRuleAsync(new FighterMustBeUniqueRule(fighterRepository, surname, name, city, tournamentId));
+            return new Fighter(Guid.NewGuid(), tournamentId, weightCategorieId, beltId, trainerId, bracketId, name,
+                surname, birthDate, AgeCalculator.CalculateAge(birthDate), country, city, GenderExtension.ParseEnum(gender));
+        }
+
+        public void Change(string name, DateTime birthDate, Guid beltId, string city, string country, string gender, string surname, Guid tournamentId, Guid trainerId, Guid weightCategorieId)
+        {
+            Name = name;
+            BirthDate = birthDate;
+            Age = AgeCalculator.CalculateAge(birthDate);
+            BeltId = beltId;
+            City = city;
+            Country = country;
+            Gender = GenderExtension.ParseEnum(gender);
+            Surname = surname;
+            TournamentId = tournamentId;
+            TrainerId = trainerId;
+            WeightCategorieId = weightCategorieId;
+        }
 
     }
 }

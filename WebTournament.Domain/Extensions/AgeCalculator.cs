@@ -1,4 +1,4 @@
-﻿namespace WebTournament.Business.Helpers
+﻿namespace WebTournament.Domain.Extensions
 {
     public static class AgeCalculator
     {

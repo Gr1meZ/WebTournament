@@ -45,7 +45,11 @@ public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity :
     {
         _dbSet.Remove(obj);
     }
-
+    
+    public virtual void RemoveAll(IQueryable<TEntity> objQuery)
+    {
+        _dbSet.RemoveRange(objQuery);
+    }
 
     public void Dispose()
     {

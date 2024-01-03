@@ -4,23 +4,22 @@ EXPOSE 80
 EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["WebTournament/WebTournament.Presentation.MVC.csproj", "WebTournament/"]
-COPY ["WebTournament.DependencyInjection/DependencyInjection.csproj", "WebTournament.DependencyInjection/"]
-COPY ["DataAccess.Common/DataAccess.Common.csproj", "DataAccess.Common/"]
-COPY ["DataAccess.PostgreSQL/DataAccess.PostgreSQL.csproj", "DataAccess.PostgreSQL/"]
-COPY ["WebTournament.DataAccess.Abstract/DataAccess.Abstract.csproj", "WebTournament.DataAccess.Abstract/"]
-COPY ["DataAccess.Domain/DataAccess.Domain.csproj", "DataAccess.Domain/"]
-COPY ["WebApplication.Business/WebTournament.Business.csproj", "WebApplication.Business/"]
-COPY ["WebTournament.Business.Abstract/WebTournament.Business.Abstract.csproj", "WebTournament.Business.Abstract/"]
-COPY ["WebTournament.Models/WebTournament.Models.csproj", "WebTournament.Models/"]
+COPY ["WebTournament.Application/WebTournament.Application.csproj", "WebTournament.Application/"]
+COPY ["WebTournament.Domain/WebTournament.Domain.csproj", "WebTournament.Domain/"]
+COPY ["WebTournament.Infrastructure.IoC/WebTournament.Infrastructure.IoC.csproj", "WebTournament.Infrastructure.IoC/"]
+COPY ["WebTournament.Infrastructure.Data/WebTournament.Infrastructure.Data.csproj", "WebTournament.Infrastructure.Data/"]
+COPY ["WebTournament.Infrastructure.Identity/WebTournament.Infrastructure.Identity.csproj", "WebTournament.Infrastructure.Identity/"]
 RUN dotnet restore "WebTournament/WebTournament.Presentation.MVC.csproj"
 COPY . .
 WORKDIR "/src/WebTournament"
-RUN dotnet build "WebTournament.Presentation.MVC.csproj" -c Release -o /app/build
+RUN dotnet build "WebTournament.Presentation.MVC.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "WebTournament.Presentation.MVC.csproj" -c Release -o /app/publish /p:UseAppHost=false
+ARG BUILD_CONFIGURATION=Release
+RUN dotnet publish "WebTournament.Presentation.MVC.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app

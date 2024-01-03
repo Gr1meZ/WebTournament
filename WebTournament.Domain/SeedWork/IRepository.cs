@@ -11,5 +11,6 @@ public interface IRepository<TEntity> : IDisposable
     void Update(TEntity obj);
 
     void Remove(TEntity obj);
+    void RemoveAll(IQueryable<TEntity> objQuery);
 
 }
