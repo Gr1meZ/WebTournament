@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using WebTournament.Infrastructure.Data.Context;
 using WebTournament.Infrastructure.Identity.Models;
+using Microsoft.AspNetCore.Identity.UI;
 namespace WebTournament.Infrastructure.IoC;
 
 public static class DatabaseInitializer
@@ -24,7 +25,7 @@ public static class DatabaseInitializer
            
 
 
-        services.AddIdentity<ApplicationUser, ApplicationRole>(options => options.SignIn.RequireConfirmedAccount = false)
+        services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
             .AddRoles<ApplicationRole>()
             .AddEntityFrameworkStores<ApplicationDbContext>();
         

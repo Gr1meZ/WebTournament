@@ -9,6 +9,7 @@ using WebTournament.Application.Fighter.GetFighterList;
 using WebTournament.Application.Fighter.RemoveAllFighters;
 using WebTournament.Application.Fighter.RemoveFighter;
 using WebTournament.Application.Fighter.UpdateFighter;
+using WebTournament.Application.Select2.Queries;
 using WebTournament.Application.Tournament.GetTournament;
 
 namespace WebTournament.Presentation.MVC.Controllers
@@ -90,6 +91,13 @@ namespace WebTournament.Presentation.MVC.Controllers
             var formFile = Request.Form.Files[0];
             await _mediator.Send(new CreateFightersFromExcelCommand(tournamentId, formFile), cancellationToken);
             return Ok();
+        }
+        
+        [HttpPost("[controller]/[action]/{bracketId}")]
+        public async Task<IActionResult> Select2Fighters([FromForm]Select2FightersQuery request, [FromRoute] Guid bracketId)
+        {
+            request.Id = bracketId;
+            return Ok(await _mediator.Send(request));
         }
     }
 }

@@ -1,3 +1,4 @@
+using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -16,10 +17,11 @@ namespace WebTournament.Presentation.MVC.Controllers;
 public class BracketController : Controller
 {
     private readonly IMediator _mediator;
-
-    public BracketController(IMediator mediator)
+    private readonly IMapper _mapper;
+    public BracketController(IMediator mediator, IMapper mapper)
     {
         _mediator = mediator;
+        _mapper = mapper;
     }
 
 
@@ -62,7 +64,7 @@ public class BracketController : Controller
     public async Task<IActionResult> AddModel(BracketDto bracketDto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState.Values.SelectMany(v => v.Errors).Select(x => x.ErrorMessage).ToList());
-        await _mediator.Send(bracketDto as GenerateBracketCommand);
+        await _mediator.Send(_mapper.Map<GenerateBracketCommand>(bracketDto));
         return CreatedAtAction(nameof(List), new { id = bracketDto.Id }, bracketDto);
     }
     

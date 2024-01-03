@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using WebTournament.Domain.Objects.AgeGroup;
 using WebTournament.Domain.Objects.Belt;
 using WebTournament.Domain.Objects.Bracket;
+using WebTournament.Domain.Objects.BracketWinner;
 using WebTournament.Domain.Objects.Club;
 using WebTournament.Domain.Objects.Fighter;
 using WebTournament.Domain.Objects.Tournament;
@@ -33,6 +34,7 @@ namespace WebTournament.Infrastructure.IoC
             services.AddScoped<IWeightCategorieRepository, WeightCategorieRepository>();
             services.AddScoped<IFighterRepository, FighterRepository>();
             services.AddScoped<IBracketRepository, BracketRepository>();
+            services.AddScoped<IBracketWinnerRepository, BracketWinnerRepository>();
 
             return services;
         }

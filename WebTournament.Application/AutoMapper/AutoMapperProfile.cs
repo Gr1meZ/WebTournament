@@ -4,6 +4,7 @@ using WebTournament.Application.AgeGroup.GetAgeGroup;
 using WebTournament.Application.AgeGroup.UpdateAgeGroup;
 using WebTournament.Application.Belt.CreateBelt;
 using WebTournament.Application.Belt.UpdateBelt;
+using WebTournament.Application.Bracket.GenerateBracket;
 using WebTournament.Application.Club.CreateClub;
 using WebTournament.Application.Club.UpdateClub;
 using WebTournament.Application.DTO;
@@ -69,7 +70,7 @@ public class AutoMapperProfile : Profile
             .ForMember(x => x.ClubName, opt
                 => opt.MapFrom(src => src.Trainer.Club.Name));
 
-       
+        CreateMap<BracketDto, GenerateBracketCommand>();
 
 
     }

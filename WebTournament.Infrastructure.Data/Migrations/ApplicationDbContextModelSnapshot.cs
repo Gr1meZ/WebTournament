@@ -143,7 +143,7 @@ namespace WebTournament.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("AgeGroups");
+                    b.ToTable("AgeGroups", (string)null);
                 });
 
             modelBuilder.Entity("WebTournament.Domain.Models.Belt", b =>
@@ -165,7 +165,7 @@ namespace WebTournament.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Belts");
+                    b.ToTable("Belts", (string)null);
                 });
 
             modelBuilder.Entity("WebTournament.Domain.Models.Bracket", b =>
@@ -194,7 +194,7 @@ namespace WebTournament.Infrastructure.Data.Migrations
 
                     b.HasIndex("WeightCategorieId");
 
-                    b.ToTable("Brackets");
+                    b.ToTable("Brackets", (string)null);
                 });
 
             modelBuilder.Entity("WebTournament.Domain.Models.BracketWinner", b =>
@@ -222,7 +222,7 @@ namespace WebTournament.Infrastructure.Data.Migrations
                     b.HasIndex("ThirdPlaceId")
                         .IsUnique();
 
-                    b.ToTable("BracketWinners");
+                    b.ToTable("BracketWinners", (string)null);
                 });
 
             modelBuilder.Entity("WebTournament.Domain.Models.Club", b =>
@@ -237,7 +237,7 @@ namespace WebTournament.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Clubs");
+                    b.ToTable("Clubs", (string)null);
                 });
 
             modelBuilder.Entity("WebTournament.Domain.Models.Fighter", b =>
@@ -299,7 +299,7 @@ namespace WebTournament.Infrastructure.Data.Migrations
 
                     b.HasIndex("WeightCategorieId");
 
-                    b.ToTable("Fighters");
+                    b.ToTable("Fighters", (string)null);
                 });
 
             modelBuilder.Entity("WebTournament.Domain.Models.Tournament", b =>
@@ -321,7 +321,7 @@ namespace WebTournament.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tournaments");
+                    b.ToTable("Tournaments", (string)null);
                 });
 
             modelBuilder.Entity("WebTournament.Domain.Models.Trainer", b =>
@@ -353,7 +353,7 @@ namespace WebTournament.Infrastructure.Data.Migrations
 
                     b.HasIndex("ClubId");
 
-                    b.ToTable("Trainers");
+                    b.ToTable("Trainers", (string)null);
                 });
 
             modelBuilder.Entity("WebTournament.Domain.Models.WeightCategorie", b =>
@@ -379,7 +379,7 @@ namespace WebTournament.Infrastructure.Data.Migrations
 
                     b.HasIndex("AgeGroupId");
 
-                    b.ToTable("WeightCategories");
+                    b.ToTable("WeightCategories", (string)null);
                 });
 
             modelBuilder.Entity("WebTournament.Infrastructure.Identity.Models.ApplicationRole", b =>

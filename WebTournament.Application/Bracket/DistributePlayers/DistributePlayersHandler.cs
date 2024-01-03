@@ -111,7 +111,7 @@ public class DistributePlayersHandler : ICommandHandler<DistributePlayersCommand
         var bracketIds = await _bracketRepository.GetAll().Select(x => x.Id).ToListAsync();
         if (!bracketIds.Any() || await _bracketWinnerRepository.GetAll().AnyAsync(x => bracketIds.Contains(x.Id))) return;
         {
-            var bracketWinners = bracketIds.Select(x => BracketWinner.Create(x, Guid.Empty, Guid.Empty, Guid.Empty));
+            var bracketWinners = bracketIds.Select(x => BracketWinner.Create(x, null, null, null));
 
             await _bracketWinnerRepository.AddRangeAsync(bracketWinners);
         }

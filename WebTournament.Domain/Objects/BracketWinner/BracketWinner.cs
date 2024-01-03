@@ -30,6 +30,6 @@ public class BracketWinner : Entity
     {
         FirstPlaceId = firstPlaceId;
         SecondPlaceId = secondPlaceId;
-        thirdPlaceId = thirdPlaceId;
+        ThirdPlaceId = thirdPlaceId;
     }
 }

@@ -1,198 +1,200 @@
-@* @model BracketState *@
-@* @{ *@
-@*     ViewData["Title"] = @Model.CategorieName; *@
-@* } *@
-@* *@
-@* <style> *@
-@* *@
-@* .select2-container--default .select2-selection--multiple .select2-selection__choice { *@
-@*   display: inline-flex !important; *@
-@* } *@
-@* *@
-@* .select2-container--default.select2-container--focus .select2-selection--multiple { *@
-@*   color: #495057 !important; *@
-@*   background-color: #fff !important; *@
-@*   border-color: #80bdff !important; *@
-@*   outline: 0 !important; *@
-@*   box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25) !important; *@
-@* } *@
-@* *@
-@* .select2-container--default .select2-selection--multiple { *@
-@*   border: 1px solid #ced4da !important; *@
-@*   border-radius: .25rem !important; *@
-@*   padding: .375rem .75rem !important; *@
-@*   font-size: 1rem !important; *@
-@*   font-weight: 600 !important; *@
-@*   line-height: 1.5 !important; *@
-@* } *@
-@* *@
-@* .select2-container .select2-search--inline .select2-search__field { *@
-@*   margin: 0 !important; *@
-@*   height: 22px !important; *@
-@* } *@
-@* *@
-@* .select2-container--default .select2-selection--multiple .select2-selection__choice { *@
-@*   margin: 0 5px 5px 0 !important; *@
-@* } *@
-@* </style> *@
-@* *@
-@* @if (Model.State == string.Empty) *@
-@* { *@
-@*   <div>Сделайте жеребьевку игроков!</div> *@
-@* } *@
-@* else *@
-@* { *@
-@*   <div id="alertMessage" class="alert alert-success collapse"> *@
-@*     <div id="alertText">Турнирная сетка успешно сохранена</div> *@
-@*     <div class="text-center"><btn class="btn" id="linkClose">Закрыть</btn></div> *@
-@*   </div> *@
-@*   <nav class="navbar bg-light navbar-expand-lg bg-body-tertiary"> *@
-@*         <select asp-for="Winners" name="winners" data-placeholder="Выберите победителей..." class="form-control" id="winners"></select> *@
-@*     <button class="btn btn-success " id="saveButton">Сохранить</button> *@
-@*     <div class="container-fluid"> *@
-@*       <button class="btn btn-warning" id="pdfBtn">PDF</button> *@
-@* *@
-@*       <button class="btn btn-primary" onclick="history.back()">Назад</button> *@
-@*     </div> *@
-@*   </nav> *@
-@*   <div class="container-fluid pt-lg-5"> *@
-@*     <div class="text-center" id="matchCallback"></div> *@
-@*     <div class="demo align-content-center" id="bracketTournament"> *@
-@*     </div> *@
-@*   </div> *@
-@*    *@
-@* } *@
-@* @section Scripts *@
-@* { *@
-@*   <script type="text/javascript"> *@
-@*    *@
-@*   $('#linkClose').click(function () { *@
-@*           $('#alertMessage').hide('fade'); *@
-@*       }); *@
-@*    *@
-@*   initAjaxAutoCompleteMultiplySelect({ *@
-@*          selector: 'select[name="winners"]', *@
-@*          url: '/Bracket/Select2BracketFighters/' + "@Model.Id", *@
-@*          maxItems : 3, *@
-@*          width: '50%' *@
-@*      }); *@
-@*     var customData = @Html.Raw(Model.State); *@
-@*     console.log(customData) *@
-@*     /* Edit function is called when team label is clicked */ *@
-@*     function edit_fn(container, data, doneCb) { *@
-@*       var input = $('<input type="text">') *@
-@*       input.val(data ? data.name : '') *@
-@*       container.html(input) *@
-@*       input.focus() *@
-@*       input.blur(function() { *@
-@*         var inputValue = input.val() *@
-@*         if (inputValue.length === 0) { *@
-@*           doneCb(null); // Drop the team and replace with BYE *@
-@*         } else { *@
-@*           var flagAndName = inputValue.split(':') // Expects correct input *@
-@*           doneCb({flag: flagAndName[0], name: flagAndName[1]}) *@
-@*         } *@
-@*       }) *@
-@*     } *@
-@*      *@
-@*    *@
-@*      *@
-@*     function render_fn(container, data, score, state) { *@
-@*       switch(state) { *@
-@*         case "empty-bye": *@
-@*           container.append("No team") *@
-@*           return; *@
-@*         case "empty-tbd": *@
-@*           container.append("Upcoming") *@
-@*           return; *@
-@*    *@
-@*         case "entry-no-score": *@
-@*         case "entry-default-win": *@
-@*         case "entry-complete": *@
-@*           container.append(data.name) *@
-@*           return; *@
-@*       } *@
-@*     } *@
-@*     $("#saveButton").click(function(e) { *@
-@*                     var bracketData = $('.demo').bracket('data'); *@
-@*                     let $winners = $('#winners').val(); *@
-@*                     console.log($winners); *@
-@*                     let bracketState = {id : '@Model.Id', state : JSON.stringify(bracketData), winners : $winners}; *@
-@*                     $.ajax({ *@
-@*                                 url: '/Bracket/SaveState', *@
-@*                                 method: 'POST', *@
-@*                                 data: bracketState, *@
-@*                                 cache: false, *@
-@*                                 xhr: function () { *@
-@*                                     let xhr = new XMLHttpRequest(); *@
-@*                                     xhr.onreadystatechange = function () { *@
-@*                                         if (xhr.readyState === 2) { *@
-@*                                             if (xhr.status === 200) { *@
-@*                                                 xhr.responseType = "text"; *@
-@*                                             } *@
-@*                                         } *@
-@*                                     }; *@
-@*                                     return xhr; *@
-@*                                 }, *@
-@*                                 success: function (data) { *@
-@*                                 $('#alertMessage').show('fade'); *@
-@*            *@
-@*                                 }, *@
-@*                                 error: function (data) { *@
-@*                                     console.log(data); *@
-@*                                     *@
-@*                                 } *@
-@*                             }); *@
-@*                   }); *@
-@*      $(function() { *@
-@*         *@
-@*        $('.demo').bracket({ *@
-@*         init: customData, *@
-@*         save: function(){}, /* without save() labels are disabled */ *@
-@*         decorator: {edit: edit_fn, *@
-@*           render: render_fn}, *@
-@*         disableToolbar: true, *@
-@*         disableTeamEdit: true, *@
-@*         teamWidth: 99, *@
-@*         scoreWidth: 31, *@
-@*         matchMargin: 99, *@
-@*         roundMargin: 99 *@
-@*       }); *@
-@*         *@
-@*     $(".label").on("mouseover", function (data) { *@
-@*           console.log(data); *@
-@*           $("#matchCallback").text(data.target.innerText); *@
-@*       }); *@
-@*        *@
-@*   }); *@
-@*    window.jsPDF = window.jspdf.jsPDF; *@
-@*    window.html2canvas = html2canvas; *@
-@*   *@
-@*      $('#pdfBtn').click(function () { *@
-@*         *@
-@*        var element = document.getElementById("bracketTournament"); *@
-@*        var currentHeight = $('.bracket').outerHeight(); *@
-@*        var currentWidth = $('.jQBracket').outerWidth(); *@
-@* *@
-@*        if (currentHeight <= 150 && currentWidth <= 250){ *@
-@*           currentHeight += 200; *@
-@*           currentWidth += 200; *@
-@*          } *@
-@*         *@
-@*        var opt = { *@
-@*          margin: 1, *@
-@*          filename:  'bracket.pdf', *@
-@*          image: { type: 'jpeg', quality: 1 }, *@
-@*          html2canvas: { dpi: 300, letterRendering: true, width: currentWidth, height: currentHeight}, *@
-@*          jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' } *@
-@*        }; *@
-@*         *@
-@*        opt.jsPDF.font = "Times New Roman"; *@
-@*         *@
-@*        html2pdf().from(element).set(opt).save(); *@
-@*          *@
-@*      }); *@
-@*       *@
-@* </script> *@
-@* } *@
-@* *@
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model WebTournament.Application.DTO.BracketState
+@{
+    ViewData["Title"] = @Model.CategorieName;
+}
+
+<style>
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+  display: inline-flex !important;
+}
+
+.select2-container--default.select2-container--focus .select2-selection--multiple {
+  color: #495057 !important;
+  background-color: #fff !important;
+  border-color: #80bdff !important;
+  outline: 0 !important;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25) !important;
+}
+
+.select2-container--default .select2-selection--multiple {
+  border: 1px solid #ced4da !important;
+  border-radius: .25rem !important;
+  padding: .375rem .75rem !important;
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  line-height: 1.5 !important;
+}
+
+.select2-container .select2-search--inline .select2-search__field {
+  margin: 0 !important;
+  height: 22px !important;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+  margin: 0 5px 5px 0 !important;
+}
+</style>
+
+@if (Model.State == string.Empty)
+{
+  <div>Сделайте жеребьевку игроков!</div>
+}
+else
+{
+  <div id="alertMessage" class="alert alert-success collapse">
+    <div id="alertText">Турнирная сетка успешно сохранена</div>
+    <div class="text-center"><btn class="btn" id="linkClose">Закрыть</btn></div>
+  </div>
+  <nav class="navbar bg-light navbar-expand-lg bg-body-tertiary">
+        <select asp-for="Winners" name="winners" data-placeholder="Выберите победителей..." class="form-control" id="winners"></select>
+    <button class="btn btn-success " id="saveButton">Сохранить</button>
+    <div class="container-fluid">
+      <button class="btn btn-warning" id="pdfBtn">PDF</button>
+
+      <button class="btn btn-primary" onclick="history.back()">Назад</button>
+    </div>
+  </nav>
+  <div class="container-fluid pt-lg-5">
+    <div class="text-center" id="matchCallback"></div>
+    <div class="demo align-content-center" id="bracketTournament">
+    </div>
+  </div>
+
+}
+@section Scripts
+{
+  <script type="text/javascript">
+
+  $('#linkClose').click(function () {
+          $('#alertMessage').hide('fade');
+      });
+
+  initAjaxAutoCompleteMultiplySelect({
+         selector: 'select[name="winners"]',
+         url: '/Fighter/Select2Fighters/' + "@Model.Id",
+         maxItems : 3,
+         width: '50%'
+     });
+  
+    var customData = @Html.Raw(Model.State);
+    console.log(customData)
+    /* Edit function is called when team label is clicked */
+    function edit_fn(container, data, doneCb) {
+      var input = $('<input type="text">')
+      input.val(data ? data.name : '')
+      container.html(input)
+      input.focus()
+      input.blur(function() {
+        var inputValue = input.val()
+        if (inputValue.length === 0) {
+          doneCb(null); // Drop the team and replace with BYE
+        } else {
+          var flagAndName = inputValue.split(':') // Expects correct input
+          doneCb({flag: flagAndName[0], name: flagAndName[1]})
+        }
+      })
+    }
+
+
+
+    function render_fn(container, data, score, state) {
+      switch(state) {
+        case "empty-bye":
+          container.append("No team")
+          return;
+        case "empty-tbd":
+          container.append("Upcoming")
+          return;
+
+        case "entry-no-score":
+        case "entry-default-win":
+        case "entry-complete":
+          container.append(data.name)
+          return;
+      }
+    }
+    $("#saveButton").click(function(e) {
+                    var bracketData = $('.demo').bracket('data');
+                    let $winners = $('#winners').val();
+                    console.log($winners);
+                    let bracketState = {id : '@Model.Id', state : JSON.stringify(bracketData), winners : $winners};
+                    $.ajax({
+                                url: '/Bracket/SaveState',
+                                method: 'POST',
+                                data: bracketState,
+                                cache: false,
+                                xhr: function () {
+                                    let xhr = new XMLHttpRequest();
+                                    xhr.onreadystatechange = function () {
+                                        if (xhr.readyState === 2) {
+                                            if (xhr.status === 200) {
+                                                xhr.responseType = "text";
+                                            }
+                                        }
+                                    };
+                                    return xhr;
+                                },
+                                success: function (data) {
+                                $('#alertMessage').show('fade');
+
+                                },
+                                error: function (data) {
+                                    console.log(data);
+
+                                }
+                            });
+                  });
+     $(function() {
+
+       $('.demo').bracket({
+        init: customData,
+        save: function(){}, /* without save() labels are disabled */
+        decorator: {edit: edit_fn,
+          render: render_fn},
+        disableToolbar: true,
+        disableTeamEdit: true,
+        teamWidth: 99,
+        scoreWidth: 31,
+        matchMargin: 99,
+        roundMargin: 99
+      });
+
+    $(".label").on("mouseover", function (data) {
+          console.log(data);
+          $("#matchCallback").text(data.target.innerText);
+      });
+
+  });
+   window.jsPDF = window.jspdf.jsPDF;
+   window.html2canvas = html2canvas;
+
+     $('#pdfBtn').click(function () {
+
+       var element = document.getElementById("bracketTournament");
+       var currentHeight = $('.bracket').outerHeight();
+       var currentWidth = $('.jQBracket').outerWidth();
+
+       if (currentHeight <= 150 && currentWidth <= 250){
+          currentHeight += 200;
+          currentWidth += 200;
+         }
+
+       var opt = {
+         margin: 1,
+         filename:  'bracket.pdf',
+         image: { type: 'jpeg', quality: 1 },
+         html2canvas: { dpi: 300, letterRendering: true, width: currentWidth, height: currentHeight},
+         jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+       };
+
+       opt.jsPDF.font = "Times New Roman";
+
+       html2pdf().from(element).set(opt).save();
+
+     });
+
+</script>
+}
+
