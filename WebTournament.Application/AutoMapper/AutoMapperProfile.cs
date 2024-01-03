@@ -69,5 +69,8 @@ public class AutoMapperProfile : Profile
             .ForMember(x => x.ClubName, opt
                 => opt.MapFrom(src => src.Trainer.Club.Name));
 
+       
+
+
     }
 }

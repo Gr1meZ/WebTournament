@@ -5,6 +5,7 @@ using WebTournament.Application.Select2.Queries;
 using WebTournament.Domain.Objects.AgeGroup;
 using WebTournament.Domain.Objects.Belt;
 using WebTournament.Domain.Objects.Club;
+using WebTournament.Domain.Objects.Fighter;
 using WebTournament.Domain.Objects.Trainer;
 using WebTournament.Domain.Objects.WeightCategorie;
 
@@ -14,20 +15,23 @@ public class Select2Handlers : IQueryHandler<Select2AgeGroupsQuery, Select2Respo
     IQueryHandler<Select2BeltQuery, Select2Response>,
     IQueryHandler<Select2ClubsQuery, Select2Response>,
     IQueryHandler<Select2TrainersQuery, Select2Response>,
-    IQueryHandler<Select2WeightCategorieQuery, Select2Response>
+    IQueryHandler<Select2WeightCategorieQuery, Select2Response>,
+    IQueryHandler<Select2FightersQuery, Select2Response>
 {
     private readonly IAgeGroupRepository _ageGroupRepository;
     private readonly IBeltRepository _beltRepository;
     private readonly IClubRepository _clubRepository;
     private readonly ITrainerRepository _trainerRepository;
     private readonly IWeightCategorieRepository _weightCategorieRepository;
-    public Select2Handlers(IAgeGroupRepository ageGroupRepository, IBeltRepository beltRepository, IClubRepository clubRepository, ITrainerRepository trainerRepository, IWeightCategorieRepository weightCategorieRepository)
+    private readonly IFighterRepository _fighterRepository;
+    public Select2Handlers(IAgeGroupRepository ageGroupRepository, IBeltRepository beltRepository, IClubRepository clubRepository, ITrainerRepository trainerRepository, IWeightCategorieRepository weightCategorieRepository, IFighterRepository fighterRepository)
     {
         _ageGroupRepository = ageGroupRepository;
         _beltRepository = beltRepository;
         _clubRepository = clubRepository;
         _trainerRepository = trainerRepository;
         _weightCategorieRepository = weightCategorieRepository;
+        _fighterRepository = fighterRepository;
     }
 
     public async Task<Select2Response> Handle(Select2AgeGroupsQuery request, CancellationToken cancellationToken)
@@ -173,5 +177,33 @@ public class Select2Handlers : IQueryHandler<Select2AgeGroupsQuery, Select2Respo
             Data = data,
             Total = total
         };
+    }
+
+    public async Task<Select2Response> Handle(Select2FightersQuery request, CancellationToken cancellationToken)
+    {
+        var fightersQuery = _fighterRepository.GetAll().Where(x => x.BracketId == request.Id);
+        var total = await fightersQuery.CountAsync(cancellationToken: cancellationToken);
+
+        if (!string.IsNullOrWhiteSpace(request.Search))
+        {
+            fightersQuery = fightersQuery.Where(x => x.Surname.ToLower().Contains(request.Search.ToLower()));
+        }
+
+        if (request.PageSize != -1)
+            fightersQuery = fightersQuery.Skip(request.Skip).Take(request.PageSize);
+
+        var data = fightersQuery.Select(x => new Select2Data()
+            {
+                Id = x.Id,
+                Name = $"{x.Surname}"
+            })
+            .ToArray();
+
+        return new Select2Response()
+        {
+            Data = data,
+            Total = total
+        };
+
     }
 }

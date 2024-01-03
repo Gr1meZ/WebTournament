@@ -72,5 +72,7 @@ namespace WebTournament.Domain.Objects.Fighter
             WeightCategorieId = weightCategorieId;
         }
 
+        public void SetBracket(Guid bracketId) => BracketId = bracketId;
+
     }
 }
