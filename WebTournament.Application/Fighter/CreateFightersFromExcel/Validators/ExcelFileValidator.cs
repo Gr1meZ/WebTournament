@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using OfficeOpenXml;
-using WebTournament.Domain.Exceptions;
+using CustomExceptionsLibrary;
 
 namespace WebTournament.Application.Fighter.CreateFightersFromExcel.Validators;
 

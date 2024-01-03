@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using WebTournament.Application.Bracket.Validators;
 using WebTournament.Application.Configuration.Commands;
-using WebTournament.Domain.Exceptions;
 using WebTournament.Domain.Objects.Bracket;
 using WebTournament.Domain.Objects.BracketWinner;
 using WebTournament.Domain.Objects.WeightCategorie;

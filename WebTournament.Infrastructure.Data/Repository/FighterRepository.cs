@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using CustomExceptionsLibrary;
 using WebTournament.Domain.Objects.Fighter;
 using WebTournament.Infrastructure.Data.Context;
-using ValidationException = WebTournament.Domain.Exceptions.ValidationException;
 
 namespace WebTournament.Infrastructure.Data.Repository;
 

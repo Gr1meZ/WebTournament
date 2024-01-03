@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using WebTournament.Infrastructure.Data;
 using WebTournament.Infrastructure.Data.Context;
 
 namespace WebTournament.Infrastructure.IoC

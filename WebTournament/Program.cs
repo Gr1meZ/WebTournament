@@ -1,4 +1,3 @@
-using System.Reflection;
 using WebTournament.Application;
 using WebTournament.Application.AutoMapper;
 using WebTournament.Infrastructure.IoC;

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using WebTournament.Domain.Exceptions;
+using CustomExceptionsLibrary;
 
 namespace WebTournament.Presentation.MVC.Filters;
 
@@ -15,7 +15,6 @@ public class ExceptionFilter : ExceptionFilterAttribute
             {
                 { typeof(ValidationException), HandleValidationException },
                 { typeof(FluentValidation.ValidationException), HandleFluentValidationException },
-                { typeof(NotFoundException), HandleNotFoundException },
                 { typeof(UnauthorizedAccessException), HandleUnauthorizedAccessException },
             };
         }
@@ -86,21 +85,7 @@ public class ExceptionFilter : ExceptionFilterAttribute
             context.ExceptionHandled = true;
         }
 
-        private void HandleNotFoundException(ExceptionContext context)
-        {
-            var exception = context.Exception as NotFoundException;
-
-            var details = new ProblemDetails()
-            {
-                Type = "https://tools.ietf.org/html/rfc7231#section-6.5.4",
-                Title = "The specified resource was not found.",
-                Detail = exception.Message
-            };
-
-            context.Result = new NotFoundObjectResult(details);
-
-            context.ExceptionHandled = true;
-        }
+       
 
         private void HandleUnauthorizedAccessException(ExceptionContext context)
         {

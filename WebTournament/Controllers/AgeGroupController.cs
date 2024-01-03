@@ -11,7 +11,7 @@ using WebTournament.Application.Select2.Queries;
 
 namespace WebTournament.Presentation.MVC.Controllers
 {
-    public class AgeGroupController : Controller
+    public class AgeGroupController : BaseController
     {
         private readonly IMediator _mediator;
         private readonly IMapper _mapper;

@@ -1,4 +1,4 @@
-using WebTournament.Domain.Exceptions;
+using CustomExceptionsLibrary;
 
 namespace WebTournament.Application.Bracket.Validators;
 

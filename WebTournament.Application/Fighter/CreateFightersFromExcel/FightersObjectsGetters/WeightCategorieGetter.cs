@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using WebTournament.Domain.Exceptions;
+using CustomExceptionsLibrary;
 using WebTournament.Domain.Extensions;
 using WebTournament.Domain.Objects.AgeGroup;
 using WebTournament.Domain.Objects.WeightCategorie;

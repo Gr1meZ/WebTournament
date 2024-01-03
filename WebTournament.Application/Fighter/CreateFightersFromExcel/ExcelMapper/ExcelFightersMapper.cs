@@ -1,6 +1,6 @@
 using OfficeOpenXml;
 using WebTournament.Application.DTO;
-using WebTournament.Domain.Exceptions;
+using CustomExceptionsLibrary;
 
 namespace WebTournament.Application.Fighter.CreateFightersFromExcel.ExcelMapper;
 

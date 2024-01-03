@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using WebTournament.Application.Common;
 using WebTournament.Application.DTO;
 using WebTournament.Application.Select2.Queries;
 using WebTournament.Application.WeightCategorie.CreateWeightCategorie;
@@ -13,7 +12,7 @@ using WebTournament.Application.WeightCategorie.UpdateWeightCategorie;
 namespace WebTournament.Presentation.MVC.Controllers
 {
 
-    public class WeightCategorieController : Controller
+    public class WeightCategorieController : BaseController
     {
         private readonly IMediator _mediator;
         private readonly IMapper _mapper;

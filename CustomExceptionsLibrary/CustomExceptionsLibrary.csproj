@@ -7,12 +7,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="FluentValidation" Version="11.8.0" />
-      <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="7.0.13" />
+      <Reference Include="Microsoft.Extensions.Identity.Core">
+        <HintPath>C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App\7.0.14\Microsoft.Extensions.Identity.Core.dll</HintPath>
+      </Reference>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\CustomExceptionsLibrary\CustomExceptionsLibrary.csproj" />
+      <PackageReference Include="FluentValidation" Version="11.8.0" />
     </ItemGroup>
 
 </Project>

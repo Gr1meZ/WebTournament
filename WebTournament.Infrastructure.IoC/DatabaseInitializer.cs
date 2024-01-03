@@ -3,7 +3,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using WebTournament.Infrastructure.Data.Context;
 using WebTournament.Infrastructure.Identity.Models;
-using Microsoft.AspNetCore.Identity.UI;
 namespace WebTournament.Infrastructure.IoC;
 
 public static class DatabaseInitializer

@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using WebTournament.Domain.Exceptions;
+using CustomExceptionsLibrary;
 using WebTournament.Domain.Objects.Bracket;
 using WebTournament.Infrastructure.Data.Context;
 

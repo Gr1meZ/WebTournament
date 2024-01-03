@@ -11,7 +11,7 @@ using WebTournament.Application.Select2.Queries;
 
 namespace WebTournament.Presentation.MVC.Controllers
 {
-    public class ClubController : Controller
+    public class ClubController : BaseController
     {
         private readonly IMediator _mediator;
         private readonly IMapper _mapper;

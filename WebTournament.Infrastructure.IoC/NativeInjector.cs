@@ -1,9 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using WebTournament.Infrastructure.Data;
-using WebTournament.Infrastructure.Identity.Models;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using WebTournament.Domain.Objects.AgeGroup;
 using WebTournament.Domain.Objects.Belt;
 using WebTournament.Domain.Objects.Bracket;

@@ -14,7 +14,7 @@ using WebTournament.Application.Select2.Queries;
 
 namespace WebTournament.Presentation.MVC.Controllers;
 
-public class BracketController : Controller
+public class BracketController : BaseController
 {
     private readonly IMediator _mediator;
     private readonly IMapper _mapper;

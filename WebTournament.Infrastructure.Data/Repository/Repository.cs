@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using WebTournament.Domain.Exceptions;
+using CustomExceptionsLibrary;
 using WebTournament.Domain.SeedWork;
 using WebTournament.Infrastructure.Data.Context;
 

@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using WebTournament.Domain.Enums;
-using WebTournament.Domain.Exceptions;
+using CustomExceptionsLibrary;
 using WebTournament.Domain.Extensions;
 using WebTournament.Domain.Objects.WeightCategorie;
 using WebTournament.Infrastructure.Data.Context;

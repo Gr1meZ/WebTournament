@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebTournament.Application.DTO;
 using WebTournament.Application.Fighter.CreateFighter;
@@ -14,7 +15,8 @@ using WebTournament.Application.Tournament.GetTournament;
 
 namespace WebTournament.Presentation.MVC.Controllers
 {
-    public class FighterController : Controller
+    [Authorize(Roles = "Admin")]
+    public class FighterController : BaseController
     {
         private readonly IMediator _mediator;
         private readonly IMapper _mapper;

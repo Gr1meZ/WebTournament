@@ -1,7 +1,7 @@
-using FluentValidation.Results;
+﻿using FluentValidation.Results;
 using Microsoft.AspNetCore.Identity;
 
-namespace WebTournament.Domain.Exceptions;
+namespace CustomExceptionsLibrary;
 
 public class ValidationException : Exception
 {

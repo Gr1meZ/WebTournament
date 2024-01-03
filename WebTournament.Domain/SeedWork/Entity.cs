@@ -1,4 +1,6 @@
-﻿using WebTournament.Domain.Exceptions;
+﻿
+
+using CustomExceptionsLibrary;
 
 namespace WebTournament.Domain.SeedWork
 {

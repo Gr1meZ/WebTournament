@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebTournament.Application.Belt.CreateBelt;
 using WebTournament.Application.Belt.GetBelt;
@@ -12,7 +11,7 @@ using WebTournament.Application.Select2.Queries;
 
 namespace WebTournament.Presentation.MVC.Controllers
 {
-    public class BeltController : Controller
+    public class BeltController : BaseController
     {
         private readonly IMediator _mediator;
         private readonly IMapper _mapper;

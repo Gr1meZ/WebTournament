@@ -11,7 +11,7 @@ using WebTournament.Application.Trainer.UpdateTrainer;
 
 namespace WebTournament.Presentation.MVC.Controllers
 {
-    public class TrainerController : Controller
+    public class TrainerController : BaseController
     {
         private readonly IMediator _mediator;
         private readonly IMapper _mapper;

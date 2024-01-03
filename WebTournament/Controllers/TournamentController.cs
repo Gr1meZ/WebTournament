@@ -13,7 +13,7 @@ using WebTournament.Application.Tournament.UpdateTournament;
 
 namespace WebTournament.Presentation.MVC.Controllers
 {
-    public class TournamentController : Controller
+    public class TournamentController : BaseController
     {
         private readonly IMediator _mediator;
         private readonly IMapper _mapper;
