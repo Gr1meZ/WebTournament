@@ -9,6 +9,7 @@ WORKDIR /src
 COPY ["WebTournament/WebTournament.Presentation.MVC.csproj", "WebTournament/"]
 COPY ["WebTournament.Application/WebTournament.Application.csproj", "WebTournament.Application/"]
 COPY ["WebTournament.Domain/WebTournament.Domain.csproj", "WebTournament.Domain/"]
+COPY ["CustomExceptionsLibrary/CustomExceptionsLibrary.csproj", "CustomExceptionsLibrary/"]
 COPY ["WebTournament.Infrastructure.IoC/WebTournament.Infrastructure.IoC.csproj", "WebTournament.Infrastructure.IoC/"]
 COPY ["WebTournament.Infrastructure.Data/WebTournament.Infrastructure.Data.csproj", "WebTournament.Infrastructure.Data/"]
 COPY ["WebTournament.Infrastructure.Identity/WebTournament.Infrastructure.Identity.csproj", "WebTournament.Infrastructure.Identity/"]

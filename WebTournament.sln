@@ -14,6 +14,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{3B924200-27FA-45A1-BDA1-992D80410484}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{40AD42B0-7081-4666-BCA7-6629BBBF341E}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebTournament.Infrastructure.Identity", "WebTournament.Infrastructure.Identity\WebTournament.Infrastructure.Identity.csproj", "{3FE71CC2-C2F4-4388-AB20-05DE9EFBFE55}"
 EndProject
