@@ -1,12 +1,10 @@
-using AutoMapper;
 using WebTournament.Application.Configuration.Queries;
-using WebTournament.Application.DTO;
 using WebTournament.Domain.Objects.Belt;
 using WebTournament.Domain.Objects.Bracket;
 
 namespace WebTournament.Application.Bracket.GetBracket;
 
-public class GetBracketHandler : IQueryHandler<GetBracketQuery, BracketState>
+public class GetBracketHandler : IQueryHandler<GetBracketQuery, BracketStateResponse>
 {
     private readonly IBracketRepository _bracketRepository;
     private readonly IBeltRepository _beltRepository;
@@ -17,10 +15,10 @@ public class GetBracketHandler : IQueryHandler<GetBracketQuery, BracketState>
         _beltRepository = beltRepository;
     }
 
-    public async Task<BracketState> Handle(GetBracketQuery request, CancellationToken cancellationToken)
+    public async Task<BracketStateResponse> Handle(GetBracketQuery request, CancellationToken cancellationToken)
     {
         var bracket = await _bracketRepository.GetByIdAsync(request.Id);
-        var bracketViewModel = new BracketState()
+        var bracketViewModel = new BracketStateResponse()
         {
             Id = bracket.Id,
             State = bracket.State,

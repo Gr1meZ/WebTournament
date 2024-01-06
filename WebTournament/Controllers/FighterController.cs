@@ -2,7 +2,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using WebTournament.Application.DTO;
 using WebTournament.Application.Fighter.CreateFighter;
 using WebTournament.Application.Fighter.CreateFightersFromExcel;
 using WebTournament.Application.Fighter.GetFighter;
@@ -12,6 +11,7 @@ using WebTournament.Application.Fighter.RemoveFighter;
 using WebTournament.Application.Fighter.UpdateFighter;
 using WebTournament.Application.Select2.Queries;
 using WebTournament.Application.Tournament.GetTournament;
+using WebTournament.Presentation.MVC.ViewModels;
 
 namespace WebTournament.Presentation.MVC.Controllers
 {
@@ -38,13 +38,14 @@ namespace WebTournament.Presentation.MVC.Controllers
         [HttpGet("[controller]/[action]/{tournamentId}")]
         public IActionResult AddIndex(Guid tournamentId)
         {
-            return View(new FighterDto() {TournamentId = tournamentId});
+            return View(new FighterViewModel() {TournamentId = tournamentId});
         }
 
         [HttpGet("[controller]/{id}/[action]")]
         public async Task<IActionResult> EditIndex(Guid id)
         {
-            return View(await _mediator.Send(new GetFighterQuery(id)));
+            var response = await _mediator.Send(new GetFighterQuery(id));
+            return View(_mapper.Map<FighterViewModel>(response));
         }
 
         [HttpPost]
@@ -55,21 +56,21 @@ namespace WebTournament.Presentation.MVC.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddModel(FighterDto fighterDto)
+        public async Task<IActionResult> AddModel(FighterViewModel fighterViewModel)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState.Values.SelectMany(v => v.Errors).Select(x => x.ErrorMessage).ToList());
-            var command = _mapper.Map<CreateFighterCommand>(fighterDto);
+            var command = _mapper.Map<CreateFighterCommand>(fighterViewModel);
             await _mediator.Send(command);
             
-            return CreatedAtAction(nameof(EditIndex), new { id = fighterDto.Id }, fighterDto);
+            return CreatedAtAction(nameof(EditIndex), new { id = fighterViewModel.Id }, fighterViewModel);
         }
 
         [HttpPost]
-        public async Task<IActionResult> EditModel(FighterDto fighterDto)
+        public async Task<IActionResult> EditModel(FighterViewModel fighterViewModel)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState.Values.SelectMany(v => v.Errors).Select(x => x.ErrorMessage).ToList());
 
-            await _mediator.Send(_mapper.Map<UpdateFighterCommand>(fighterDto));
+            await _mediator.Send(_mapper.Map<UpdateFighterCommand>(fighterViewModel));
             return Ok();
         }
 

@@ -1,5 +1,4 @@
 using WebTournament.Application.Configuration.Commands;
-using WebTournament.Application.Configuration.Queries;
 using WebTournament.Domain.Objects.Tournament;
 using WebTournament.Domain.SeedWork;
 

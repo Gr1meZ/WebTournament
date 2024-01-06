@@ -1,13 +1,13 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using WebTournament.Application.DTO;
 using WebTournament.Application.Select2.Queries;
 using WebTournament.Application.Trainer.CreateTrainer;
 using WebTournament.Application.Trainer.GetTrainer;
 using WebTournament.Application.Trainer.GetTrainerList;
 using WebTournament.Application.Trainer.RemoveTrainer;
 using WebTournament.Application.Trainer.UpdateTrainer;
+using WebTournament.Presentation.MVC.ViewModels;
 
 namespace WebTournament.Presentation.MVC.Controllers
 {
@@ -35,7 +35,8 @@ namespace WebTournament.Presentation.MVC.Controllers
         [HttpGet("[controller]/{id}/[action]")]
         public async Task<IActionResult> EditIndex(Guid id)
         {
-            return View(await _mediator.Send(new GetTrainerQuery(id)));
+            var response = await _mediator.Send(new GetTrainerQuery(id));
+            return View(_mapper.Map<TrainerViewModel>(response));
         }
 
         [HttpPost]
@@ -45,23 +46,23 @@ namespace WebTournament.Presentation.MVC.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddModel(TrainerDto trainerDto)
+        public async Task<IActionResult> AddModel(TrainerViewModel trainerViewModel)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState.Values.SelectMany(v => v.Errors)
                 .Select(x => x.ErrorMessage).ToList());
            
-            var command = _mapper.Map<CreateTrainerCommand>(trainerDto);
+            var command = _mapper.Map<CreateTrainerCommand>(trainerViewModel);
             await _mediator.Send(command);
             
-            return CreatedAtAction(nameof(EditIndex), new { id = trainerDto.Id }, trainerDto);
+            return CreatedAtAction(nameof(EditIndex), new { id = trainerViewModel.Id }, trainerViewModel);
         }
 
         [HttpPost]
-        public async Task<IActionResult> EditModel(TrainerDto trainerDto)
+        public async Task<IActionResult> EditModel(TrainerViewModel trainerViewModel)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState.Values.SelectMany(v => v.Errors).Select(x => x.ErrorMessage).ToList());
 
-            await _mediator.Send(_mapper.Map<UpdateTrainerCommand>(trainerDto));
+            await _mediator.Send(_mapper.Map<UpdateTrainerCommand>(trainerViewModel));
             return Ok();
         }
 

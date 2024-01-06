@@ -1,5 +1,4 @@
 using WebTournament.Application.Configuration.Commands;
-using WebTournament.Application.DTO;
 using WebTournament.Domain.Objects.Club;
 using WebTournament.Domain.SeedWork;
 

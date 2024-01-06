@@ -1,11 +1,10 @@
 using AutoMapper;
 using WebTournament.Application.Configuration.Queries;
-using WebTournament.Application.DTO;
 using WebTournament.Domain.Objects.Club;
 
 namespace WebTournament.Application.Club.GetClub;
 
-public class GetClubHandler : IQueryHandler<GetClubQuery, ClubDto>
+public class GetClubHandler : IQueryHandler<GetClubQuery, ClubResponse>
 {
     private readonly IClubRepository _clubRepository;
     private readonly IMapper _mapper;
@@ -16,9 +15,9 @@ public class GetClubHandler : IQueryHandler<GetClubQuery, ClubDto>
         _mapper = mapper;
     }
 
-    public async Task<ClubDto> Handle(GetClubQuery request, CancellationToken cancellationToken)
+    public async Task<ClubResponse> Handle(GetClubQuery request, CancellationToken cancellationToken)
     {
         var club = await _clubRepository.GetByIdAsync(request.Id);
-        return _mapper.Map<ClubDto>(club);
+        return _mapper.Map<ClubResponse>(club);
     }
 }

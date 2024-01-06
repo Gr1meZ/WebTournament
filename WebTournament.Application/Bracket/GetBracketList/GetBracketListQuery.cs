@@ -1,10 +1,9 @@
-using WebTournament.Application.Common;
 using WebTournament.Application.Configuration.Queries;
-using WebTournament.Application.DTO;
+using WebTournament.Application.SeedPaging;
 
 namespace WebTournament.Application.Bracket.GetBracketList;
 
-public class GetBracketListQuery : PagedRequest, IQuery<PagedResponse<BracketDto[]>>
+public class GetBracketListQuery : PagedRequest, IQuery<PagedResponse<BracketResponse[]>>
 {
     public GetBracketListQuery(Guid tournamentId)
     {

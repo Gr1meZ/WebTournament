@@ -1,5 +1,4 @@
 using WebTournament.Application.Configuration.Commands;
-using WebTournament.Application.DTO;
 using WebTournament.Domain.Objects.Bracket;
 using WebTournament.Domain.Objects.BracketWinner;
 using WebTournament.Domain.SeedWork;
@@ -28,7 +27,7 @@ public class SaveBracketStateHandler : ICommandHandler<SaveBracketStateCommand>
         await _unitOfWork.CommitAsync(cancellationToken);
     }
 
-    private async Task SyncWinners(BracketState bracketState)
+    private async Task SyncWinners(BracketStateRequest bracketState)
     {
 
         if (bracketState?.Winners?.Count == null)

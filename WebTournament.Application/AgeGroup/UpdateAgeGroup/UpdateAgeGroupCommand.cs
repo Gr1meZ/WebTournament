@@ -1,15 +1,11 @@
-using WebTournament.Application.Configuration;
 using WebTournament.Application.Configuration.Commands;
-using WebTournament.Application.DTO;
 
 namespace WebTournament.Application.AgeGroup.UpdateAgeGroup;
 
-public class UpdateAgeGroupCommand :  AgeGroupDto, ICommand
+public class UpdateAgeGroupCommand :  ICommand
 {
-    public UpdateAgeGroupCommand(Guid id)
-    {
-        Id = id;
-    }
-
-    public Guid Id { get; }
+    public Guid Id { get; set; }
+    public string Name { get; set; }
+    public int? MinAge { get; set;}
+    public int? MaxAge { get; set; }
 }

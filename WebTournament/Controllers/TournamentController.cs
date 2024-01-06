@@ -1,15 +1,13 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using WebTournament.Application.Common;
-using WebTournament.Application.DTO;
 using WebTournament.Application.Tournament.CreateTournament;
 using WebTournament.Application.Tournament.GetTournament;
 using WebTournament.Application.Tournament.GetTournamentList;
 using WebTournament.Application.Tournament.GetTournamentResults;
 using WebTournament.Application.Tournament.RemoveTournament;
 using WebTournament.Application.Tournament.UpdateTournament;
+using WebTournament.Presentation.MVC.ViewModels;
 
 namespace WebTournament.Presentation.MVC.Controllers
 {
@@ -36,13 +34,15 @@ namespace WebTournament.Presentation.MVC.Controllers
         [HttpGet("[controller]/{id}/[action]")]
         public async Task<IActionResult> EditIndex(Guid id)
         {
-            return View(await _mediator.Send(new GetTournamentQuery(id)));
+            var response = await _mediator.Send(new GetTournamentQuery(id));
+            return View(_mapper.Map<TournamentViewModel>(response));
         }
         
         [HttpGet("[controller]/{id}/[action]")]
         public async Task<IActionResult> Winners(Guid id)
         {
-            return View(await _mediator.Send(new GetTournamentResultsQuery(id)));
+            var response = await _mediator.Send(new GetTournamentResultsQuery(id));
+            return View(_mapper.Map<List<BracketWinnerViewModel>>(response));
         }
         
         [HttpPost]
@@ -52,22 +52,22 @@ namespace WebTournament.Presentation.MVC.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddModel(TournamentDto tournamentDto)
+        public async Task<IActionResult> AddModel(TournamentViewModel tournamentViewModel)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState.Values.SelectMany(v => v.Errors)
                 .Select(x => x.ErrorMessage).ToList());
             
-            var command = _mapper.Map<CreateTournamentCommand>(tournamentDto);
+            var command = _mapper.Map<CreateTournamentCommand>(tournamentViewModel);
             await _mediator.Send(command);
-            return CreatedAtAction(nameof(EditIndex), new { id = tournamentDto.Id }, tournamentDto);
+            return CreatedAtAction(nameof(EditIndex), new { id = tournamentViewModel.Id }, tournamentViewModel);
         }
 
         [HttpPost]
-        public async Task<IActionResult> EditModel(TournamentDto tournamentDto)
+        public async Task<IActionResult> EditModel(TournamentViewModel tournamentViewModel)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState.Values.SelectMany(v => v.Errors).Select(x => x.ErrorMessage).ToList());
            
-            await _mediator.Send(_mapper.Map<UpdateTournamentCommand>(tournamentDto));
+            await _mediator.Send(_mapper.Map<UpdateTournamentCommand>(tournamentViewModel));
             return Ok();
         }
 

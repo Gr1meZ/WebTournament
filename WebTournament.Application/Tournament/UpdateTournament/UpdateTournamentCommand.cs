@@ -1,9 +1,11 @@
 using WebTournament.Application.Configuration.Commands;
-using WebTournament.Application.DTO;
 
 namespace WebTournament.Application.Tournament.UpdateTournament;
 
-public class UpdateTournamentCommand : TournamentDto, ICommand
+public class UpdateTournamentCommand : ICommand
 {
-    
+    public Guid Id { get; set; }
+    public string Name { get; set; }
+    public DateTime StartDate { get; set; }
+    public string Address { get; set; }
 }

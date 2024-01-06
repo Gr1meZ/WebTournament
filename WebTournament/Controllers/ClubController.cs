@@ -6,8 +6,8 @@ using WebTournament.Application.Club.GetClub;
 using WebTournament.Application.Club.GetClubList;
 using WebTournament.Application.Club.RemoveClub;
 using WebTournament.Application.Club.UpdateClub;
-using WebTournament.Application.DTO;
 using WebTournament.Application.Select2.Queries;
+using WebTournament.Presentation.MVC.ViewModels;
 
 namespace WebTournament.Presentation.MVC.Controllers
 {
@@ -35,7 +35,8 @@ namespace WebTournament.Presentation.MVC.Controllers
         [HttpGet("[controller]/{id}/[action]")]
         public async Task<IActionResult> EditIndex(Guid id)
         {
-            return View(await _mediator.Send(new GetClubQuery(id)));
+            var response = await _mediator.Send(new GetClubQuery(id));
+            return View(_mapper.Map<ClubViewModel>(response));
         }
 
         [HttpPost]
@@ -45,23 +46,23 @@ namespace WebTournament.Presentation.MVC.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddModel(ClubDto clubDto)
+        public async Task<IActionResult> AddModel(ClubViewModel clubViewModel)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState.Values.SelectMany(v => v.Errors)
                 .Select(x => x.ErrorMessage).ToList());
            
-            var command = _mapper.Map<CreateClubCommand>(clubDto);
+            var command = _mapper.Map<CreateClubCommand>(clubViewModel);
             await _mediator.Send(command);
             
-            return CreatedAtAction(nameof(EditIndex), new { id = clubDto.Id }, clubDto);
+            return CreatedAtAction(nameof(EditIndex), new { id = clubViewModel.Id }, clubViewModel);
         }
 
         [HttpPost]
-        public async Task<IActionResult> EditModel(ClubDto clubDto)
+        public async Task<IActionResult> EditModel(ClubViewModel clubViewModel)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState.Values.SelectMany(v => v.Errors).Select(x => x.ErrorMessage).ToList());
 
-            await _mediator.Send(_mapper.Map<UpdateClubCommand>(clubDto));
+            await _mediator.Send(_mapper.Map<UpdateClubCommand>(clubViewModel));
             return Ok();
         }
 

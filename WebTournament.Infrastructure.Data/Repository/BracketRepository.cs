@@ -36,8 +36,6 @@ public class BracketRepository : Repository<Bracket>, IBracketRepository
     public IQueryable<Bracket> GetAll(Guid tournamentId)
     {
         return _dbSet
-            .Include(x => x.Tournament)
-            .Include(x => x.WeightCategorie.AgeGroup)
             .Where(x => x.TournamentId == tournamentId)
             .AsNoTracking();
     }

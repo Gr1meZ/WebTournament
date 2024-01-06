@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using WebTournament.Application.Bracket.Validators;
 using WebTournament.Application.Configuration.Commands;
-using WebTournament.Application.DTO;
 using WebTournament.Domain.Objects.Bracket;
 using WebTournament.Domain.Objects.BracketWinner;
 using WebTournament.Domain.Objects.Fighter;

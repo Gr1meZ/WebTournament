@@ -2,7 +2,6 @@ using CustomExceptionsLibrary;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
 using WebTournament.Application.Configuration.Commands;
-using WebTournament.Application.DTO;
 using WebTournament.Application.Fighter.CreateFightersFromExcel.ExcelMapper;
 using WebTournament.Application.Fighter.CreateFightersFromExcel.Validators;
 using WebTournament.Domain.Extensions;
@@ -53,10 +52,10 @@ public class CreateFightersFromExcelHandler : ICommandHandler<CreateFightersFrom
             ExcelFileValidator.ValidateWorkSheet(worksheet);
             
             var rowCount = worksheet.Dimension.Rows;
-            var fightersList = new List<FighterDto>();
+            var fightersList = new List<FighterResponse>();
             for (var row = 2; row <= rowCount; row++)
             {
-                var fighterDto = new FighterDto();
+                var fighterDto = new FighterResponse();
                 
                 ExcelFightersMapper.ParseExcelFile(worksheet, row, fighterDto);
                 

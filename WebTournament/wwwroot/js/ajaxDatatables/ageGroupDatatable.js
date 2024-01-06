@@ -20,7 +20,7 @@
             rowId: 'id',
             ajax: function(data, callback) {
                 dtAjaxHandler('/AgeGroup/List', data, callback)
-                
+
             },
             columnDefs: [
                 { targets: 0, title: "ID", data: "id", visible: false },

@@ -1,9 +1,8 @@
 using WebTournament.Application.Configuration.Queries;
-using WebTournament.Application.DTO;
 
 namespace WebTournament.Application.Club.GetClub;
 
-public class GetClubQuery : IQuery<ClubDto>
+public class GetClubQuery : IQuery<ClubResponse>
 {
     public Guid Id { get; private set; }
 

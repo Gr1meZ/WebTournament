@@ -1,9 +1,11 @@
-using WebTournament.Application.Configuration;
 using WebTournament.Application.Configuration.Commands;
-using WebTournament.Application.DTO;
 
 namespace WebTournament.Application.AgeGroup.CreateAgeGroup;
 
-public class CreateAgeGroupCommand : AgeGroupDto, ICommand
+public class CreateAgeGroupCommand :  ICommand
 {
+    public Guid Id { get; set; }
+    public string Name { get; set; }
+    public int? MinAge { get; set;}
+    public int? MaxAge { get; set; }
 }

@@ -1,10 +1,9 @@
-using WebTournament.Application.Common;
 using WebTournament.Application.Configuration.Queries;
-using WebTournament.Application.DTO;
+using WebTournament.Application.SeedPaging;
 
 namespace WebTournament.Application.Trainer.GetTrainerList;
 
-public class GetTrainerListQuery : PagedRequest, IQuery<PagedResponse<TrainerDto[]>>
+public class GetTrainerListQuery : PagedRequest, IQuery<PagedResponse<TrainerResponse[]>>
 {
     
 }

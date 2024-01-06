@@ -1,9 +1,8 @@
 using WebTournament.Application.Configuration.Queries;
-using WebTournament.Application.DTO;
 
 namespace WebTournament.Application.AgeGroup.GetAgeGroup;
 
-public class GetAgeGroupQuery : IQuery<AgeGroupDto>
+public class GetAgeGroupQuery : IQuery<AgeGroupResponse>
 {
     public Guid Id { get; private set; }
 

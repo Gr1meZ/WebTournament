@@ -1,11 +1,10 @@
 using AutoMapper;
 using WebTournament.Application.Configuration.Queries;
-using WebTournament.Application.DTO;
 using WebTournament.Domain.Objects.Tournament;
 
 namespace WebTournament.Application.Tournament.GetTournament;
 
-public class GetTournamentHandler : IQueryHandler<GetTournamentQuery, TournamentDto>
+public class GetTournamentHandler : IQueryHandler<GetTournamentQuery, TournamentResponse>
 {
     private readonly ITournamentRepository _tournamentRepository;
     private readonly IMapper _mapper;
@@ -16,9 +15,9 @@ public class GetTournamentHandler : IQueryHandler<GetTournamentQuery, Tournament
         _mapper = mapper;
     }
 
-    public async Task<TournamentDto> Handle(GetTournamentQuery request, CancellationToken cancellationToken)
+    public async Task<TournamentResponse> Handle(GetTournamentQuery request, CancellationToken cancellationToken)
     {
         var tournament = await _tournamentRepository.GetByIdAsync(request.Id);
-        return _mapper.Map<TournamentDto>(tournament);
+        return _mapper.Map<TournamentResponse>(tournament);
     }
 }

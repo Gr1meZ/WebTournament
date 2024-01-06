@@ -1,12 +1,11 @@
 using OfficeOpenXml;
-using WebTournament.Application.DTO;
 using CustomExceptionsLibrary;
 
 namespace WebTournament.Application.Fighter.CreateFightersFromExcel.ExcelMapper;
 
 public class ExcelFightersMapper
 {
-    public static void ParseExcelFile(ExcelWorksheet? worksheet, int row, FighterDto fighterDto)
+    public static void ParseExcelFile(ExcelWorksheet? worksheet, int row, FighterResponse fighterDto)
     {
           for (var col = 1; col <= 11; col++)
           {

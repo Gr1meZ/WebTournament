@@ -1,11 +1,10 @@
 using AutoMapper;
 using WebTournament.Application.Configuration.Queries;
-using WebTournament.Application.DTO;
 using WebTournament.Domain.Objects.AgeGroup;
 
 namespace WebTournament.Application.AgeGroup.GetAgeGroup;
 
-public class GetAgeGroupHandler : IQueryHandler<GetAgeGroupQuery, AgeGroupDto>
+public class GetAgeGroupHandler : IQueryHandler<GetAgeGroupQuery, AgeGroupResponse>
 {
     private readonly IAgeGroupRepository _ageGroupRepository;
     private readonly IMapper _mapper;
@@ -15,9 +14,9 @@ public class GetAgeGroupHandler : IQueryHandler<GetAgeGroupQuery, AgeGroupDto>
         _mapper = mapper;
     }
 
-    public async Task<AgeGroupDto> Handle(GetAgeGroupQuery request, CancellationToken cancellationToken)
+    public async Task<AgeGroupResponse> Handle(GetAgeGroupQuery request, CancellationToken cancellationToken)
     {
         var ageGroup = await _ageGroupRepository.GetByIdAsync(request.Id);
-        return _mapper.Map<AgeGroupDto>(ageGroup);
+        return _mapper.Map<AgeGroupResponse>(ageGroup);
     }
 }

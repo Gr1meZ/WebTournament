@@ -1,9 +1,9 @@
 using WebTournament.Application.Configuration.Commands;
-using WebTournament.Application.DTO;
 
 namespace WebTournament.Application.Club.CreateClub;
 
-public class CreateClubCommand : ClubDto, ICommand
+public class CreateClubCommand : ICommand
 {
-    
+    public Guid Id { get; set; }
+    public string Name { get; set; }
 }

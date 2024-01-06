@@ -23,6 +23,7 @@ public class FighterRepository : Repository<Fighter>, IFighterRepository
             .Include(x => x.Trainer)
             .Include(x => x.WeightCategorie.AgeGroup)
             .FirstOrDefaultAsync(x => x.Id == id);
+        
         if (fighter is null)
             throw new ValidationException("ValidationException", $"{nameof(fighter)} is not found");
         

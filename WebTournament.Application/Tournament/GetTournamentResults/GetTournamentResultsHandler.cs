@@ -1,12 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using WebTournament.Application.Configuration.Queries;
-using WebTournament.Application.DTO;
 using WebTournament.Domain.Objects.Belt;
 using WebTournament.Domain.Objects.Tournament;
 
 namespace WebTournament.Application.Tournament.GetTournamentResults;
 
-public class GetTournamentResultsHandler : IQueryHandler<GetTournamentResultsQuery, List<BracketWinnerDto>>
+public class GetTournamentResultsHandler : IQueryHandler<GetTournamentResultsQuery, List<BracketWinnerResponse>>
 {
     private readonly ITournamentRepository _tournamentRepository;
     private readonly IBeltRepository _beltRepository;
@@ -16,13 +15,13 @@ public class GetTournamentResultsHandler : IQueryHandler<GetTournamentResultsQue
         _beltRepository = beltRepository;
     }
 
-    public async Task<List<BracketWinnerDto>> Handle(GetTournamentResultsQuery request, CancellationToken cancellationToken)
+    public async Task<List<BracketWinnerResponse>> Handle(GetTournamentResultsQuery request, CancellationToken cancellationToken)
     {
         var bracketResults = await _tournamentRepository
             .GetTournamentResults(request.Id)
             .ToListAsync(cancellationToken: cancellationToken);
         
-        return bracketResults.Select(x => new BracketWinnerDto()
+        return bracketResults.Select(x => new BracketWinnerResponse()
         {
             Id = x.Id,
             Division = string.Join(", ",  _beltRepository.GetMatchedBeltsByDivision(x.Bracket.Division)),

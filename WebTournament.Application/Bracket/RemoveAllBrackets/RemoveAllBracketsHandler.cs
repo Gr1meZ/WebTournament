@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using WebTournament.Application.Configuration.Commands;
 using WebTournament.Domain.Objects.Bracket;
 using WebTournament.Domain.SeedWork;

@@ -6,8 +6,8 @@ using WebTournament.Application.Belt.GetBelt;
 using WebTournament.Application.Belt.GetBeltList;
 using WebTournament.Application.Belt.RemoveBelt;
 using WebTournament.Application.Belt.UpdateBelt;
-using WebTournament.Application.DTO;
 using WebTournament.Application.Select2.Queries;
+using WebTournament.Presentation.MVC.ViewModels;
 
 namespace WebTournament.Presentation.MVC.Controllers
 {
@@ -34,7 +34,8 @@ namespace WebTournament.Presentation.MVC.Controllers
         [HttpGet("[controller]/{id}/[action]")]
         public async Task<IActionResult> EditIndex(Guid id)
         {
-            return View(await _mediator.Send(new GetBeltQuery(id)));
+            var response = await _mediator.Send(new GetBeltQuery(id));
+            return View(_mapper.Map<BeltViewModel>(response));
         }
 
         [HttpPost]
@@ -44,19 +45,19 @@ namespace WebTournament.Presentation.MVC.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddModel(BeltDto beltDto)
+        public async Task<IActionResult> AddModel(BeltViewModel beltViewModel)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState.Values.SelectMany(v => v.Errors).Select(x => x.ErrorMessage).ToList());
-            var command = _mapper.Map<CreateBeltCommand>(beltDto);
+            var command = _mapper.Map<CreateBeltCommand>(beltViewModel);
             await _mediator.Send(command);
-            return CreatedAtAction(nameof(EditIndex), new { id = beltDto.Id }, beltDto);
+            return CreatedAtAction(nameof(EditIndex), new { id = beltViewModel.Id }, beltViewModel);
         }
 
         [HttpPost]
-        public async Task<IActionResult> EditModel(BeltDto beltDto)
+        public async Task<IActionResult> EditModel(BeltViewModel beltViewModel)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState.Values.SelectMany(v => v.Errors).Select(x => x.ErrorMessage).ToList());
-            await _mediator.Send(_mapper.Map<UpdateBeltCommand>(beltDto));
+            await _mediator.Send(_mapper.Map<UpdateBeltCommand>(beltViewModel));
             return Ok();
         }
 

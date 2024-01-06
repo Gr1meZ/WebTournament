@@ -1,10 +1,8 @@
-using WebTournament.Application.Common;
 using WebTournament.Application.Configuration.Queries;
-using WebTournament.Application.DTO;
+using WebTournament.Application.SeedPaging;
 
 namespace WebTournament.Application.Belt.GetBeltList;
 
-public class GetBeltListQuery : PagedRequest, IQuery<PagedResponse<BeltDto[]>>
+public class GetBeltListQuery : PagedRequest, IQuery<PagedResponse<BeltResponse[]>>
 {
-    
 }

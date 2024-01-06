@@ -6,8 +6,8 @@ using WebTournament.Application.AgeGroup.GetAgeGroup;
 using WebTournament.Application.AgeGroup.GetAgeGroupList;
 using WebTournament.Application.AgeGroup.RemoveAgeGroup;
 using WebTournament.Application.AgeGroup.UpdateAgeGroup;
-using WebTournament.Application.DTO;
 using WebTournament.Application.Select2.Queries;
+using WebTournament.Presentation.MVC.ViewModels;
 
 namespace WebTournament.Presentation.MVC.Controllers
 {
@@ -34,7 +34,8 @@ namespace WebTournament.Presentation.MVC.Controllers
         [HttpGet("[controller]/{id}/[action]")]
         public async Task<IActionResult> EditIndex(Guid id)
         {
-            return View(await _mediator.Send(new GetAgeGroupQuery(id)));
+            var response = await _mediator.Send(new GetAgeGroupQuery(id));
+            return View(_mapper.Map<AgeGroupViewModel>(response));
         }
 
         [HttpPost]
@@ -44,18 +45,18 @@ namespace WebTournament.Presentation.MVC.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddModel(AgeGroupDto ageGroupDto)
+        public async Task<IActionResult> AddModel(AgeGroupViewModel ageGroupViewModel)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState.Values.SelectMany(v => v.Errors).Select(x => x.ErrorMessage).ToList());
-            await _mediator.Send(_mapper.Map<CreateAgeGroupCommand>(ageGroupDto));
+            await _mediator.Send(_mapper.Map<CreateAgeGroupCommand>(ageGroupViewModel));
             return Ok();
         }
 
         [HttpPost]
-        public async Task<IActionResult> EditModel(AgeGroupDto ageGroupDto)
+        public async Task<IActionResult> EditModel(AgeGroupViewModel ageGroupViewModel)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState.Values.SelectMany(v => v.Errors).Select(x => x.ErrorMessage).ToList());
-            await _mediator.Send(_mapper.Map<UpdateAgeGroupCommand>(ageGroupDto));
+            await _mediator.Send(_mapper.Map<UpdateAgeGroupCommand>(ageGroupViewModel));
             return Ok();
         }
 

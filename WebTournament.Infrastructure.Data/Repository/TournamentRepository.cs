@@ -24,6 +24,8 @@ public class TournamentRepository : Repository<Tournament>, ITournamentRepositor
             .Include(x => x.SecondPlacePlayer.Trainer.Club)
             .Include(x => x.ThirdPlacePlayer.Trainer.Club)
             .Include(x => x.FirstPlacePlayer.Tournament)
-            .OrderBy(x => x.Bracket.WeightCategorie.AgeGroup.MinAge).ThenBy(x => x.Bracket.WeightCategorie.MaxWeight);
+            .Include(x => x.FirstPlacePlayer.WeightCategorie.AgeGroup)
+            .OrderBy(x => x.Bracket.WeightCategorie.AgeGroup.MinAge).ThenBy(x => x.Bracket.WeightCategorie.MaxWeight)
+            .AsNoTracking();
     }
 }

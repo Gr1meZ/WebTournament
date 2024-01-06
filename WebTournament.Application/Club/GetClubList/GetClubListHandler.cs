@@ -1,13 +1,12 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using WebTournament.Application.Common;
 using WebTournament.Application.Configuration.Queries;
-using WebTournament.Application.DTO;
+using WebTournament.Application.SeedPaging;
 using WebTournament.Domain.Objects.Club;
 
 namespace WebTournament.Application.Club.GetClubList;
 
-public class GetClubListHandler : IQueryHandler<GetClubListQuery, PagedResponse<ClubDto[]>>
+public class GetClubListHandler : IQueryHandler<GetClubListQuery, PagedResponse<ClubResponse[]>>
 {
     private readonly IClubRepository _clubRepository;
     private readonly IMapper _mapper;
@@ -18,38 +17,18 @@ public class GetClubListHandler : IQueryHandler<GetClubListQuery, PagedResponse<
         _mapper = mapper;
     }
 
-    public async Task<PagedResponse<ClubDto[]>> Handle(GetClubListQuery request, CancellationToken cancellationToken)
+    public async Task<PagedResponse<ClubResponse[]>> Handle(GetClubListQuery request, CancellationToken cancellationToken)
     {
         var clubsQuery = _clubRepository.GetAll();
-
-        var lowerQ = request.Search.ToLower();
-        if (!string.IsNullOrWhiteSpace(lowerQ))
-        {
-            clubsQuery = (lowerQ.Split(' ')).Aggregate(clubsQuery, (current, searchWord) =>
-                current.Where(f => f.Name.ToLower().Contains(searchWord.ToLower())));
-        }
-
-        if (!string.IsNullOrWhiteSpace(request.OrderColumn) && !string.IsNullOrWhiteSpace(request.OrderDir))
-        {
-            clubsQuery = request.OrderColumn switch
-            {
-                "name" => (request.OrderDir.Equals("asc"))
-                    ? clubsQuery.OrderBy(o => o.Name)
-                    : clubsQuery.OrderByDescending(o => o.Name),
-                _ => (request.OrderDir.Equals("asc"))
-                    ? clubsQuery.OrderBy(o => o.Id)
-                    : clubsQuery.OrderByDescending(o => o.Id)
-            };
-        }
-
-        var totalItemCount = clubsQuery.Count();
-
-        clubsQuery = clubsQuery.Skip((request.PageNumber - 1) * request.PageSize).Take(request.PageSize);
-
-        var dbItems = await clubsQuery
-            .Select(x => _mapper.Map<ClubDto>(x))
+        
+        var clubSpecificationResult = await 
+            new ClubSpecification(clubsQuery, request.Search, request.OrderColumn, request.OrderDir)
+                .GetSpecificationResult(request.PageNumber, request.PageSize, cancellationToken);
+        
+        var dbItems = await clubSpecificationResult.Entities
+            .Select(x => _mapper.Map<ClubResponse>(x))
             .ToArrayAsync(cancellationToken: cancellationToken);
 
-        return new PagedResponse<ClubDto[]>(dbItems, totalItemCount, request.PageNumber, request.PageSize);
+        return new PagedResponse<ClubResponse[]>(dbItems, clubSpecificationResult.Total, request.PageNumber, request.PageSize);
     }
 }

@@ -1,4 +1,3 @@
-using WebTournament.Application.Configuration;
 using WebTournament.Application.Configuration.Commands;
 using WebTournament.Domain.Objects.AgeGroup;
 using WebTournament.Domain.SeedWork;

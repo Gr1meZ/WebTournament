@@ -1,13 +1,13 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using WebTournament.Application.DTO;
 using WebTournament.Application.Select2.Queries;
 using WebTournament.Application.WeightCategorie.CreateWeightCategorie;
 using WebTournament.Application.WeightCategorie.GetWeightCategorie;
 using WebTournament.Application.WeightCategorie.GetWeightCategorieList;
 using WebTournament.Application.WeightCategorie.RemoveWeightCategorie;
 using WebTournament.Application.WeightCategorie.UpdateWeightCategorie;
+using WebTournament.Presentation.MVC.ViewModels;
 
 namespace WebTournament.Presentation.MVC.Controllers
 {
@@ -36,7 +36,8 @@ namespace WebTournament.Presentation.MVC.Controllers
         [HttpGet("[controller]/{id}/[action]")]
         public async Task<IActionResult> EditIndex(Guid id)
         {
-            return View(await _mediator.Send(new GetWeightCategorieQuery(id)));
+            var response = await _mediator.Send(new GetWeightCategorieQuery(id));
+            return View(_mapper.Map<WeightCategorieViewModel>(response));
         }
 
         [HttpPost]
@@ -46,22 +47,22 @@ namespace WebTournament.Presentation.MVC.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddModel(WeightCategorieDto weightCategorieDto)
+        public async Task<IActionResult> AddModel(WeightCategorieViewModel weightCategorieViewModel)
         {
-            if (!ModelState.IsValid || !weightCategorieDto.AgeGroupId.HasValue) return BadRequest(ModelState.Values.SelectMany(v => v.Errors).Select(x => x.ErrorMessage).ToList());
+            if (!ModelState.IsValid || !weightCategorieViewModel.AgeGroupId.HasValue) return BadRequest(ModelState.Values.SelectMany(v => v.Errors).Select(x => x.ErrorMessage).ToList());
            
-            var command = _mapper.Map<CreateWeightCategorieCommand>(weightCategorieDto);
+            var command = _mapper.Map<CreateWeightCategorieCommand>(weightCategorieViewModel);
             await _mediator.Send(command);
             
-            return CreatedAtAction(nameof(EditIndex), new { id = weightCategorieDto.Id }, weightCategorieDto);
+            return CreatedAtAction(nameof(EditIndex), new { id = weightCategorieViewModel.Id }, weightCategorieViewModel);
         }
 
         [HttpPost]
-        public async Task<IActionResult> EditModel(WeightCategorieDto weightCategorieDto)
+        public async Task<IActionResult> EditModel(WeightCategorieViewModel weightCategorieViewModel)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState.Values.SelectMany(v => v.Errors).Select(x => x.ErrorMessage).ToList());
 
-            await _mediator.Send(_mapper.Map<UpdateWeightCategorieCommand>(weightCategorieDto));
+            await _mediator.Send(_mapper.Map<UpdateWeightCategorieCommand>(weightCategorieViewModel));
             return Ok();
         }
 
