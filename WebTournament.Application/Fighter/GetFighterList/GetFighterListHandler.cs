@@ -24,7 +24,7 @@ public class GetFighterListHandler : IQueryHandler<GetFighterListQuery, PagedRes
         
         var fighterSpecificationResult = await
             new FighterSpecification(fightersQuery, request.Search, request.OrderColumn, request.OrderDir)
-                .GetSpecificationResult(request.PageNumber, request.PageSize, cancellationToken);
+                .GetSpecificationResultAsync(request.PageNumber, request.PageSize, cancellationToken);
 
         var dbItems = await fighterSpecificationResult.Entities.Select(x => _mapper.Map<FighterResponse>(x))
             .ToArrayAsync(cancellationToken: cancellationToken);

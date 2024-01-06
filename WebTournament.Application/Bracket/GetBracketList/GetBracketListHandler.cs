@@ -28,7 +28,7 @@ public class GetBracketListHandler : IQueryHandler<GetBracketListQuery, PagedRes
 
         var bracketSpecificationResult = await 
             new BracketSpecification(bracketQuery, request.Search, request.OrderColumn, request.OrderDir)
-                .GetSpecificationResult(request.PageNumber, request.PageSize, cancellationToken);
+                .GetSpecificationResultAsync(request.PageNumber, request.PageSize, cancellationToken);
 
         var dbItems = await bracketSpecificationResult.Entities.Select(x => new BracketResponse()
         {

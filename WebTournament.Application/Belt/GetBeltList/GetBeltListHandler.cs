@@ -22,7 +22,7 @@ public class GetBeltListHandler : IQueryHandler<GetBeltListQuery, PagedResponse<
     {
         var beltQuery = _beltRepository.GetAll();
         var beltSpecificationResult = await new BeltSpecification(beltQuery, request.Search, request.OrderColumn, request.OrderDir)
-            .GetSpecificationResult(request.PageNumber, request.PageSize, cancellationToken);
+            .GetSpecificationResultAsync(request.PageNumber, request.PageSize, cancellationToken);
 
         var dbItems = await beltSpecificationResult.Entities
             .Select(x => _mapper.Map<BeltResponse>(x))

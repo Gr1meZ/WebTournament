@@ -23,7 +23,7 @@ public class GetTournamentListHandler : IQueryHandler<GetTournamentListQuery, Pa
 
         var tournamentSpecificationResult = await new TournamentSpecification(tournaments, request.Search,
             request.OrderColumn, request.OrderDir)
-            .GetSpecificationResult(request.PageNumber, request.PageSize, cancellationToken);
+            .GetSpecificationResultAsync(request.PageNumber, request.PageSize, cancellationToken);
         
         var dbItems = await tournamentSpecificationResult.Entities
             .Select(x => _mapper.Map<TournamentResponse>(x))

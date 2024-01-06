@@ -25,7 +25,7 @@ public class
         
         var weightCategorieSpecificationResult = await 
             new WeightCategorieSpecification(weightCategorieQuery, request.Search, request.OrderColumn, request.OrderDir)
-                .GetSpecificationResult(request.PageNumber, request.PageSize, cancellationToken);
+                .GetSpecificationResultAsync(request.PageNumber, request.PageSize, cancellationToken);
         
         var dbItems = await weightCategorieSpecificationResult.Entities
             .Select(x => _mapper.Map<WeightCategorieResponse>(x))

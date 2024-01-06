@@ -24,7 +24,7 @@ public class GetTrainerListHandler : IQueryHandler<GetTrainerListQuery, PagedRes
 
         var trainerSpecificationResult = await 
             new TrainerSpecification(trainersQuery, request.Search, request.OrderColumn, request.OrderDir)
-                .GetSpecificationResult(request.PageNumber, request.PageSize, cancellationToken);
+                .GetSpecificationResultAsync(request.PageNumber, request.PageSize, cancellationToken);
         
         var dbItems = await trainerSpecificationResult.Entities
             .Select(x => _mapper.Map<TrainerResponse>(x))

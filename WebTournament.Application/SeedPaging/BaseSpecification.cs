@@ -25,7 +25,7 @@ public abstract class BaseSpecification<TEntity> where TEntity : Entity
     protected virtual async Task<int> GetTotalAsync(CancellationToken cancellationToken) =>
          Total = await Entities.CountAsync(cancellationToken);
 
-    public virtual async Task<SpecificationResult<TEntity>> GetSpecificationResult(int pageNumber, int pageSize, CancellationToken cancellationToken)
+    public virtual async Task<SpecificationResult<TEntity>> GetSpecificationResultAsync(int pageNumber, int pageSize, CancellationToken cancellationToken)
     {
         var total = await GetTotalAsync(cancellationToken);
         Entities = Entities.Skip((pageNumber - 1) * pageSize).Take(pageSize);

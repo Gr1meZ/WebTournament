@@ -21,7 +21,7 @@ public class GetAgeGroupListHandler : IQueryHandler<GetAgeGroupListQuery, PagedR
          var ageGroupQuery = _ageGroupRepository.GetAll();
          
          var ageGroupSpecificationResult = await new AgeGroupSpecification(ageGroupQuery, request.Search, request.OrderColumn, request.OrderDir)
-             .GetSpecificationResult(request.PageNumber, request.PageSize, cancellationToken);
+             .GetSpecificationResultAsync(request.PageNumber, request.PageSize, cancellationToken);
          
             var dbItems =  await ageGroupSpecificationResult.Entities
                 .Select(x => _mapper.Map<AgeGroupResponse>(x))

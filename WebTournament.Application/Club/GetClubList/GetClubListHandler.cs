@@ -23,7 +23,7 @@ public class GetClubListHandler : IQueryHandler<GetClubListQuery, PagedResponse<
         
         var clubSpecificationResult = await 
             new ClubSpecification(clubsQuery, request.Search, request.OrderColumn, request.OrderDir)
-                .GetSpecificationResult(request.PageNumber, request.PageSize, cancellationToken);
+                .GetSpecificationResultAsync(request.PageNumber, request.PageSize, cancellationToken);
         
         var dbItems = await clubSpecificationResult.Entities
             .Select(x => _mapper.Map<ClubResponse>(x))
