@@ -10,7 +10,7 @@ public class AgeGroupRepository : Repository<AgeGroup>, IAgeGroupRepository
     {
     }
     
-    public async Task<bool> IsUniqueAsync(int? minAge, int? maxAge) => 
+    public async Task<bool> IsExistsAsync(int? minAge, int? maxAge) => 
         await _applicationDbContext.AgeGroups.AnyAsync(x => x.MaxAge == maxAge && x.MinAge == minAge);
 
    

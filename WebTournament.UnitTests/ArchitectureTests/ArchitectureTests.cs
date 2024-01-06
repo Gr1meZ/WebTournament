@@ -1,7 +1,6 @@
 using FluentAssertions;
 using NetArchTest.Rules;
 using WebTournament.Application;
-using WebTournament.Application.Configuration.Queries;
 using WebTournament.Domain;
 using WebTournament.Infrastructure.Data;
 using WebTournament.Infrastructure.Identity;
@@ -10,17 +9,10 @@ using WebTournament.Presentation.MVC;
 using WebTournament.Presentation.MVC.Controllers;
 using Xunit.Abstractions;
 
-namespace WebTournament.ArchitectureTests;
+namespace WebTournament.UnitTests.ArchitectureTests;
 
 public class ArchitectureTests
 {
-    private readonly ITestOutputHelper _testOutputHelper;
-
-    public ArchitectureTests(ITestOutputHelper testOutputHelper)
-    {
-        _testOutputHelper = testOutputHelper;
-    }
-
     private const string DomainNamespace = "WebTournament.Domain";
     private const string ApplicationNamespace = "WebTournament.Application";
     private const string InfrastructureDataNamespace = "WebTournament.Infrastructure.Data";

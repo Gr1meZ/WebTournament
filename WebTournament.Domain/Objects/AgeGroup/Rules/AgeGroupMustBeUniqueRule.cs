@@ -15,7 +15,7 @@ public class AgeGroupMustBeUniqueRule : IBusinessRule
         _maxAge = maxAge;
     }
 
-    public async Task<bool> IsBrokenAsync() => await _ageGroupRepository.IsUniqueAsync(_minAge, _maxAge);
+    public async Task<bool> IsBrokenAsync() => await _ageGroupRepository.IsExistsAsync(_minAge, _maxAge);
 
 
     public string Message => "Данная возрастная группа уже существует!";

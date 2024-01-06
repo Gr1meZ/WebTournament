@@ -24,7 +24,7 @@ namespace WebTournament.Domain.Objects.AgeGroup
          public static async Task<AgeGroup> CreateAsync(Guid id, string name, int? minAge, int? maxAge, IAgeGroupRepository ageGroupRepository)
          {
              await CheckRuleAsync(new AgeGroupMustBeUniqueRule(ageGroupRepository, minAge, maxAge));
-             return new AgeGroup() { Id = Guid.NewGuid(), MaxAge = maxAge.Value, MinAge = minAge.Value, Name = name };
+             return new AgeGroup() { Id = id, MaxAge = maxAge.Value, MinAge = minAge.Value, Name = name };
          }
          
          public void Change(string name, int? minAge, int? maxAge)
