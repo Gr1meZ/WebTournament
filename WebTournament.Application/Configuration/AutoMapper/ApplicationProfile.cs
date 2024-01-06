@@ -32,7 +32,11 @@ public class ApplicationProfile : Profile
             .ForMember(x => x.WeightCategorieName, opt
                 => opt.MapFrom(src => $"{src.WeightCategorie.AgeGroup.Name} {src.WeightCategorie.WeightName}"))
             .ForMember(x => x.ClubName, opt
-                => opt.MapFrom(src => src.Trainer.Club.Name));
+                => opt.MapFrom(src => src.Trainer.Club.Name))
+            .ForMember(x => x.WeightNumber, opt
+                => opt.MapFrom(src => src.WeightCategorie.MaxWeight))
+            .ForMember(x => x.BeltNumber, opt
+                => opt.MapFrom(src => src.Belt.BeltNumber));
         
         CreateMap<Domain.Objects.Tournament.Tournament, TournamentResponse>();
         

@@ -1,11 +1,15 @@
+using System.Reflection;
+using AutoMapper;
 using FluentAssertions;
 using NetArchTest.Rules;
 using WebTournament.Application;
+using WebTournament.Application.Configuration.AutoMapper;
 using WebTournament.Domain;
 using WebTournament.Infrastructure.Data;
 using WebTournament.Infrastructure.Identity;
 using WebTournament.Infrastructure.IoC;
 using WebTournament.Presentation.MVC;
+using WebTournament.Presentation.MVC.AutoMapper;
 using WebTournament.Presentation.MVC.Controllers;
 using Xunit.Abstractions;
 
@@ -241,21 +245,18 @@ public class ArchitectureTests
         result.IsSuccessful.Should().BeTrue();
     }
     
+    
     [Fact]
-    public void AutoMapper_Must_DependOnPresentationAndApplication()
+    public void AutoMapper_ApplicationConfiguration_MustBe_Valid()
     {
-        var applicationAssembly = typeof(ApplicationAssembleReference).Assembly;
-        var presentationAssembly = typeof(PresentationAssembleReference).Assembly;
-        
-        var otherAssemblies = AppDomain.CurrentDomain.GetAssemblies()
-            .Where(a => a != applicationAssembly && a != presentationAssembly);
-        
-        var otherResult = Types
-            .InAssemblies(otherAssemblies)
-            .ShouldNot()
-            .HaveDependencyOn("AutoMapper")
-            .GetResult();
-        
-        otherResult.IsSuccessful.Should().BeTrue();
+        var config = new MapperConfiguration(cfg => cfg.AddProfile<ApplicationProfile>());
+        config.AssertConfigurationIsValid();
+    }
+    
+    [Fact]
+    public void AutoMapper_PresentationConfiguration_MustBe_Valid()
+    {
+        var config = new MapperConfiguration(cfg => cfg.AddProfile<PresentationProfile>());
+        config.AssertConfigurationIsValid();
     }
 }

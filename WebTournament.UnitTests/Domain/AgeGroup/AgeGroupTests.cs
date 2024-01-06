@@ -1,7 +1,11 @@
+using AutoMapper;
 using CustomExceptionsLibrary;
 using Moq;
+using WebTournament.Application.AgeGroup;
 using WebTournament.Application.AgeGroup.CreateAgeGroup;
+using WebTournament.Application.AgeGroup.GetAgeGroup;
 using WebTournament.Application.AgeGroup.UpdateAgeGroup;
+using WebTournament.Application.Configuration.AutoMapper;
 using WebTournament.Domain.Objects.AgeGroup;
 using Xunit.Abstractions;
 
@@ -11,6 +15,7 @@ public class AgeGroupTests
 {
     private readonly Mock<IAgeGroupRepository> _ageGroupRepository = new();
     
+
     [Fact]
     public async Task AgeGroup_Must_BeCreated()
     {
@@ -75,7 +80,27 @@ public class AgeGroupTests
         Assert.Equal(ageGroup.MaxAge, ageGroupCommand.MaxAge);
         Assert.Equal(ageGroup.Name, ageGroupCommand.Name);
     }
+    
+    [Fact]
+    public async Task GetAgeGroup_Must_BeSuccessful()
+    {
+        var getAgeGroupQuery = new GetAgeGroupQuery(Guid.NewGuid());
+        
+        var ageGroup = await BuilderAsync(getAgeGroupQuery.Id);
 
+        _ageGroupRepository.Setup(method => method.GetByIdAsync(getAgeGroupQuery.Id))
+            .ReturnsAsync(ageGroup);
+        
+        var config = new MapperConfiguration(cfg => cfg.AddProfile<ApplicationProfile>());
+        var mapper = config.CreateMapper();
+        var ageGroupResponse = mapper.Map<AgeGroupResponse>(ageGroup);
+        
+        Assert.Equal(ageGroup.Id, ageGroupResponse.Id);
+        Assert.Equal(ageGroup.MinAge, ageGroupResponse.MinAge);
+        Assert.Equal(ageGroup.MaxAge, ageGroupResponse.MaxAge);
+        Assert.Equal(ageGroup.Name, ageGroupResponse.Name);
+    }
+    
     private async Task<WebTournament.Domain.Objects.AgeGroup.AgeGroup> BuilderAsync(Guid id)
     {
         _ageGroupRepository.Setup(method => method.IsExistsAsync(5, 6))
