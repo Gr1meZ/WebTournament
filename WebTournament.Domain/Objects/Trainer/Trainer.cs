@@ -25,11 +25,11 @@ namespace WebTournament.Domain.Objects.Trainer
         
         public IReadOnlyCollection<Fighter.Fighter> Fighters { get; protected set; }
 
-        public static async Task<Trainer> CreateAsync(string name, string surname, string patronymic, string phone,
+        public static async Task<Trainer> CreateAsync(Guid id, string name, string surname, string patronymic, string phone,
             Guid clubId, ITrainerRepository trainerRepository)
         {
             await CheckRuleAsync(new TrainerMustBeUniqueRule(name, surname, patronymic, phone, clubId, trainerRepository));
-            return new Trainer(Guid.NewGuid(), clubId, name, surname, patronymic, phone);
+            return new Trainer(id, clubId, name, surname, patronymic, phone);
         }
         
         public void Change(string name, string surname, string patronymic, string phone,

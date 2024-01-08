@@ -11,7 +11,7 @@ public class FighterRepository : Repository<Fighter>, IFighterRepository
     {
     }
 
-    public async Task<bool> IsUnique(string surname, string name, string city, Guid tournamentId) =>
+    public async Task<bool> IsExistsAsync(string surname, string name, string city, Guid tournamentId) =>
         await _applicationDbContext.Fighters.AnyAsync(x =>
             x.Surname == surname && x.Name == name && x.City == city && x.TournamentId == tournamentId);
 

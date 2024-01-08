@@ -11,7 +11,7 @@ public class BracketRepository : Repository<Bracket>, IBracketRepository
     {
     }
 
-    public async Task<bool> IsUnique(Guid tournamentId, Guid weightCategorieId, Guid[] division) =>
+    public async Task<bool> IsExistsAsync(Guid tournamentId, Guid weightCategorieId, Guid[] division) =>
      await _applicationDbContext.Brackets.AnyAsync(x => x.TournamentId == tournamentId 
                                                         && x.WeightCategorieId == weightCategorieId 
                                                         && x.Division == division);

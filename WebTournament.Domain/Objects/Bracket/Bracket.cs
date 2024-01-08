@@ -25,11 +25,11 @@ public class Bracket : Entity
     public Tournament.Tournament Tournament { get; protected set; }
     public IReadOnlyCollection<Fighter.Fighter> Fighters { get; protected set; }
 
-    public static async Task<Bracket> CreateAsync(Guid weightCategorieId, Guid tournamentId, Guid[] division,
+    public static async Task<Bracket> CreateAsync(Guid id, Guid weightCategorieId, Guid tournamentId, Guid[] division,
         string state, IBracketRepository bracketRepository)
     {
         await CheckRuleAsync(new BracketMustBeUniqueRule(tournamentId, weightCategorieId, division, bracketRepository));
-        return new Bracket(Guid.NewGuid(), weightCategorieId, tournamentId, division, state);
+        return new Bracket(id, weightCategorieId, tournamentId, division, state);
     }
 
     public void UpdateState(string state) => State = state;

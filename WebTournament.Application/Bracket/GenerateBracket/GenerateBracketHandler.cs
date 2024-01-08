@@ -30,9 +30,9 @@ public class GenerateBracketHandler : ICommandHandler<GenerateBracketCommand>
             .ToListAsync(cancellationToken: cancellationToken);
 
         var bracketsList = new List<Domain.Objects.Bracket.Bracket>();
-        foreach (var id in weightCategoriesIds)
+        foreach (var weightCategorieId in weightCategoriesIds)
         {
-            var bracket = await Domain.Objects.Bracket.Bracket.CreateAsync(id, request.TournamentId, request.Division, string.Empty, _bracketRepository);
+            var bracket = await Domain.Objects.Bracket.Bracket.CreateAsync(Guid.NewGuid(), weightCategorieId, request.TournamentId, request.Division, string.Empty, _bracketRepository);
             bracketsList.Add(bracket);
         }
         await _bracketRepository.AddRangeAsync(bracketsList);

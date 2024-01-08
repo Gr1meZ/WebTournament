@@ -17,7 +17,7 @@ public class CreateClubHandler : ICommandHandler<CreateClubCommand>
 
     public async Task Handle(CreateClubCommand request, CancellationToken cancellationToken)
     {
-        var club = await Domain.Objects.Club.Club.CreateAsync(request.Name, _clubRepository);
+        var club = await Domain.Objects.Club.Club.CreateAsync(Guid.NewGuid(), request.Name, _clubRepository);
         
         await _clubRepository.AddAsync(club);
         await _unitOfWork.CommitAsync(cancellationToken);

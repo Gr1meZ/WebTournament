@@ -48,12 +48,12 @@ namespace WebTournament.Domain.Objects.Fighter
         public  Trainer.Trainer Trainer { get; protected set;}    
         public Bracket.Bracket Bracket { get; protected set; }
 
-        public static async Task<Fighter> CreateAsync(Guid tournamentId, Guid weightCategorieId, Guid beltId,
+        public static async Task<Fighter> CreateAsync(Guid id, Guid tournamentId, Guid weightCategorieId, Guid beltId,
             Guid trainerId, Guid? bracketId, string name,
             string surname, DateTime birthDate, string country, string city, string gender, IFighterRepository fighterRepository)
         {
             await CheckRuleAsync(new FighterMustBeUniqueRule(fighterRepository, surname, name, city, tournamentId));
-            return new Fighter(Guid.NewGuid(), tournamentId, weightCategorieId, beltId, trainerId, bracketId, name,
+            return new Fighter(id, tournamentId, weightCategorieId, beltId, trainerId, bracketId, name,
                 surname, birthDate, AgeCalculator.CalculateAge(birthDate), country, city, GenderExtension.ParseEnum(gender));
         }
 

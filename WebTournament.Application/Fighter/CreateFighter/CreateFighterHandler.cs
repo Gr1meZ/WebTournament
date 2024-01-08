@@ -16,7 +16,7 @@ public class CreateFighterHandler : ICommandHandler<CreateFighterCommand>
 
     public async Task Handle(CreateFighterCommand request, CancellationToken cancellationToken)
     {
-        var fighter = await Domain.Objects.Fighter.Fighter.CreateAsync(request.TournamentId.Value, request.WeightCategorieId.Value,
+        var fighter = await Domain.Objects.Fighter.Fighter.CreateAsync(Guid.NewGuid(), request.TournamentId.Value, request.WeightCategorieId.Value,
             request.BeltId.Value, request.TrainerId.Value, null, request.Name, request.Surname, request.BirthDate, request.Country,
             request.City, request.Gender, _fighterRepository);
 

@@ -14,10 +14,10 @@ namespace WebTournament.Domain.Objects.Club
         public  string Name { get; private set; }
         public IReadOnlyCollection<Trainer.Trainer> Trainers { get;  protected set; }
 
-        public static async Task<Club> CreateAsync(string name, IClubRepository clubRepository)
+        public static async Task<Club> CreateAsync(Guid id, string name, IClubRepository clubRepository)
         {
             await CheckRuleAsync(new ClubMustBeUniqueRule(clubRepository, name));
-            return new Club() { Id = Guid.NewGuid(), Name = name};
+            return new Club() { Id = id, Name = name};
         }
 
         public void Change(string name) => Name = name;

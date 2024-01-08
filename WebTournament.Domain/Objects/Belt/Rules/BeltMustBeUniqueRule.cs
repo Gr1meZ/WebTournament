@@ -15,7 +15,7 @@ public class BeltMustBeUniqueRule : IBusinessRule
         _shortName = shortName;
     }
 
-    public Task<bool> IsBrokenAsync() => _beltRepository.IsUniqueAsync(_beltNumber, _shortName);
+    public Task<bool> IsBrokenAsync() => _beltRepository.IsExistsAsync(_beltNumber, _shortName);
 
 
     public string Message => "Данный пояс уже существует!";

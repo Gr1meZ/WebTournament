@@ -4,6 +4,6 @@ namespace WebTournament.Domain.Objects.Club;
 
 public interface IClubRepository : IRepository<Club>
 {
-    Task<bool> IsUniqueAsync(string name);
+    Task<bool> IsExistsAsync(string name);
 
 }

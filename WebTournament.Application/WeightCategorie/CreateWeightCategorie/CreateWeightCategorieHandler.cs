@@ -18,7 +18,7 @@ public class CreateWeightCategorieHandler : ICommandHandler<CreateWeightCategori
     public async Task Handle(CreateWeightCategorieCommand request, CancellationToken cancellationToken)
     {
         var weightCategorie = await Domain.Objects.WeightCategorie.WeightCategorie
-            .CreateAsync(request.AgeGroupId.Value, request.MaxWeight.Value, request.WeightName,
+            .CreateAsync(Guid.NewGuid(), request.AgeGroupId.Value, request.MaxWeight.Value, request.WeightName,
                 GenderExtension.ParseEnum(request.Gender), _weightCategorieRepository);
        
         await _weightCategorieRepository.AddAsync(weightCategorie);

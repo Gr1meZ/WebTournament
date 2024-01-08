@@ -12,7 +12,7 @@ public class WeightCategorieRepository : Repository<WeightCategorie>, IWeightCat
     {
     }
 
-    public async Task<bool> IsUnique(int maxWeight, string gender, Guid ageGroupId) =>
+    public async Task<bool> IsExistsAsync(int maxWeight, string gender, Guid ageGroupId) =>
         await _applicationDbContext.WeightCategories.AnyAsync(x =>
             x.MaxWeight == maxWeight && x.AgeGroupId == ageGroupId && x.Gender == GenderExtension.ParseEnum(gender));
     

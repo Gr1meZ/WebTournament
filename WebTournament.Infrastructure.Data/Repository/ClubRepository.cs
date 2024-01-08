@@ -11,6 +11,6 @@ public class ClubRepository : Repository<Club>, IClubRepository
     {
     }
 
-    public async Task<bool> IsUniqueAsync(string name) => await _applicationDbContext.Clubs.AnyAsync(x => x.Name == name);
+    public async Task<bool> IsExistsAsync(string name) => await _applicationDbContext.Clubs.AnyAsync(x => x.Name == name);
 
 }

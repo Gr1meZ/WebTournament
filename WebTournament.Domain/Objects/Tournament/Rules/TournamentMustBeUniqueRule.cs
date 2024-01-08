@@ -15,7 +15,7 @@ public class TournamentMustBeUniqueRule : IBusinessRule
         _tournamentRepository = tournamentRepository;
     }
 
-    public async Task<bool> IsBrokenAsync() => await _tournamentRepository.IsUnique(_name, _address);
+    public async Task<bool> IsBrokenAsync() => await _tournamentRepository.IsExistsAsync(_name, _address);
 
 
     public string Message => "Данный турнир уже создан!";

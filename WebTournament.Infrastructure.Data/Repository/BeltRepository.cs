@@ -10,7 +10,7 @@ public class BeltRepository : Repository<Belt>, IBeltRepository
     {
     }
 
-    public async Task<bool> IsUniqueAsync(int beltNumber, string shortName) => await _applicationDbContext.Belts
+    public async Task<bool> IsExistsAsync(int beltNumber, string shortName) => await _applicationDbContext.Belts
         .Where(x => x.BeltNumber == beltNumber && x.ShortName == shortName)
         .AnyAsync();
 

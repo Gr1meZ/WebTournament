@@ -35,11 +35,6 @@ public class SaveBracketStateHandler : ICommandHandler<SaveBracketStateCommand>
 
         var bracketWinner = await _bracketWinnerRepository.GetByIdAsync(bracketState.Id);
 
-        Guid? GetWinnerId(int index)
-        {
-            return bracketState.Winners.ElementAtOrDefault(index) == Guid.Empty ? null : bracketState.Winners[index];
-        }
-
         if (bracketWinner is null)
         {
             bracketWinner = BracketWinner.Create(bracketState.Id, GetWinnerId(0), GetWinnerId(1), GetWinnerId(2));
@@ -48,6 +43,11 @@ public class SaveBracketStateHandler : ICommandHandler<SaveBracketStateCommand>
         else
         {
             bracketWinner.Change(GetWinnerId(0), GetWinnerId(1), GetWinnerId(2));
+        }
+
+        Guid? GetWinnerId(int index)
+        {
+            return bracketState.Winners.ElementAtOrDefault(index) == Guid.Empty ? null : bracketState.Winners[index];
         }
     }
 }

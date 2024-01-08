@@ -17,7 +17,7 @@ public class CreateBeltHandler : ICommandHandler<CreateBeltCommand>
 
     public async Task Handle(CreateBeltCommand request, CancellationToken cancellationToken)
     {
-        var belt = await Domain.Objects.Belt.Belt.CreateAsync(request.BeltNumber!.Value, 
+        var belt = await Domain.Objects.Belt.Belt.CreateAsync(Guid.NewGuid(), request.BeltNumber!.Value, 
             request.ShortName, request.FullName, _beltRepository);
         
         await _beltRepository.AddAsync(belt);

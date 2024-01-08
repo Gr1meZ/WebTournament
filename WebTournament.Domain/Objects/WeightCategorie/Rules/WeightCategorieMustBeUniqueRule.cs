@@ -16,7 +16,7 @@ public class WeightCategorieMustBeUniqueRule : IBusinessRule
         _ageGroupId = ageGroupId;
     }
 
-    public async Task<bool> IsBrokenAsync() => await _weightCategorieRepository.IsUnique(_maxWeight, _gender, _ageGroupId);
+    public async Task<bool> IsBrokenAsync() => await _weightCategorieRepository.IsExistsAsync(_maxWeight, _gender, _ageGroupId);
    
 
     public string Message => "Данная весовая категория уже существует!";

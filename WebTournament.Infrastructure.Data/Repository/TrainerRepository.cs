@@ -10,7 +10,7 @@ public class TrainerRepository : Repository<Trainer>, ITrainerRepository
     {
     }
 
-    public async Task<bool> IsUnique(string name, string surname, string patronymic, string phone, Guid clubId) =>
+    public async Task<bool> IsExistsAsync(string name, string surname, string patronymic, string phone, Guid clubId) =>
         await _applicationDbContext.Trainers
             .AnyAsync(x =>
                 x.Name == name && x.Surname == surname && x.Patronymic == patronymic && x.Phone == phone &&

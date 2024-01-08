@@ -19,7 +19,7 @@ public class BracketMustBeUniqueRule : IBusinessRule
     }
 
     public async Task<bool> IsBrokenAsync() =>
-        await _bracketRepository.IsUnique(_tournamentId, _weightCategorieId, _division);
+        await _bracketRepository.IsExistsAsync(_tournamentId, _weightCategorieId, _division);
 
 
     public string Message => "Данная турнирная сетка уже сгенерирована для данного турнира";

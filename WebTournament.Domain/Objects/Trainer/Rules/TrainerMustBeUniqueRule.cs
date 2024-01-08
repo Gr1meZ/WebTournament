@@ -21,7 +21,7 @@ public class TrainerMustBeUniqueRule : IBusinessRule
     }
 
     public async Task<bool> IsBrokenAsync() =>
-        await _trainerRepository.IsUnique(_name, _surname, _patronymic, _phone, _clubId);
+        await _trainerRepository.IsExistsAsync(_name, _surname, _patronymic, _phone, _clubId);
    
 
     public string Message => "Данный тренер уже существует!";

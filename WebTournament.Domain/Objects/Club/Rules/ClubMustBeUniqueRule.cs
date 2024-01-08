@@ -13,7 +13,7 @@ public class ClubMustBeUniqueRule : IBusinessRule
         _name = name;
     }
 
-    public async Task<bool> IsBrokenAsync() => await _clubRepository.IsUniqueAsync(_name);
+    public async Task<bool> IsBrokenAsync() => await _clubRepository.IsExistsAsync(_name);
 
 
     public string Message => "Данный клуб уже существует!";

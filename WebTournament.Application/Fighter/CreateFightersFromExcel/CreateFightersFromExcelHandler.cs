@@ -76,7 +76,7 @@ public class CreateFightersFromExcelHandler : ICommandHandler<CreateFightersFrom
             
             foreach (var fighterDto in fightersList)
             {
-                var domainFighter = await Domain.Objects.Fighter.Fighter.CreateAsync(fighterDto.TournamentId.Value, fighterDto.WeightCategorieId.Value,
+                var domainFighter = await Domain.Objects.Fighter.Fighter.CreateAsync(Guid.NewGuid(), fighterDto.TournamentId.Value, fighterDto.WeightCategorieId.Value,
                     fighterDto.BeltId.Value, fighterDto.TrainerId.Value, null, fighterDto.Name, fighterDto.Surname, fighterDto.BirthDate, fighterDto.Country,
                     fighterDto.City, fighterDto.Gender, _fighterRepository);
                 domainFighters.Add(domainFighter);

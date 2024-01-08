@@ -17,7 +17,7 @@ public class CreateTrainerHandler : ICommandHandler<CreateTrainerCommand>
 
     public async Task Handle(CreateTrainerCommand request, CancellationToken cancellationToken)
     {
-        var trainer = await Domain.Objects.Trainer.Trainer.CreateAsync(request.Name, request.Surname, request.Patronymic,
+        var trainer = await Domain.Objects.Trainer.Trainer.CreateAsync(Guid.NewGuid(), request.Name, request.Surname, request.Patronymic,
             request.Phone, request.ClubId.Value, _trainerRepository);
        
         await _trainerRepository.AddAsync(trainer);

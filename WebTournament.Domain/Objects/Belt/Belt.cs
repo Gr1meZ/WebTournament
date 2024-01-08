@@ -21,10 +21,10 @@ namespace WebTournament.Domain.Objects.Belt
         
         public IReadOnlyCollection<Fighter.Fighter> Fighters { get;  protected set; }
         
-        public static async Task<Belt> CreateAsync(int beltNumber, string shortName, string fullName, IBeltRepository beltRepository)
+        public static async Task<Belt> CreateAsync(Guid id, int beltNumber, string shortName, string fullName, IBeltRepository beltRepository)
         {
             await CheckRuleAsync(new BeltMustBeUniqueRule(beltRepository, beltNumber, shortName));
-            return new Belt() { Id = Guid.NewGuid(), BeltNumber = beltNumber, FullName = fullName, ShortName = shortName};
+            return new Belt() { Id = id, BeltNumber = beltNumber, FullName = fullName, ShortName = shortName};
         }
          
         public void Change(int beltNumber, string shortName, string fullName)

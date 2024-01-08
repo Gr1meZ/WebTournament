@@ -11,7 +11,7 @@ public class TournamentRepository : Repository<Tournament>, ITournamentRepositor
     {
     }
 
-    public async Task<bool> IsUnique(string name, string address) => 
+    public async Task<bool> IsExistsAsync(string name, string address) => 
         await _applicationDbContext.Tournaments.AnyAsync(x => x.Name == name && x.Address == address);
 
     public IQueryable<BracketWinner> GetTournamentResults(Guid tournamentId)

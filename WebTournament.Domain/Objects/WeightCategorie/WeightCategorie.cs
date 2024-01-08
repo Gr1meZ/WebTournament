@@ -27,13 +27,13 @@ namespace WebTournament.Domain.Objects.WeightCategorie
         public IReadOnlyCollection<Fighter.Fighter> Fighters { get; protected set; }
         public IReadOnlyCollection<Bracket.Bracket> Brackets { get; protected set; }
 
-        public static async Task<WeightCategorie> CreateAsync(Guid ageGroupId, int maxWeight, string weightName,
+        public static async Task<WeightCategorie> CreateAsync(Guid id, Guid ageGroupId, int maxWeight, string weightName,
             Gender gender, IWeightCategorieRepository weightCategorieRepository)
         {
             await CheckRuleAsync(
                 new WeightCategorieMustBeUniqueRule(weightCategorieRepository, maxWeight, gender.MapToString(), ageGroupId));
             
-            return new WeightCategorie(Guid.NewGuid(), ageGroupId, maxWeight, weightName, gender);
+            return new WeightCategorie(id, ageGroupId, maxWeight, weightName, gender);
         }
 
         public void Change(Guid ageGroupId, int maxWeight, string weightName,

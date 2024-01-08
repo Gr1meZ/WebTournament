@@ -16,7 +16,7 @@ public class CreateTournamentHandler : ICommandHandler<CreateTournamentCommand>
 
     public async Task Handle(CreateTournamentCommand request, CancellationToken cancellationToken)
     {
-        var tournament = await Domain.Objects.Tournament.Tournament.CreateAsync(request.Name, request.StartDate,
+        var tournament = await Domain.Objects.Tournament.Tournament.CreateAsync(Guid.NewGuid(), request.Name, request.StartDate,
             request.Address, _tournamentRepository);
         
         await _tournamentRepository.AddAsync(tournament);

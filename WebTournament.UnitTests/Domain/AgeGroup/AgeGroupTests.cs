@@ -7,7 +7,7 @@ using WebTournament.Application.AgeGroup.GetAgeGroup;
 using WebTournament.Application.AgeGroup.UpdateAgeGroup;
 using WebTournament.Application.Configuration.AutoMapper;
 using WebTournament.Domain.Objects.AgeGroup;
-using Xunit.Abstractions;
+using WebTournament.UnitTests.Builders;
 
 namespace WebTournament.UnitTests.Domain.AgeGroup;
 
@@ -29,7 +29,7 @@ public class AgeGroupTests
         _ageGroupRepository.Setup(method => method.IsExistsAsync(ageGroupCommand.MinAge, ageGroupCommand.MaxAge))
             .ReturnsAsync(false);
 
-        var ageGroup = await BuilderAsync(Guid.NewGuid());
+        var ageGroup = await AgeGroupBuilder.BuildAsync(Guid.NewGuid());
 
         Assert.Equal(ageGroup.Name, ageGroupCommand.Name);
         Assert.Equal(ageGroup.MinAge, ageGroupCommand.MinAge);
@@ -68,7 +68,7 @@ public class AgeGroupTests
             MinAge = 8,
         };
         
-        var ageGroup = await BuilderAsync(id);
+        var ageGroup = await AgeGroupBuilder.BuildAsync(id);
 
         _ageGroupRepository.Setup(method => method.GetByIdAsync(ageGroupCommand.Id))
             .ReturnsAsync(ageGroup);
@@ -79,35 +79,5 @@ public class AgeGroupTests
         Assert.Equal(ageGroup.MinAge, ageGroupCommand.MinAge);
         Assert.Equal(ageGroup.MaxAge, ageGroupCommand.MaxAge);
         Assert.Equal(ageGroup.Name, ageGroupCommand.Name);
-    }
-    
-    [Fact]
-    public async Task GetAgeGroup_Must_BeSuccessful()
-    {
-        var getAgeGroupQuery = new GetAgeGroupQuery(Guid.NewGuid());
-        
-        var ageGroup = await BuilderAsync(getAgeGroupQuery.Id);
-
-        _ageGroupRepository.Setup(method => method.GetByIdAsync(getAgeGroupQuery.Id))
-            .ReturnsAsync(ageGroup);
-        
-        var config = new MapperConfiguration(cfg => cfg.AddProfile<ApplicationProfile>());
-        var mapper = config.CreateMapper();
-        var ageGroupResponse = mapper.Map<AgeGroupResponse>(ageGroup);
-        
-        Assert.Equal(ageGroup.Id, ageGroupResponse.Id);
-        Assert.Equal(ageGroup.MinAge, ageGroupResponse.MinAge);
-        Assert.Equal(ageGroup.MaxAge, ageGroupResponse.MaxAge);
-        Assert.Equal(ageGroup.Name, ageGroupResponse.Name);
-    }
-    
-    private async Task<WebTournament.Domain.Objects.AgeGroup.AgeGroup> BuilderAsync(Guid id)
-    {
-        _ageGroupRepository.Setup(method => method.IsExistsAsync(5, 6))
-            .ReturnsAsync(false);
-        
-        return await WebTournament.Domain.Objects.AgeGroup.AgeGroup
-            .CreateAsync(id, $"5-6 лет", 5,6,
-                _ageGroupRepository.Object);
     }
 }

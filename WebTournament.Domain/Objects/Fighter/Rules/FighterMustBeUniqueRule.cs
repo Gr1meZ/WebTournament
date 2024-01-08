@@ -19,7 +19,7 @@ public class FighterMustBeUniqueRule : IBusinessRule
         _tournamentId = tournamentId;
     }
 
-    public async Task<bool> IsBrokenAsync() => await _fighterRepository.IsUnique(_surname, _name, _city, _tournamentId);
+    public async Task<bool> IsBrokenAsync() => await _fighterRepository.IsExistsAsync(_surname, _name, _city, _tournamentId);
 
 
     public string Message => $"Спортсмен {_surname} {_name} уже существует!";
