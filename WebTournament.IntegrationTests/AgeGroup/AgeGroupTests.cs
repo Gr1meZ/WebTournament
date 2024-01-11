@@ -50,8 +50,8 @@ public class AgeGroupTests : BaseIntegrationTest
     [Fact]
     public async Task GetAgeGroup_IsValid()
     {
-        var ageGroup = await DbContext.AgeGroups.FirstOrDefaultAsync();
-        var getAgeGroupQuery = new GetAgeGroupQuery(ageGroup.Id);
+        var ageGroupId = await DbContext.AgeGroups.Select(x => x.Id).FirstOrDefaultAsync();
+        var getAgeGroupQuery = new GetAgeGroupQuery(ageGroupId);
         
         var ageGroupResponse = await Sender.Send(getAgeGroupQuery);
         
