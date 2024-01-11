@@ -14,7 +14,6 @@ namespace WebTournament.UnitTests.Domain.AgeGroup;
 public class AgeGroupTests
 {
     private readonly Mock<IAgeGroupRepository> _ageGroupRepository = new();
-    
 
     [Fact]
     public async Task AgeGroup_Must_BeCreated()

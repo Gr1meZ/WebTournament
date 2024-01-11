@@ -49,7 +49,7 @@
     <ProjectReference Include="..\WebTournament.Application\WebTournament.Application.csproj" />
     <ProjectReference Include="..\WebTournament.Infrastructure.IoC\WebTournament.Infrastructure.IoC.csproj" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <Content Include="..\.dockerignore">
       <Link>.dockerignore</Link>

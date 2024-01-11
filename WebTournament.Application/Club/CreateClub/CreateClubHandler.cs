@@ -22,4 +22,5 @@ public class CreateClubHandler : ICommandHandler<CreateClubCommand>
         await _clubRepository.AddAsync(club);
         await _unitOfWork.CommitAsync(cancellationToken);
     }
+    
 }

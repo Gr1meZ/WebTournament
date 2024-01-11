@@ -1,3 +1,4 @@
+using CustomExceptionsLibrary;
 using Microsoft.EntityFrameworkCore;
 using WebTournament.Domain.Objects.Trainer;
 using WebTournament.Infrastructure.Data.Context;
@@ -19,5 +20,17 @@ public class TrainerRepository : Repository<Trainer>, ITrainerRepository
     public override IQueryable<Trainer> GetAll()
     {
         return _dbSet.Include(x => x.Club).AsQueryable().AsNoTracking();
+    }
+
+    public override async Task<Trainer> GetByIdAsync(Guid id)
+    {
+        var trainer = await _dbSet
+            .Include(x => x.Club)
+            .FirstOrDefaultAsync(x => x.Id == id);
+        
+        if (trainer is null)
+            throw new ValidationException("ValidationException", $"{nameof(trainer)} is not found");
+        
+        return trainer;
     }
 }
