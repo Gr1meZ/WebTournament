@@ -201,7 +201,7 @@ public class FighterTests : BaseIntegrationTest
     }
     
     [Fact]
-    public async Task ExcelFile_Must_HaveValidatedWorksheet()
+    public async Task ExcelFile_Must_AddFighter()
     {
         await Sender.Send(new CreateAgeGroupCommand() { Name = "Test", MinAge = 5, MaxAge = 7 });
         var ageGroup = await DbContext.AgeGroups.FirstOrDefaultAsync(x => x.MinAge == 5 && x.MaxAge == 7);
@@ -221,7 +221,7 @@ public class FighterTests : BaseIntegrationTest
         
         var tournamentId = await GetRandomTournamentIdAsync();
         
-        var filePath = Path.Combine(_environment.WebRootPath, "requestExample.xlsx");
+        var filePath = Path.Combine(_environment.WebRootPath, "requests", "validRequest.xlsx");
         await using var stream = File.OpenRead(filePath);
         var file = new FormFile(stream, 0, stream.Length, null, Path.GetFileName(stream.Name));
         
@@ -233,5 +233,20 @@ public class FighterTests : BaseIntegrationTest
             x.BeltId == belt.Id && x.WeightCategorieId == weightCategorie.Id);
         
         Assert.True(isFighterCreated);
+    }
+
+
+    [Fact]
+    public async Task ExcelFile_Have_NotValidWorksheet()
+    {
+        var tournamentId = await GetRandomTournamentIdAsync();
+
+        var filePath = Path.Combine(_environment.WebRootPath, "requests", "falseWorksheet.xlsx");
+        await using var stream = File.OpenRead(filePath);
+        var file = new FormFile(stream, 0, stream.Length, null, Path.GetFileName(stream.Name));
+        
+        var excelFileCmd = new CreateFightersFromExcelCommand(tournamentId, file);
+
+        await Assert.ThrowsAsync<ValidationException>(() => Sender.Send(excelFileCmd));
     }
 }
