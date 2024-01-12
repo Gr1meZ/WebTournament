@@ -58,6 +58,8 @@ public class CreateFightersFromExcelHandler : ICommandHandler<CreateFightersFrom
                 var fighterDto = new FighterResponse();
                 
                 ExcelFightersMapper.ParseExcelFile(worksheet, row, fighterDto);
+                if (fighterDto?.Gender == null)
+                    continue;
                 
                 fighterDto.TournamentId = request.Id;
                 fighterDto.Age = AgeCalculator.CalculateAge(fighterDto.BirthDate);
@@ -106,7 +108,7 @@ public class CreateFightersFromExcelHandler : ICommandHandler<CreateFightersFrom
             throw new ValidationException("ValidationException",$"Возрастная группа для возраста '{age}' не найдена. Создайте в базе данных категорию для данного возраста!");
             
         var weightCategorie = await _weightCategorieRepository.GetAll()
-            .Where(x => weight <= x.MaxWeight && x.AgeGroupId == ageGroup.Id && x.Gender == GenderExtension.ParseEnum(gender)) // Фильтруем по условию
+            .Where(x => weight <= x.MaxWeight && x.AgeGroupId == ageGroup.Id && x.Gender == GenderExtension.ParseEnum(gender)) 
             .OrderBy(x => x.MaxWeight) 
             .FirstOrDefaultAsync();
           

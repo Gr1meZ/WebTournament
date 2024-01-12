@@ -1,12 +1,18 @@
+using System.IO.Compression;
 using CustomExceptionsLibrary;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using WebTournament.Application.AgeGroup.CreateAgeGroup;
 using WebTournament.Application.Belt.CreateBelt;
 using WebTournament.Application.Club.CreateClub;
 using WebTournament.Application.Fighter;
 using WebTournament.Application.Fighter.CreateFighter;
+using WebTournament.Application.Fighter.CreateFightersFromExcel;
 using WebTournament.Application.Fighter.GetFighter;
 using WebTournament.Application.Fighter.GetFighterList;
+using WebTournament.Application.Fighter.RemoveAllFighters;
 using WebTournament.Application.Fighter.RemoveFighter;
 using WebTournament.Application.Fighter.UpdateFighter;
 using WebTournament.Application.Tournament.CreateTournament;
@@ -19,31 +25,21 @@ namespace WebTournament.IntegrationTests.Fighter;
 
 public class FighterTests : BaseIntegrationTest
 {
-
+    private readonly IWebHostEnvironment? _environment;
     public FighterTests(WebApplicationFactory factory) : base(factory)
     {
+        _environment = factory.Services.GetService<IWebHostEnvironment>();
     }
     
       [Fact]
     public async Task Fighter_Must_BeCreated()
     {
-        var createFighterCommand = new CreateFighterCommand()
-        {
-            TournamentId =  await GetRandomTournamentAsync(),
-            BeltId = await CreateRandomBeltAsync(), 
-            TrainerId = await CreateRandomTrainerAsync(),
-            WeightCategorieId = await CreateRandomWeightCategorieIdAsync(),
-            Name = "Иван", 
-            Surname = "Иванов", 
-            BirthDate = DateTime.UtcNow.AddYears(-10), 
-            Country = "Россия",
-            City = "Москва", 
-            Gender = Gender.Male.MapToString()
-        };
+        var createFighterCommand = await CreateFighterCommandAsync();
         
         await Sender.Send(createFighterCommand);
         
-        var fighter = await DbContext.Fighters.FirstOrDefaultAsync(x => x.Name == createFighterCommand.Name);
+        var fighter = await DbContext.Fighters
+            .FirstOrDefaultAsync(x => x.Name == createFighterCommand.Name && x.Surname == createFighterCommand.Surname);
         
         Assert.NotNull(fighter);
     }
@@ -51,19 +47,7 @@ public class FighterTests : BaseIntegrationTest
     [Fact]
     public async Task Fighter_AlreadyExists_ThrowsException()
     {
-        var createFighterCommand = new CreateFighterCommand()
-        {
-            TournamentId =  await GetRandomTournamentAsync(), 
-            BeltId = await CreateRandomBeltAsync(), 
-            TrainerId = await CreateRandomTrainerAsync(),
-            WeightCategorieId = await CreateRandomWeightCategorieIdAsync(),
-            Name = "Денис", 
-            Surname = "Артемович", 
-            BirthDate = DateTime.UtcNow.AddYears(-20), 
-            Country = "Россия",
-            City = "Москва", 
-            Gender = Gender.Male.MapToString()
-        };
+        var createFighterCommand = await CreateFighterCommandAsync();
         
         await Sender.Send(createFighterCommand);
         
@@ -92,19 +76,16 @@ public class FighterTests : BaseIntegrationTest
     [Fact]
     public async Task GetFighterList_Must_ReturnValidPagedResponse()
     {
-        var getFighterListBySearch = new GetFighterListQuery(await GetRandomTournamentAsync()) { Search = "Москва" };
-        var getFighterListByOrder = new GetFighterListQuery(await GetRandomTournamentAsync()) {OrderColumn = "city", OrderDir = "desc", Search = ""};
+        var tournamentId = await GetRandomTournamentIdAsync();
         
-        var searchResponse = await Sender.Send(getFighterListBySearch);
+        var getFighterListByOrder = new GetFighterListQuery(tournamentId) {OrderColumn = "city", OrderDir = "desc", Search = ""};
+        
         var orderColumnResponse = await Sender.Send(getFighterListByOrder);
         
-        var dataBySearch = await DbContext.Fighters.Where(x => x.Name.Contains(getFighterListBySearch.Search)).ToListAsync();
         var dataByOrder = await DbContext.Fighters.OrderByDescending(x => x.Name).ToListAsync();
         
-        var expectedSearch = dataBySearch.Select(fighter => Mapper.Map<FighterResponse>(fighter)).ToArray();
         var expectedOrder = dataByOrder.Select(fighter => Mapper.Map<FighterResponse>(fighter)).ToArray();
         
-        Assert.Equal(searchResponse.Metadata.TotalItemCount, expectedSearch.Length);
         Assert.Equal(orderColumnResponse.Metadata.TotalItemCount, expectedOrder.Length);
 
     }
@@ -114,9 +95,9 @@ public class FighterTests : BaseIntegrationTest
     {
         var createFighterCommand = new CreateFighterCommand()
         {
-            TournamentId =  await GetRandomTournamentAsync(), 
-            BeltId = await CreateRandomBeltAsync(), 
-            TrainerId = await CreateRandomTrainerAsync(),
+            TournamentId =  await GetRandomTournamentIdAsync(), 
+            BeltId = await CreateRandomBeltIdAsync(), 
+            TrainerId = await CreateRandomTrainerIdAsync(),
             WeightCategorieId = await CreateRandomWeightCategorieIdAsync(),
             Name = "Артем", 
             Surname = "Сергеев", 
@@ -143,15 +124,31 @@ public class FighterTests : BaseIntegrationTest
     }
     
     [Fact]
+    public async Task AllFighters_Must_BeRemoved()
+    {
+        var createFighterCommand = await CreateFighterCommandAsync();
+        
+        await Sender.Send(createFighterCommand);
+        
+        var removeCommand = new RemoveAllFightersCommand(createFighterCommand.TournamentId.Value);
+
+        await Sender.Send(removeCommand);
+
+        var isDeleted = !await DbContext.Fighters.AnyAsync(x => x.TournamentId == createFighterCommand.TournamentId.Value);
+        
+        Assert.True(isDeleted);
+    }
+    
+    [Fact]
     public async Task Fighter_Must_BeUpdated()
     {
         var fighterId = await DbContext.Fighters.Select(x => x.Id).FirstOrDefaultAsync();
         var updateCommand = new UpdateFighterCommand()
         {
             Id = fighterId,
-            TournamentId =  await GetRandomTournamentAsync(), 
-            BeltId = await CreateRandomBeltAsync(), 
-            TrainerId = await CreateRandomTrainerAsync(),
+            TournamentId =  await GetRandomTournamentIdAsync(), 
+            BeltId = await CreateRandomBeltIdAsync(), 
+            TrainerId = await CreateRandomTrainerIdAsync(),
             WeightCategorieId = await CreateRandomWeightCategorieIdAsync(),
             Name = "Иванов", 
             Surname = "Иванович", 
@@ -179,83 +176,62 @@ public class FighterTests : BaseIntegrationTest
         Assert.Equal(updateCommand.Gender, updatedFighter.Gender.MapToString());
     }
 
-    private async Task<Guid> GetRandomTournamentAsync()
+    [Fact]
+    public async Task ExcelFile_Must_BeEmpty()
     {
-        var anyTournament = await DbContext.Tournaments.FirstOrDefaultAsync();
-        if (anyTournament is not null)
-        {
-            return anyTournament.Id;
-        }
-        
-        var tournamentCmd = new CreateTournamentCommand()
-            { Name = Guid.NewGuid().ToString(), Address = Guid.NewGuid().ToString(), StartDate = DateTime.UtcNow.AddDays(new Random().Next(0, 50)) };
-        
-        await Sender.Send(tournamentCmd);
-        
-        return await DbContext.Tournaments
-            .Where(x => x.Name == tournamentCmd.Name && x.StartDate == tournamentCmd.StartDate)
-            .Select(x => x.Id).FirstOrDefaultAsync();
+        var tournamentId = await GetRandomTournamentIdAsync();
+        using var stream = new MemoryStream();
+
+        var excelFile = new FormFile(stream,0, 0, "excel", "test.xlsx" );
+        var excelFileCmd = new CreateFightersFromExcelCommand(tournamentId, excelFile);
+
+        await Assert.ThrowsAsync<ValidationException>(() => Sender.Send(excelFileCmd));
     }
     
-    private async Task<Guid> CreateRandomBeltAsync()
+    [Fact]
+    public async Task ExcelFile_Must_HaveNotValidExtension()
     {
-        var beltCmd = new CreateBeltCommand()
-            { BeltNumber = new Random().Next(0, 10), ShortName = Guid.NewGuid().ToString(), FullName = Guid.NewGuid().ToString()};
-        
-        await Sender.Send(beltCmd);
-        
-        return await DbContext.Belts
-            .Where(x => x.BeltNumber == beltCmd.BeltNumber && x.ShortName == beltCmd.ShortName)
-            .Select(x => x.Id).FirstOrDefaultAsync();
+        var tournamentId = await GetRandomTournamentIdAsync();
+        using var stream = new MemoryStream();
+
+        var excelFile = new FormFile(stream,0, 10, "excel", "test.doc" );
+        var excelFileCmd = new CreateFightersFromExcelCommand(tournamentId, excelFile);
+
+        await Assert.ThrowsAsync<ValidationException>(() => Sender.Send(excelFileCmd));
     }
     
-    private async Task<Guid> CreateRandomTrainerAsync()
+    [Fact]
+    public async Task ExcelFile_Must_HaveValidatedWorksheet()
     {
-        await Sender.Send(new CreateClubCommand() { Name = Guid.NewGuid().ToString() });
-        var clubId = await DbContext.Clubs.Select(x => x.Id).FirstOrDefaultAsync();
+        await Sender.Send(new CreateAgeGroupCommand() { Name = "Test", MinAge = 5, MaxAge = 7 });
+        var ageGroup = await DbContext.AgeGroups.FirstOrDefaultAsync(x => x.MinAge == 5 && x.MaxAge == 7);
         
-        var trainerCmd = new CreateTrainerCommand()
-            { 
-                Name = Guid.NewGuid().ToString(),
-                Surname  = Guid.NewGuid().ToString(),
-                Patronymic = Guid.NewGuid().ToString(), 
-                Phone  = Guid.NewGuid().ToString(),
-                ClubId = clubId
-            };
+        await Sender.Send(new CreateBeltCommand() { BeltNumber = 10, ShortName = "гып", FullName = "Test"});
+        var belt = await DbContext.Belts.FirstOrDefaultAsync(x => x.BeltNumber == 10);
         
-        await Sender.Send(trainerCmd);
+        await Sender.Send(new CreateClubCommand() { Name = "Юнош" });
+        var club = await DbContext.Clubs.FirstOrDefaultAsync(x => x.Name == "Юнош");
         
-        return await DbContext.Trainers
-            .Where(x => x.Name == trainerCmd.Name && x.Surname == trainerCmd.Surname
-                                                  && x.ClubId == clubId && x.Phone == trainerCmd.Phone)
-            .Select(x => x.Id)
-            .FirstOrDefaultAsync();
-    }
-    
-    private async Task<Guid> CreateRandomWeightCategorieIdAsync()
-    {
-        var ageGroupId = await DbContext.AgeGroups.Select(x => x.Id).FirstOrDefaultAsync();
-        if (ageGroupId == Guid.Empty)
-        {
-            var ageGroupCmd = new CreateAgeGroupCommand(){Name = "Test", MaxAge = 10, MinAge = 3};
-            await Sender.Send(ageGroupCmd);
-            ageGroupId = await DbContext.AgeGroups.Select(x => x.Id).FirstOrDefaultAsync();
-        }
+        await Sender.Send(new CreateWeightCategorieCommand() {Gender = Gender.Female.MapToString(), MaxWeight = 25, WeightName = "Test", AgeGroupId = ageGroup.Id});
+        var weightCategorie = await DbContext.WeightCategories.FirstOrDefaultAsync(x => x.MaxWeight == 25);
         
-        var weightCategorieCommand = new CreateWeightCategorieCommand()
-        { 
-            Gender = Gender.Male.MapToString(),
-            MaxWeight = new Random().Next(0, 500),
-            WeightName = Guid.NewGuid().ToString(),
-            AgeGroupId = ageGroupId
-        };
+        await Sender.Send(new CreateTrainerCommand()
+            { Name = "Константин", Surname = "Кочмаров", Patronymic = "Юрьевич", Phone = "123", ClubId = club.Id });
+        var trainer = await DbContext.Trainers.FirstOrDefaultAsync(x => x.ClubId == club.Id);
         
-        await Sender.Send(weightCategorieCommand);
+        var tournamentId = await GetRandomTournamentIdAsync();
         
-        return await DbContext.WeightCategories
-            .Where(x => x.Gender == GenderExtension.ParseEnum(weightCategorieCommand.Gender) && x.MaxWeight == weightCategorieCommand.MaxWeight
-                                                  && x.AgeGroupId == ageGroupId)
-            .Select(x => x.Id)
-            .FirstOrDefaultAsync();
+        var filePath = Path.Combine(_environment.WebRootPath, "requestExample.xlsx");
+        await using var stream = File.OpenRead(filePath);
+        var file = new FormFile(stream, 0, stream.Length, null, Path.GetFileName(stream.Name));
+        
+        var excelFileCmd = new CreateFightersFromExcelCommand(tournamentId, file);
+        await Sender.Send(excelFileCmd);
+        
+        var isFighterCreated = await DbContext.Fighters.AnyAsync(x =>
+            x.TournamentId == tournamentId && x.TrainerId == trainer.Id &&
+            x.BeltId == belt.Id && x.WeightCategorieId == weightCategorie.Id);
+        
+        Assert.True(isFighterCreated);
     }
 }

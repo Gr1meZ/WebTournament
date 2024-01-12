@@ -18,17 +18,12 @@ public class BeltTests : BaseIntegrationTest
     [Fact]
     public async Task Belt_Must_BeCreated()
     {
-        var createBeltCommand = new CreateBeltCommand()
-        {
-            BeltNumber = 1,
-            ShortName = "гып",
-            FullName = "Красный пояс"
-        };
+        var createBeltCommand = CreateBeltCommand();
         
         await Sender.Send(createBeltCommand);
         
         var belt = await DbContext.Belts.FirstOrDefaultAsync(x =>
-            x.ShortName == createBeltCommand.ShortName && x.BeltNumber == 1);
+            x.ShortName == createBeltCommand.ShortName && x.BeltNumber == createBeltCommand.BeltNumber);
         
         Assert.NotNull(belt);
     }
@@ -36,12 +31,7 @@ public class BeltTests : BaseIntegrationTest
     [Fact]
     public async Task Belt_AlreadyExists_ThrowsException()
     {
-        var createBeltCommand = new CreateBeltCommand()
-        {
-            BeltNumber = 7,
-            ShortName = "гып",
-            FullName = "Красный пояс"
-        };
+        var createBeltCommand = CreateBeltCommand();
         
         await Sender.Send(createBeltCommand);
         
@@ -94,12 +84,7 @@ public class BeltTests : BaseIntegrationTest
     [Fact]
     public async Task Belt_Must_BeRemoved()
     {
-        var createBeltCommand = new CreateBeltCommand()
-        {
-            BeltNumber = 5,
-            ShortName = "гып",
-            FullName = "Красный пояс"
-        };
+        var createBeltCommand = CreateBeltCommand();
         
         await Sender.Send(createBeltCommand);
 

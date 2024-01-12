@@ -32,6 +32,7 @@ public class DistributePlayersHandler : ICommandHandler<DistributePlayersCommand
         foreach (var fighter in fighters)
         {
             var bracketId = await _bracketRepository.GetAll()
+                .Include(x => x.WeightCategorie.AgeGroup)
                 .Where(x => x.WeightCategorieId == fighter.WeightCategorieId && x.Division.Contains(fighter.BeltId) && x.TournamentId == request.Id)
                 .Select(x => x.Id).FirstOrDefaultAsync(cancellationToken: cancellationToken);
 
@@ -40,7 +41,7 @@ public class DistributePlayersHandler : ICommandHandler<DistributePlayersCommand
         }
         
         await DrawFighters(request.Id, fighters); 
-        await CreateBracketWinnersAsync();
+        await CreateBracketWinnersAsync(request.Id);
         await _unitOfWork.CommitAsync(cancellationToken);
     }
      private async Task DrawFighters(Guid tournamentId, IReadOnlyCollection<Domain.Objects.Fighter.Fighter> fighters)
@@ -105,9 +106,13 @@ public class DistributePlayersHandler : ICommandHandler<DistributePlayersCommand
              });
          }
      }
-    private async Task CreateBracketWinnersAsync()
+    private async Task CreateBracketWinnersAsync(Guid tournamentId)
     {
-        var bracketIds = await _bracketRepository.GetAll().Select(x => x.Id).ToListAsync();
+        var bracketIds = await _bracketRepository
+            .GetAll()
+            .Where(x => x.TournamentId == tournamentId)
+            .Select(x => x.Id).ToListAsync();
+        
         if (!bracketIds.Any() || await _bracketWinnerRepository.GetAll().AnyAsync(x => bracketIds.Contains(x.Id))) return;
         {
             var bracketWinners = bracketIds.Select(x => BracketWinner.Create(x, null, null, null));

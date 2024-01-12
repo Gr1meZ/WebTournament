@@ -92,11 +92,5 @@ public class BracketController : BaseController
         await _mediator.Send(new SaveBracketStateCommand(bracketStateViewModel.Id, _mapper.Map<BracketStateRequest>(bracketStateViewModel)));
         return Ok();
     }
-    
-    [HttpPost("[controller]/[action]/{bracketId}")]
-    public async Task<IActionResult> Select2BracketFighters([FromForm]Select2FightersQuery request, Guid bracketId)
-    {
-        request.Id = bracketId;
-        return Ok(await _mediator.Send(request));
-    }
+ 
 }

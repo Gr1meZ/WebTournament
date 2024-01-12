@@ -35,7 +35,6 @@ public class GenerateBracketHandler : ICommandHandler<GenerateBracketCommand>
             var bracket = await Domain.Objects.Bracket.Bracket.CreateAsync(Guid.NewGuid(), weightCategorieId, request.TournamentId, request.Division, string.Empty, _bracketRepository);
             bracketsList.Add(bracket);
         }
-        await _bracketRepository.AddRangeAsync(bracketsList);
 
         await _bracketRepository.AddRangeAsync(bracketsList);
         await _unitOfWork.CommitAsync(cancellationToken);
