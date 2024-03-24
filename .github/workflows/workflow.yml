@@ -21,14 +21,14 @@ jobs:
       - name: Build and test
         uses: docker/build-push-action@v5
         with:
-          context: ./WebTournament
+          context: .
           file: ./WebTournament/Dockerfile
           target: build
           load: true
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
-          context: ./WebTournament
+          context: .
           push: true
           target: final
           tags: ${{ secrets.DOCKER_USERNAME }}/${{ github.event.repository.name }}:latest
