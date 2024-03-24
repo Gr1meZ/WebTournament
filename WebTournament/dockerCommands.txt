@@ -1,4 +1,4 @@
-docker build -f .\WebTournament\Dockerfile -t gr1mez/webtournament_application .
+docker build -f .\WebTournament\Dockerfile -t gr1mez/webtournament .
 docker pull gr1mez/webtournament_application
 docker push gr1mez/webtournament_application
 docker-compose up -d
