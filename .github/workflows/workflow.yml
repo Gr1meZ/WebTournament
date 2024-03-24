@@ -29,6 +29,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
+          file: ./WebTournament/Dockerfile
           push: true
           target: final
           tags: ${{ secrets.DOCKER_USERNAME }}/webtournament:latest
